@@ -21,7 +21,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 #Here I will very simply load the data. Note that I should in theory also split a set for validation, and shuffle the data...
 #Can write the decompressor here if I want
 
-dense, pid = sparse2dense('Zuds_weighted_sparse_train.h5')
+dense, pid = sparse2dense('Zuds_sparse_100k_train.h5')
 print(pid)
 #f = h5py.File('Zuds_weighted_short.h5', 'r')
 #y = np.array(f['pid'][:])
@@ -86,7 +86,7 @@ model = tf.keras.models.Sequential([
 '''
 
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Conv2D(16, 4, padding = 'same', activation= 'relu', input_shape=(8,29,29), data_format='channels_first'),
+    tf.keras.layers.Conv2D(16, 4, padding = 'same', activation= 'relu', input_shape=(9,29,29), data_format='channels_first'),
     tf.keras.layers.MaxPooling2D(),
     tf.keras.layers.Dropout(0.5),
     tf.keras.layers.Conv2D(16, 4, padding = 'same', activation= 'relu', data_format='channels_first'),
@@ -114,9 +114,24 @@ model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001),
               loss='categorical_crossentropy', 
               metrics=['accuracy'])
 
+# https://stackoverflow.com/questions/65383500/tensorflow-keras-keep-loss-of-every-batch
+
+batch_end_loss = list()
+batch_end_acc = list()
+batch_end_loss_vali = list()
+batch_end_acc_vali = list()
+
+class SaveBatchLoss(tf.keras.callbacks.Callback):
+    def on_train_batch_end(self, batch, logs=None): 
+        batch_end_loss.append(logs['loss'])
+        batch_end_acc.append(logs['accuracy'])
+    def on_test_batch_end(self, batch, logs=None): 
+        batch_end_loss_vali.append(logs['loss'])
+        batch_end_acc_vali.append(logs['accuracy'])
 
 early_stopping_cb = keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True)
-history = model.fit(X_train_full, y_train_full, steps_per_epoch = len(X_train_full) / 32, epochs=50, validation_data=(X_test, y_test), callbacks=[early_stopping_cb])
+history = model.fit(X_train_full, y_train_full, steps_per_epoch = len(X_train_full) / 32, epochs=50, validation_data=(X_test, y_test), callbacks=[early_stopping_cb, SaveBatchLoss()])
+#history = model.fit(X_train_full, y_train_full, steps_per_epoch = len(X_train_full) / 32, epochs=50, validation_data=(X_test, y_test), callbacks=[early_stopping_cb])
 
 
 acc = history.history['accuracy']
@@ -140,6 +155,7 @@ plt.xlabel('epoch')
 plt.grid(True)
 plt.savefig('training.pdf')
 '''
-
+print('NOT SAVING!')
 np.savez('train_results_LodeNet.npz', acc, val_acc, loss, val_loss, initial_epochs)
+np.savez('training_params.npz', batch_end_loss, batch_end_acc, batch_end_loss_vali, batch_end_acc_vali, len(X_train_full))
 model.save('LodeNet.h5')
