@@ -140,7 +140,7 @@ val_acc = history.history['val_accuracy']
 loss = history.history['loss']
 val_loss = history.history['val_loss']
 
-initial_epochs = history.epoch[-1]+1
+initial_epochs = history.epoch[-1]
 '''
 plt.figure(figsize=(12, 8))
 plt.plot(acc, label='Training Accuracy')
@@ -157,5 +157,5 @@ plt.savefig('training.pdf')
 '''
 print('NOT SAVING!')
 np.savez('train_results_LodeNet.npz', acc, val_acc, loss, val_loss, initial_epochs)
-np.savez('training_params.npz', batch_end_loss, batch_end_acc, batch_end_loss_vali, batch_end_acc_vali, len(X_train_full))
+np.savez('training_params.npz', batch_end_loss, batch_end_acc, batch_end_loss_vali, batch_end_acc_vali, initial_epochs)
 model.save('LodeNet.h5')
