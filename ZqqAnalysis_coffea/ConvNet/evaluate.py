@@ -59,7 +59,7 @@ model = keras.models.load_model("LodeNet.h5")
 predictions = model.predict(X_test)
 print(predictions)
 np.savez('eval_filesplitter.npz', predictions, y_test, p4)
-
+# trivial merge
 
 
 
