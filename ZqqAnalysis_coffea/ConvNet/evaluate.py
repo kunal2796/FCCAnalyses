@@ -14,7 +14,13 @@ from sparse_loader import sparse2dense
 from tensorflow import keras
 
 
-dense, pid = sparse2dense('Zuds_weighted_sparse_eval.h5')
+dense, pid = sparse2dense('Zuds_sparse_100k_eval.h5')
+
+#Here we just load the jet four vectors for later use, in principle this could be done in sparse2dense for cleanliness
+
+f = h5py.File('Zuds_sparse_100k_eval.h5')
+p4 = f['p4'][:]
+f.close()
 
 
 y = pid
@@ -52,8 +58,8 @@ print('it works...')
 model = keras.models.load_model("LodeNet.h5")
 predictions = model.predict(X_test)
 print(predictions)
-np.savez('eval_filesplitter.npz', predictions, y_test)
-
+np.savez('eval_filesplitter.npz', predictions, y_test, p4)
+# trivial merge
 
 
 

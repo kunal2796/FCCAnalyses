@@ -11,8 +11,16 @@ def fullprint(*args, **kwargs):
   pprint(*args, **kwargs)
   numpy.set_printoptions(**opt)
 
+def file_lens_tot(file_lens, batch_num):
+    file_lens_t = 0
+    if(batch_num==0):
+        return file_lens_t
+    else:
+        for i in range(batch_num):
+            file_lens_t = file_lens_t + file_lens[i-1]
+    return file_lens_t
 
-def sparse2dense(f):
+def sparse2denses(f, batch_number):
     #Here we load the file
     sparse_file = h5py.File(f, 'r')
     #Here we define the pid for later use 
@@ -23,9 +31,16 @@ def sparse2dense(f):
     #Shorted number of batches to 3 for testing
     file_lens = file_lens[:]
     #print(len(sparse_file['data'][:file_lens[0]]))
-    index_old = 0
-    index = file_lens[0]
-    dense = sparse.COO(coords = (sparse_file['coords'][index_old:index]).T, data = sparse_file['data'][index_old:index], shape = tuple(sparse_file['shape'][:4])).todense()                  #, fill_value = sparse_file['fill_value'][0])
+    index_old = np.sum(file_lens[:batch_number[0]])# if (batch_number[0]>0) else 0#file_lens_tot(file_lens, batch_number[0])
+    index = index_old + file_lens[batch_number[0]]
+    print(file_lens[:5])
+    print(sparse_file['shape'][:20])
+    print(index_old)
+    print(index)
+    print(batch_number[0]*4)
+    print((batch_number[0]+1)*4)
+    print(sparse_file['shape'][batch_number[0]*4:4*(batch_number[0]+1)])
+    dense = sparse.COO(coords = (sparse_file['coords'][index_old:index]).T, data = sparse_file['data'][index_old:index], shape = tuple(sparse_file['shape'][4*batch_number[0]:4*(batch_number[0]+1)])).todense()                  #, fill_value = sparse_file['fill_value'][0])
 
     print('first batch loaded...')
     '''
@@ -38,7 +53,7 @@ def sparse2dense(f):
         print(i)
         print(sparse_file['coords'][:,0])
     '''
-    for i in range(1, len(file_lens)):
+    for i in range(batch_number[0]+1, batch_number[1]):
         print('starting batch'+str(i))
         if 1>2:#i>10:
             print('######################')
@@ -49,6 +64,9 @@ def sparse2dense(f):
         index_old = index
         index = index + file_lens[i]
         k=i-1
+        print(index_old)
+        print(index)
+        print(sparse_file['shape'][(4*(k+1)):(4*(k+2))])
         '''
         print('CORDS')
         coords = (sparse_file['coords'][index_old:index])
@@ -68,7 +86,7 @@ def sparse2dense(f):
     
     print(dense.shape)
     sparse_file.close()
-    return dense, pid
+    #return dense, pid
 
 #dense = sparse2dense('Zuds_weighted_sparse_short.h5')[:]#[:,6,:]
 

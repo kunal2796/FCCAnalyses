@@ -23,6 +23,9 @@ def compute_lumi(N):
     return N/cross_section_norm
     #return N/(cross_section*BR)
 
+def compute_Pt(p4):
+    return np.sqrt(p4[:,1]**2+p4[:,2]**2)
+
 
 #quark_mask = (pid==2)|(pid==1)|(pid==3)
 #gluon_mask = (pid==21)
@@ -40,50 +43,50 @@ p4_d = p4[down_mask]
 # The plan for the Zpeak is to compute the Zpeak for doubly s-tagged events. To this end we should first make a mask for s tagged events.
 # For now I require a classifier score of 0.55, though this is just a guess based on the classifier distribution.
 
-inv_mass = np.sqrt((p4[::2,0]+p4[1::2,0])**2-((p4[::2,1]+p4[1::2,1])**2+(p4[::2,2]+p4[1::2,2])**2+(p4[::2,3]+p4[1::2,3])**2))
-print(inv_mass)
 
 print('REMEMBER TO CHANGE THRESHOLDS')
-firstJet_mask = (CNN[::2]>0.54473346)
-secondJet_mask = (CNN[1::2]>0.54473346)
-event_mask = firstJet_mask&secondJet_mask
-print(len(inv_mass))
-inv_mass = inv_mass[event_mask]
-pid = pid[::2][event_mask]
+
+Pt_bins = np.linspace(0, 50, 25)
+
+jet_mask = (CNN>0.54473346)
+pid_cut = pid[jet_mask]
 
 strange_mask = (pid==2)
 down_mask = (pid==0)
 up_mask = (pid==1)
 
-inv_mass_s = inv_mass[strange_mask]
-inv_mass_d = inv_mass[down_mask]
-inv_mass_u = inv_mass[up_mask]
-print(len(inv_mass_s))
-#print(event_mask)
-#print(inv_mass)
-#print(inv_mass_s)
+strange_mask_cut = (pid==2)&(jet_mask)
+down_mask_cut = (pid==0)&(jet_mask)
+up_mask_cut = (pid==1)&(jet_mask)
 
-Lumi = compute_lumi(len(inv_mass_s)+len(inv_mass_d)+len(inv_mass_u))
+Pt_s = np.nan_to_num(np.histogram(compute_Pt(p4)[strange_mask_cut], bins=Pt_bins)[0]/np.histogram(compute_Pt(p4)[strange_mask], bins=Pt_bins)[0])
+Lumi = compute_lumi(len(jet_mask))
+print('Pt_s')
+print(Pt_s)
+print(np.histogram(compute_Pt(p4)[strange_mask_cut], bins=Pt_bins)[0])
+print(np.histogram(compute_Pt(p4), bins=Pt_bins)[0])
 
-bins = np.linspace(90.95,91.50,50)
+#bins = np.linspace(90.95,91.50,50)
 #bins = np.linspace(0.2,0.75,20)
 # Have a look into color scheme at some point
-plt.hist([inv_mass_s, inv_mass_d, inv_mass_u], histtype='step', label=['strange jets','down jets','up jets'], density=False, bins=bins, stacked=True)
+#plt.hist([inv_mass_s, inv_mass_d, inv_mass_u], histtype='step', label=['strange jets','down jets','up jets'], density=False, bins=bins, stacked=True)
+plt.plot(Pt_bins[:-1], Pt_s, label=r'strange jet efficiency ($\mathbf{\varepsilon_{sig}}$)', linestyle='', marker='x')
+#plt.plot(Pt_bins[:-1], np.histogram(compute_Pt(p4)[strange_mask_cut], bins=Pt_bins)[0], label=r'strange jet efficiency ($\mathbf{\varepsilon_{sig}}$)', linestyle='', marker='x')
 plt.plot(1000, 0, label=r'$\int \mathcal{L}$ = '+str(np.around(Lumi, 3))+r' pb$^{-1}$', linestyle='')
-plt.plot(1000, 0, label=r'LodeNet$_s$ $> 0.5447$ both jets', linestyle='')
+plt.plot(1000, 0, label=r'LodeNet$_s$ $> 0.5447$ single jet', linestyle='')
 #plt.hist([inv_mass_s, inv_mass_o], facecolor='b', edgecolor='b', histtype='step', label='strange jets', density=False, bins=bins, stacked=True)
 #plt.hist(inv_mass_o, facecolor='r', edgecolor='r', histtype='step', label='down+up jets', density=False, bins=bins, stacked=True)
 #plt.yscale('log')
-plt.xlim(min(bins), max(bins))
-plt.ylabel('Number of Events')
-plt.xlabel(r'$\mathbf{Z}$ invariant mass [GeV]')
+plt.xlim(min(Pt_bins), max(Pt_bins))
+plt.ylabel(r'Efficiency ($\mathbf{\varepsilon_{sig}})$')
+plt.xlabel(r'Jet $\mathbf{p_{T}}$ [GeV]')
 #plt.title('Jet {} Distribution'.format('CNN'))
-plt.title(r'$\mathbf{FCCee}$ Delphes Sim. - (s-tagged $\mathbf{Z}$ invariant mass), $\sqrt{s}$ = 91 GeV')
+plt.title(r'$\mathbf{FCCee}$ Delphes Sim. - (s-tagged strange jet efficiency $\mathbf{\varepsilon_{sig}}$), $\sqrt{s}$ = 91 GeV')
 
 handles, labels = plt.gca().get_legend_handles_labels()
-order = [0,1,2,3,4]
-plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order])
+order = [1,2,0]
+plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order], loc='upper left', fontsize=9)
 
-plt.legend(loc='upper right', fontsize=9)
-plt.savefig('../plots/Zpeak_stacked.pdf')
+#plt.legend(loc='upper left', fontsize=9)
+plt.savefig('../plots/efficiencyPt.pdf')
 

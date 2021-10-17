@@ -583,16 +583,16 @@ output = processor.run_uproot_job(fileset,
     processor_instance=MyProcessor(),
     executor=processor.futures_executor,
     #executor_args={'workers':opt.cpu},
-    executor_args={'schema': None, 'workers':4,},#processor.LazyDataFrame},
-    maxchunks =40,
-    chunksize =2500,
+    executor_args={'schema': None, 'workers':1,},#processor.LazyDataFrame},
+    maxchunks =60,
+    chunksize =10000,
 )
 
 
 #print(output)
 #print(len(output['nConsti'].value))
 #Writeh5(output, 'nConsti_b', 'h5_output')
-Writeh5(output, 'Zuds_sparse_100k', 'h5_output')
+Writeh5(output, 'Zuds_sparse_600k', 'h5_output')
 #print(len(out['ML']['pid']))
 #print(len(out['ML']['global']))
 

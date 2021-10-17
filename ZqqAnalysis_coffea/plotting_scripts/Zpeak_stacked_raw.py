@@ -43,10 +43,11 @@ p4_d = p4[down_mask]
 inv_mass = np.sqrt((p4[::2,0]+p4[1::2,0])**2-((p4[::2,1]+p4[1::2,1])**2+(p4[::2,2]+p4[1::2,2])**2+(p4[::2,3]+p4[1::2,3])**2))
 print(inv_mass)
 
-print('REMEMBER TO CHANGE THRESHOLDS')
-firstJet_mask = (CNN[::2]>0.54473346)
-secondJet_mask = (CNN[1::2]>0.54473346)
+
+firstJet_mask = (CNN[::2]>0.665)
+secondJet_mask = (CNN[1::2]>0.665)
 event_mask = firstJet_mask&secondJet_mask
+event_mask = (event_mask>-10)
 print(len(inv_mass))
 inv_mass = inv_mass[event_mask]
 pid = pid[::2][event_mask]
@@ -70,7 +71,7 @@ bins = np.linspace(90.95,91.50,50)
 # Have a look into color scheme at some point
 plt.hist([inv_mass_s, inv_mass_d, inv_mass_u], histtype='step', label=['strange jets','down jets','up jets'], density=False, bins=bins, stacked=True)
 plt.plot(1000, 0, label=r'$\int \mathcal{L}$ = '+str(np.around(Lumi, 3))+r' pb$^{-1}$', linestyle='')
-plt.plot(1000, 0, label=r'LodeNet$_s$ $> 0.5447$ both jets', linestyle='')
+###plt.plot(1000, 0, label=r'LodeNet$_s$ $> 0.665$ both jets', linestyle='')
 #plt.hist([inv_mass_s, inv_mass_o], facecolor='b', edgecolor='b', histtype='step', label='strange jets', density=False, bins=bins, stacked=True)
 #plt.hist(inv_mass_o, facecolor='r', edgecolor='r', histtype='step', label='down+up jets', density=False, bins=bins, stacked=True)
 #plt.yscale('log')
@@ -78,12 +79,12 @@ plt.xlim(min(bins), max(bins))
 plt.ylabel('Number of Events')
 plt.xlabel(r'$\mathbf{Z}$ invariant mass [GeV]')
 #plt.title('Jet {} Distribution'.format('CNN'))
-plt.title(r'$\mathbf{FCCee}$ Delphes Sim. - (s-tagged $\mathbf{Z}$ invariant mass), $\sqrt{s}$ = 91 GeV')
+plt.title(r'$\mathbf{FCCee}$ Delphes Sim. - ($\mathbf{Z}$ invariant mass), $\sqrt{s}$ = 91 GeV')
 
 handles, labels = plt.gca().get_legend_handles_labels()
-order = [0,1,2,3,4]
+order = [0,1,2,3]
 plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order])
 
 plt.legend(loc='upper right', fontsize=9)
-plt.savefig('../plots/Zpeak_stacked.pdf')
+plt.savefig('../plots/Zpeak_stacked_raw.pdf')
 
