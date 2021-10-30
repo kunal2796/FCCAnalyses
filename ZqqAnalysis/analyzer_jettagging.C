@@ -1,3 +1,9 @@
+// studying the performance of jet tagging algorithm used in FCCAnalyses by analysing the angular distributions of jets, partons and their ngular separations
+// also separates the u/d/s events plus gets the statistics of the 3
+// Note: planning to use the MC truth parton for the label instead of the output of jettagging tool from FCCAnalyses - debatable
+// still don't understand the distributions entirely
+// No cuts
+
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -49,7 +55,7 @@ int main()
   TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>> jetFlavour(tree, "jets_ee_kt_flavour");
 
   TString histfname;
-  histfname = "histZuds_ghostmatching.root";
+  histfname = "histZuds_jettagging.root";
   TFile histFile(histfname,"RECREATE");
 
   // histograms
@@ -61,6 +67,9 @@ int main()
   // event counter
   int evt = 0;
 
+  // flavour counter
+  int s_jets=0, u_jets=0, d_jets=0;
+       
   // event loop
   while(tree.Next())
     {
@@ -99,9 +108,21 @@ int main()
 	  angJ1 = p4_p[iq].Angle(p4_Jet[0].Vect());
 	  angJ2 = p4_p[iq].Angle(p4_Jet[1].Vect());
 	  h_angJP->Fill(min(angJ1,angJ2));
-	  if(abs(MCpdg->at(ip))==3) h_angJPs->Fill(min(angJ1,angJ2));
-	  if(abs(MCpdg->at(ip))==1) h_angJPd->Fill(min(angJ1,angJ2));
-	  if(abs(MCpdg->at(ip))==2) h_angJPu->Fill(min(angJ1,angJ2));
+	  if(abs(MCpdg->at(ip))==3)
+	    {
+	      h_angJPs->Fill(min(angJ1,angJ2));
+	      s_jets++;
+	    }
+	  if(abs(MCpdg->at(ip))==1)
+	    {
+	      h_angJPd->Fill(min(angJ1,angJ2));
+	      d_jets++;
+	    }
+	  if(abs(MCpdg->at(ip))==2)
+	    {
+	      h_angJPu->Fill(min(angJ1,angJ2));
+	      u_jets++;
+	    }
 
 	  iq++;
 	}
@@ -109,7 +130,7 @@ int main()
       evt++;
     }
 
-  cout<<"processed all events"<<endl;
+  cout<<"processed all events"<<endl<<"there are "<<s_jets<<" s-jets, "<<d_jets<<" d-jets, and "<<u_jets<<" u-jets"<<endl;
 
   file->Close();
   cout<<"closed the event file"<<endl;

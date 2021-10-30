@@ -1,3 +1,9 @@
+// Studying the Spring2021 event files (Zbb files in particular, but trivial to edit for uds): events, partons, jets
+// Encountered the segmentation error - fixed
+// Note: Close the event file before writing histograms/jet images
+// Note: Prefer using "TTreeReader" and "TTreeReaderValue" instead of "SetBranchAddress" - include the library "ROOT/RVec.hxx" while using TTreeReader
+// No cuts
+
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -118,23 +124,24 @@ int main()
 
 	  p4.SetPxPyPzE(px, py, pz, e);
     
-	  if(MCstatus->at(ctr)>20 && MCstatus->at(ctr)<30)
+	  //if(MCstatus->at(ctr)>20 && MCstatus->at(ctr)<30)
+	  if(MCstatus->at(ctr)==23)
 	    {
-	      if(MCpdg->at(ctr)==5 || MCpdg->at(ctr)==-5)
-		{
-		  nb++;
-		  // pT of b or b-bar
-		  h_pbT->Fill(p4.Pt());
+	      //if(MCpdg->at(ctr)==5 || MCpdg->at(ctr)==-5)
+	      //{
+	      nb++;
+	      // pT of b or b-bar
+	      h_pbT->Fill(p4.Pt());
 
-		  // |p| of b or b-bar
-		  h_pb->Fill(p);
+	      // |p| of b or b-bar
+	      h_pb->Fill(p);
 
-		  // invariant mass
-		  h_invMb->Fill(p4.M());
+	      // invariant mass
+	      h_invMb->Fill(p4.M());
 
-		  // polar angle
-		  h_thetab->Fill(p4.Theta());
-		}
+	      // polar angle
+	      h_thetab->Fill(p4.Theta());
+	      //}
 	      
 	      // b
 	      if(MCpdg->at(ctr)==5)

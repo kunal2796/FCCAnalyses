@@ -1,5 +1,6 @@
-// Summed jet-images for uds events; includes all categories except pi0 (has Ks) - no index matching so pi+- histogram has all pi+-, even the ones coming from Ks
-// No cuts
+// studying uds jets, gets summed jet-images of all categories, includs Ks not pi0
+// also studying the Ks->pipi decays - angluar distributions to decide on jet assignment, momentum distribution to see the effect by cuts, and multiplicity of the decays in the events
+// tried the "consecutive pion" strategy instead of index matching: didn't work
 
 #include <iostream>
 #include <cmath>
@@ -40,7 +41,7 @@ int main()
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCeF(tree,  "MC_e_f");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpdgF(tree,"MC_pdg_f");
 
-  //jet constituents                                                                                     
+  // jet constituents                                                                                     
   TTreeReaderValue<vector<vector<int>>> jetConst(tree, "jetconstituents_ee_kt");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPx(tree, "jets_ee_kt_px");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPy(tree, "jets_ee_kt_py");
@@ -48,8 +49,11 @@ int main()
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE(tree,  "jets_ee_kt_e");
   TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>> jetFlavour(tree,"jets_ee_kt_flavour");
 
-  //Ks->pi+pi-
+  // Ks->pi+pi-
   TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>> Ks2pipi(tree, "K0spipi_indices");
+
+  // pi->gamma gamma
+  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>> pi2gmgm(tree, "pi0gammagamma_indices");
   
   int nEvents = tree.GetEntries();
   cout<<"Number of Events: "<<nEvents<<endl;
@@ -63,7 +67,7 @@ int main()
   TH2F* h_JetNKaonL = new TH2F("h_JetNKaonL","K_{L} in light jets",29,-0.5,0.5,29,-0.5,0.5);
   TH2F* h_JetCPionL = new TH2F("h_JetCPionL","#pi^{+/-} in light jets",29,-0.5,0.5,29,-0.5,0.5);
   TH2F* h_JetElecL = new TH2F("h_JetElecL","e^{+/-} in light jets",29,-0.5,0.5,29,-0.5,0.5);
-  TH2F* h_JetMuonL = new TH2F("h_JetMuonL","#mu^{+/-} in light jets",29,-0.5,0.5,29,-0.5,0.5);
+  //TH2F* h_JetMuonL = new TH2F("h_JetMuonL","#mu^{+/-} in light jets",29,-0.5,0.5,29,-0.5,0.5);
   TH2F* h_JetPhotL = new TH2F("h_JetPhotL","#gamma in light jets",29,-0.5,0.5,29,-0.5,0.5);
   TH2F* h_JetProtL = new TH2F("h_JetProtL","p in light jets",29,-0.5,0.5,29,-0.5,0.5);
   TH2F* h_JetNeutL = new TH2F("h_JetNeutL","n in light jets",29,-0.5,0.5,29,-0.5,0.5);
@@ -72,6 +76,9 @@ int main()
   TH2F* h_JetKs2pipiPiL = new TH2F("h_JetKs2pipiPiL","#pi's from K_{S} #rightarrow #pi^{+}#pi^{-} in light jets",29,-0.5,0.5,29,-0.5,0.5);
 
   TH1F* h_Kspipi = new TH1F("h_Kspipi","No. of K_{S} #rightarrow #pi^{+}#pi^{-}",8,0,8);
+  TH1F* h_Ks_pipi_consec = new TH1F("h_Ks_pipi_consec","No. of K_{S} #rightarrow #pi^{+}#pi^{-} (Consecutive Pions)",8,0,8);
+
+  TH1F* h_Ks_p = new TH1F("h_Ks_p","K_{S} momentum",100,0,20);
 
   // event counter
   int evt = 0;
@@ -122,12 +129,18 @@ int main()
 	  e = MCe->at(Ks2pipi->at(iKP));
 	  
 	  p4.SetPxPyPzE(px, py, pz, e);
+
+	  // cuts
+	  //if(p4.Pt()<0.5) continue;
+	  //if(abs(cos(p4.Theta()))>0.97) continue;
 	  
 	  //cout<<MCpdg->at(Ks2pipi->at(iKP))<<endl;
 	  // K-shorts
 	  if(iKP%3 == 0)
 	    {
 	      // angle to assign to a jet, normalise with momentum magnitude, get delta theta and delta phi (NOTE: delta phi is not simply the difference between phi's of the particle and the jet)
+
+	      h_Ks_p->Fill(p4.Pt());
 	      
 	      KsAngJ1 = p4.Angle(p_Jet[0].Vect());
 	      KsAngJ2 = p4.Angle(p_Jet[1].Vect());
@@ -166,7 +179,21 @@ int main()
 	    }
 	  
 	}
-      
+      /*
+      // consecutive pions: DOESN'T WORK
+      int nKs_pipi=0, recount=-1;
+      for(int iPi=0; iPi<MCpdgF->size(); iPi++)
+	{
+	  if(iPi == MCpdgF->size()-1) break;
+	  if(abs(MCpdgF->at(iPi))==211 && abs(MCpdgF->at(iPi+1))==211 && iPi!=recount && (MCpdgF->at(iPi)*MCpdgF->at(iPi+1))<0)
+	    {
+	      nKs_pipi++;
+	      recount = iPi+1;
+	    }
+	}
+      h_Ks_pipi_consec->Fill(nKs_pipi);
+      */
+
       // extract jet constituents
       vector<int> jet1Const, jet2Const;
       if(jetConst->size()>=1)      jet1Const = jetConst->at(0);
@@ -208,7 +235,7 @@ int main()
 	  if(abs(MCpdgF->at(ele))==11) h_JetElecL->Fill(delta_theta1,delta_phi1,p_norm1);
 	  
 	  // Muon
-	  if(abs(MCpdgF->at(ele))==13) h_JetMuonL->Fill(delta_theta1,delta_phi1,p_norm1);
+	  //if(abs(MCpdgF->at(ele))==13) h_JetMuonL->Fill(delta_theta1,delta_phi1,p_norm1);
 	  
 	  // photon
 	  if(abs(MCpdgF->at(ele))==22) h_JetPhotL->Fill(delta_theta1,delta_phi1,p_norm1);
@@ -255,7 +282,7 @@ int main()
 	  if(abs(MCpdgF->at(ele))==11) h_JetElecL->Fill(delta_theta2,delta_phi2,p_norm2);
 	  
 	  // Muon
-	  if(abs(MCpdgF->at(ele))==13) h_JetMuonL->Fill(delta_theta2,delta_phi2,p_norm2);
+	  //if(abs(MCpdgF->at(ele))==13) h_JetMuonL->Fill(delta_theta2,delta_phi2,p_norm2);
 	  
 	  // photon
 	  if(abs(MCpdgF->at(ele))==22) h_JetPhotL->Fill(delta_theta2,delta_phi2,p_norm2);
@@ -287,7 +314,7 @@ int main()
   h_JetNKaonL->Write();
   h_JetCPionL->Write();
   h_JetElecL->Write();
-  h_JetMuonL->Write();
+  //h_JetMuonL->Write();
   h_JetPhotL->Write();
   h_JetProtL->Write();
   h_JetNeutL->Write();
@@ -295,6 +322,8 @@ int main()
   h_JetKs2pipiPiL->Write();
 
   h_Kspipi->Write();
+  h_Ks_pipi_consec->Write();
+  h_Ks_p->Write();
 
   cout<<"hists written to file"<<endl;
 
