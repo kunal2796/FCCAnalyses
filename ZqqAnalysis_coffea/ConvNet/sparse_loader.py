@@ -23,17 +23,11 @@ def sparse2dense(f):
     #Shorted number of batches to 3 for testing
     file_lens = file_lens[:]
     #print(len(sparse_file['data'][:file_lens[0]]))
-    print('$$$$$$$$$$$$$$$$')
-    print(sparse_file['shape'][:])
-    print(sparse_file['coords'][:])
-    print(sparse_file['data'][:10])
-    print(len(sparse_file['shape'][:]))
-    print(len(sparse_file['coords'][:]))
-    print(len(sparse_file['data'][:]))
-    print (file_lens) 
     index_old = 0
     index = file_lens[0]
     dense = sparse.COO(coords = (sparse_file['coords'][index_old:index]).T, data = sparse_file['data'][index_old:index], shape = tuple(sparse_file['shape'][:4])).todense()                  #, fill_value = sparse_file['fill_value'][0])
+
+    print('first batch loaded...')
     '''
     print('USED INDICES')
     print(0)
@@ -45,6 +39,13 @@ def sparse2dense(f):
         print(sparse_file['coords'][:,0])
     '''
     for i in range(1, len(file_lens)):
+        print('starting batch'+str(i))
+        if 1>2:#i>10:
+            print('######################')
+            print('#BREAKING AT BATCH 10#')
+            print('######################')
+            pid = pid[:len(dense)]
+            break
         index_old = index
         index = index + file_lens[i]
         k=i-1
