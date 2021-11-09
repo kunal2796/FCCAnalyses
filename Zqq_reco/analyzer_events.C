@@ -1,7 +1,6 @@
-// Studying the Spring2021 event files (Zuds files in particular): events, partons, jets - reco level
-// Note: Close the event file before writing histograms/jet images
+// Studying the Spring2021 event files (Zuds files in particular): events, partons, jets - reco level (exclusive with exactly 2 jets)
+// Note: Close the event file before writing histograms to prevent seg faults
 // No cuts
-// REMEMBER TO ADD jetFlavour TO THE NTUPLE
 
 #include <iostream>
 #include <cmath>
@@ -31,18 +30,19 @@ int main()
   cout<<"Number of Events: "<<nEvents<<endl;
 
   TString histfname;
-  histfname = "histZuds.root";
+  histfname = "histZuds_excl.root";
   TFile *histFile = new TFile(histfname,"RECREATE");
   
   // hists for the particle loop
   TH1F* h_nreco = new TH1F("h_nreco","Multiplicity",60,0,60);
-  TH1F* h_pT = new TH1F("h_pT","p_{T} [GeV]",100,0,10);
-  TH1F* h_p = new TH1F("h_p","|p| [GeV]",100,0,20);
-  TH1F* h_e = new TH1F("h_e","E [GeV]",100,0,20);
+  TH1F* h_pT = new TH1F("h_pT","p_{T} [GeV]",100,0,20);
+  TH1F* h_p = new TH1F("h_p","|p| [GeV]",100,0,30);
+  TH1F* h_e = new TH1F("h_e","E [GeV]",100,0,30);
   TH1F* h_theta = new TH1F("h_theta","Polar Angle (#theta)",100,0,3.15);
   TH1F* h_phi = new TH1F("h_phi","Azimuthal Angle (#phi)",100,-3.15,3.15);
   TH1F* h_invM = new TH1F("h_invM","Invariant Mass (event) [GeV]",100,75,100);
   TH1F* h_invM_RP = new TH1F("h_invM_RP","Invariant Mass (reco particles) [MeV]",100,0,26);
+  TH1F* h_m_RP = new TH1F("h_m_RP","Mass (reco particles) [GeV]",100,0,0.14);
   
   // hists for the jet loop
   TH1F* h_njet = new TH1F("h_njet","Jet Multiplicity",20,0,20);
@@ -59,9 +59,9 @@ int main()
   TH1F* h_invMjets_d = new TH1F("h_invMjets_d","d-jets",100,75,100);
   
   // hists for the jet constituents
-  TH1F* h_angJP = new TH1F("h_angJP","Angle b/n Jet Constituents and Jet Axis",100,0,3.14);
-  TH1F* h_thetaJP = new TH1F("h_thetaJP","#Delta#theta Jet Constituents & Jet Axis",100,-3.14,3.14);
-  TH1F* h_phiJP = new TH1F("h_phiJP","#Delta#phi Jet Constituents & Jet Axis",100,-3.14,3.14);
+  TH1F* h_angJP = new TH1F("h_angJP","Angle b/n Jet Constituents and Jet Axis",100,0,3.15);
+  TH1F* h_thetaJP = new TH1F("h_thetaJP","#Delta#theta Jet Constituents & Jet Axis",100,-3.15,3.15);
+  TH1F* h_phiJP = new TH1F("h_phiJP","#Delta#phi Jet Constituents & Jet Axis",100,-3.15,3.15);
 
   // reco particles                                                       
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpx(tree, "RP_px");
@@ -70,6 +70,7 @@ int main()
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPe(tree, "RP_e");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPp(tree, "RP_p");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPtheta(tree, "RP_theta");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPmass(tree, "RP_mass");
   
   // jets and jet constituents - eekt     
   TTreeReaderValue<vector<vector<int>>> jetConst(tree, "jetconstituents_ee_kt");
@@ -87,17 +88,12 @@ int main()
   //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE(tree, "jets_kt_e");
   //TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>> jetFlavour(tree, "jets_kt_flavour");
 
-  // jets and jet constituents - ee-genkt     
-  //TTreeReaderValue<vector<vector<int>>> jetConst(tree, "jetconstituents_ee_genkt");
-  //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPx(tree, "jets_ee_genkt_px");
-  //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPy(tree, "jets_ee_genkt_py");
-  //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPz(tree, "jets_ee_genkt_pz");
-  //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE(tree, "jets_ee_genkt_e");
-  //TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>> jetFlavour(tree, "jets_ee_genkt_flavour");
-
   // event counter
   int evt = 0;
 
+  // electron & muon counter
+  int n_elec = 0, n_muon = 0;
+  
   // event loop
   while(tree.Next())
     {
@@ -133,6 +129,15 @@ int main()
 
 	  // invariant mass - reco particles
 	  h_invM_RP->Fill(1000*p4.M());
+
+	  // mass (from FCCAnalyses function)
+	  h_m_RP->Fill(RPmass->at(ctr));
+
+	  // electron count
+	  if(RPmass->at(ctr) != 0 && RPmass->at(ctr) < 0.01) n_elec++;
+
+	  // muon count
+	  if(RPmass->at(ctr) > 0.1 && RPmass->at(ctr) < 0.11) n_muon++;
 	}
 
       // event multiplicity
@@ -179,7 +184,7 @@ int main()
 
       // jet multiplicity
       h_njet->Fill(nJet);
-      	
+      
       // invariant mass - (jet sum)
       h_invMjets->Fill(p_Jets.M());     // entire dataset
       if(jetFlavour->size()>0)
@@ -190,7 +195,6 @@ int main()
 	  if(jetFlavour->at(0)==2 && jetFlavour->at(1)==2) h_invMjets_u->Fill(p_Jets.M()); // u-jets
 	  if(jetFlavour->at(0)==1 && jetFlavour->at(1)==1) h_invMjets_d->Fill(p_Jets.M()); // d-jets
 	}
-      // REMEMBER TO CHANGE WHILE USING INCLUSIVE CLUSTERING
 
       /*======================*/
       
@@ -200,7 +204,7 @@ int main()
       else cout<<"**No jet constituents found in event#"<<evt+1<<"**"<<endl;
       if(jetConst->size()>=2)      jet2Const = jetConst->at(1);
       else cout<<"**Second jet constituents not found in event#"<<evt+1<<"**"<<endl;
-      
+    
       // JET 1
       float px_j1=0, py_j1=0, pz_j1=0, e_j1=0;
       TLorentzVector p4_j1;
@@ -262,6 +266,7 @@ int main()
   h_phi->Write();
   h_invM->Write();
   h_invM_RP->Write();
+  h_m_RP->Write();
   h_njet->Write();
   h_pjet->Write();
   h_pTjet->Write();
@@ -283,6 +288,8 @@ int main()
   //delete jetConst;
   //jetConst = NULL;
 
+  cout<<"There are "<<n_elec<<" electrons and "<<n_muon<<" muons in "<<evt<<" events"<<endl;
+  
   cout<<endl;
   return -1;
 }

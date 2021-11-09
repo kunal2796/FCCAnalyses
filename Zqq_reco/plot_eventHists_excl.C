@@ -6,8 +6,8 @@
 
 int main()
 {
-  TFile *hists=TFile::Open("histZuds.root");
-
+  TFile *hists=TFile::Open("histZuds_excl.root");
+  
   TH1F* pT = (TH1F*)hists->Get("h_pT");
   TH1F* p = (TH1F*)hists->Get("h_p");
   TH1F* e = (TH1F*)hists->Get("h_e");
@@ -15,8 +15,9 @@ int main()
   TH1F* phi = (TH1F*)hists->Get("h_phi");
   TH1F* invM = (TH1F*)hists->Get("h_invM");
   TH1F* invM_RP = (TH1F*)hists->Get("h_invM_RP");
+  TH1F* m_RP = (TH1F*)hists->Get("h_m_RP");
   TH1F* nreco = (TH1F*)hists->Get("h_nreco");
-
+  
   TH1F* njet = (TH1F*)hists->Get("h_njet");
   TH1F* pjet = (TH1F*)hists->Get("h_pjet");
   TH1F* pTjet = (TH1F*)hists->Get("h_pTjet");
@@ -32,9 +33,7 @@ int main()
   TH1F* angJP = (TH1F*)hists->Get("h_angJP");
   TH1F* thetaJP = (TH1F*)hists->Get("h_thetaJP");
   TH1F* phiJP = (TH1F*)hists->Get("h_phiJP");
-
-  //hists->Close();
-
+  
   TCanvas *c1 = new TCanvas("c1","Reco Particles",700,700);
   c1->Divide(2,2);
   //
@@ -73,7 +72,7 @@ int main()
   c2->Print("reco_angDistribution.pdf");
   
   TCanvas *c3 = new TCanvas("c3","Invariant Mass",720,720);
-  c3->Divide(1,2);
+  c3->Divide(1,3);
   //
   c3->cd(1);
   invM->GetXaxis()->SetTitle("M_{inv} [GeV]");
@@ -84,8 +83,13 @@ int main()
   c3->cd(2)->SetLogy();
   invM_RP->Draw();
   //
+  c3->cd(3);
+  m_RP->GetXaxis()->SetTitle("m [GeV]");
+  c3->cd(3)->SetLogy();
+  m_RP->Draw();
+  //
   c3->Print("invM_reco.pdf");
-
+  
   TCanvas *c4 = new TCanvas("c4","Jets (eekt)",730,730);
   c4->Divide(2,2);
   //
@@ -147,9 +151,9 @@ int main()
   gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
   //
   c7->Print("invM_stack_eekt.pdf");
-
+  
   TCanvas *c8 = new TCanvas("c8","Jet Constituents - Angular Distribution (eekt)",770,770);
-  c8->Divide(2,2);
+  c8->Divide(1,3);
   //
   c8->cd(1);
   angJP->GetXaxis()->SetTitle("[rad]");
@@ -166,9 +170,9 @@ int main()
   c8->cd(3)->SetLogy();
   phiJP->Draw();
   //
-  c8->Print("jetConstAngularDist_eekt.pdf");
-  
+  c8->Print("jetConstAngularDist_ee_genkt.pdf");
+
   hists->Close();
-  
+
   return -1;
 }
