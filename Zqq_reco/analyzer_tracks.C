@@ -1,6 +1,7 @@
 // Studying the Spring2021 event files (Zuds files in particular): tracks (exclusive with exactly 2 jets)
 // Note: Close the event file before writing histograms to prevent seg faults
 // No cuts?
+// Tracks include charged+neutral but empty values (not 0) for neutrals
 
 #include <iostream>
 #include <cmath>
@@ -38,6 +39,14 @@ int main()
   TH1F* h_z0 = new TH1F("h_z0","Longitudinal Impact Parameter",100,0,100);
   TH1F* h_d0sig = new TH1F("h_d0sig","Transverse Impact Parameter Significance",100,-5,5);
   TH1F* h_z0sig = new TH1F("h_z0sig","Longitudinal Impact Parameter Significance",100,-5,5);
+  TH1F* h_d0_chrg = new TH1F("h_d0_chrg","Transverse IP (Charged)",100,0,100);
+  TH1F* h_z0_chrg = new TH1F("h_z0_chrg","Longitudinal IP (Charged)",100,0,100);
+  TH1F* h_d0sig_chrg = new TH1F("h_d0sig_chrg","Transverse IP Significance (Charged)",100,-5,5);
+  TH1F* h_z0sig_chrg = new TH1F("h_z0sig_chrg","Longitudinal IP Significance (Charged)",100,-5,5);
+  TH1F* h_d0_neut = new TH1F("h_d0_neut","Transverse IP (Neutral)",100,0,10000);
+  TH1F* h_z0_neut = new TH1F("h_z0_neut","Longitudinal IP (Neutral)",100,0,10000);
+  TH1F* h_d0sig_neut = new TH1F("h_d0sig_neut","Transverse IP Significance (Neutral)",100,-500,500);
+  TH1F* h_z0sig_neut = new TH1F("h_z0sig_neut","Longitudinal IP Significance (Neutral)",100,-500,500);
 
   // hist by flavour
   TH1F* h_d0_b = new TH1F("h_d0_b","Z #rightarrow b#bar{b}",100,0,100);
@@ -69,6 +78,7 @@ int main()
   //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPp(tree, "RP_p");
   //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPtheta(tree, "RP_theta");
   //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPmass(tree, "RP_mass");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPcharge(tree, "RP_charge");
 
   // track parameters
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPD0(tree, "RP_D0");
@@ -77,7 +87,7 @@ int main()
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPomega(tree, "RP_omega");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPtanLambda(tree, "RP_tanLambda");
 
-  // significance
+  // IP significance
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPD0sig(tree, "RP_D0_sig");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPZ0sig(tree, "RP_Z0_sig");
 
@@ -103,7 +113,7 @@ int main()
   // event loop
   while(tree.Next())
     {
-      // track loop (only charged ofcourse)
+      // track loop (assumed to be only charged but actually all reco)
       float d0=0., z0=0.;
       float d0sig=0., z0sig=0.;
       
@@ -117,6 +127,8 @@ int main()
 	  
 	  // transverse IP
 	  h_d0->Fill(abs(d0));
+	  if(RPcharge->at(ctr) != 0) h_d0_chrg->Fill(abs(d0)); // charged
+	  else h_d0_neut->Fill(abs(d0));                       // neutral
 	  if(jetFlavour->size() != 0)
 	    {
 	      if(jetFlavour->at(0)==5 && jetFlavour->at(1)==5) h_d0_b->Fill(abs(d0)); // b
@@ -128,6 +140,8 @@ int main()
 	  
 	  // longitudinal IP
 	  h_z0->Fill(abs(z0));
+	  if(RPcharge->at(ctr) != 0) h_z0_chrg->Fill(abs(z0)); // charged
+	  else h_z0_neut->Fill(abs(z0));                       // neutral
 	  if(jetFlavour->size() != 0)
 	    {
 	      if(jetFlavour->at(0)==5 && jetFlavour->at(1)==5) h_z0_b->Fill(abs(z0)); // b
@@ -139,6 +153,8 @@ int main()
 	  
 	  // transverse IP significance
 	  h_d0sig->Fill(d0sig);
+	  if(RPcharge->at(ctr) != 0) h_d0sig_chrg->Fill(d0sig); // charged
+	  else h_d0sig_neut->Fill(abs(d0sig));                  // neutral
 	  if(jetFlavour->size() != 0)
 	    {
 	      if(jetFlavour->at(0)==5 && jetFlavour->at(1)==5) h_d0sig_b->Fill(d0sig); // b
@@ -150,6 +166,8 @@ int main()
 	  
 	  // longitudinal IP significance
 	  h_z0sig->Fill(z0sig);
+	  if(RPcharge->at(ctr) != 0) h_z0sig_chrg->Fill(z0sig); // charged
+	  else h_z0sig_neut->Fill(abs(z0sig));                  // neutral
 	  if(jetFlavour->size() != 0)
 	    {
 	      if(jetFlavour->at(0)==5 && jetFlavour->at(1)==5) h_z0sig_b->Fill(z0sig); // b
@@ -178,6 +196,14 @@ int main()
   h_z0->Write();
   h_d0sig->Write();
   h_z0sig->Write();
+  h_d0_chrg->Write();
+  h_z0_chrg->Write();
+  h_d0sig_chrg->Write();
+  h_z0sig_chrg->Write();
+  h_d0_neut->Write();
+  h_z0_neut->Write();
+  h_d0sig_neut->Write();
+  h_z0sig_neut->Write();
   h_d0_b->Write();
   h_z0_b->Write();
   h_d0sig_b->Write();

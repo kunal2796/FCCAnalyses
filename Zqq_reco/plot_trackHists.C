@@ -12,6 +12,14 @@ int main()
   TH1F* z0 = (TH1F*)hists->Get("h_z0");
   TH1F* d0sig = (TH1F*)hists->Get("h_d0sig");
   TH1F* z0sig = (TH1F*)hists->Get("h_z0sig");
+  TH1F* d0_chrg = (TH1F*)hists->Get("h_d0_chrg");
+  TH1F* z0_chrg = (TH1F*)hists->Get("h_z0_chrg");
+  TH1F* d0sig_chrg = (TH1F*)hists->Get("h_d0sig_chrg");
+  TH1F* z0sig_chrg = (TH1F*)hists->Get("h_z0sig_chrg");
+  TH1F* d0_neut = (TH1F*)hists->Get("h_d0_neut");
+  TH1F* z0_neut = (TH1F*)hists->Get("h_z0_neut");
+  TH1F* d0sig_neut = (TH1F*)hists->Get("h_d0sig_neut");
+  TH1F* z0sig_neut = (TH1F*)hists->Get("h_z0sig_neut");
   TH1F* d0_b = (TH1F*)hists->Get("h_d0_b");
   TH1F* z0_b = (TH1F*)hists->Get("h_z0_b");
   TH1F* d0sig_b = (TH1F*)hists->Get("h_d0sig_b");
@@ -114,6 +122,56 @@ int main()
   gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
   //
   c2->Print("imp_para_stacked_log.pdf");
+
+  TCanvas *c3 = new TCanvas("c3","Reco Tracks (Charged)",720,720);
+  c3->Divide(2,2);
+  //
+  c3->cd(1);
+  d0_chrg->GetXaxis()->SetTitle("|D_{0}| [mm]");
+  c3->cd(1)->SetLogy();
+  d0_chrg->Draw();
+  //
+  c3->cd(2);
+  z0_chrg->GetXaxis()->SetTitle("|z_{0}| [mm]");
+  c3->cd(2)->SetLogy();
+  z0_chrg->Draw();
+  //
+  c3->cd(3);
+  d0sig_chrg->GetXaxis()->SetTitle("D_{0}/#sigma_{D_{0}}");
+  c3->cd(3)->SetLogy();
+  d0sig_chrg->Draw();
+  //
+  c3->cd(4);
+  z0sig_chrg->GetXaxis()->SetTitle("z_{0}/#sigma_{z_{0}}");
+  c3->cd(4)->SetLogy();
+  z0sig_chrg->Draw();
+  //
+  c3->Print("imp_para_chrgd.pdf");
+
+  TCanvas *c4 = new TCanvas("c4","Reco Tracks (Neutral)",730,730);
+  c4->Divide(2,2);
+  //
+  c4->cd(1);
+  d0_neut->GetXaxis()->SetTitle("|D_{0}| [mm]");
+  c4->cd(1)->SetLogy();
+  d0_neut->Draw();
+  //
+  c4->cd(2);
+  z0_neut->GetXaxis()->SetTitle("|z_{0}| [mm]");
+  c4->cd(2)->SetLogy();
+  z0_neut->Draw();
+  //
+  c4->cd(3);
+  d0sig_neut->GetXaxis()->SetTitle("D_{0}/#sigma_{D_{0}}");
+  c4->cd(3)->SetLogy();
+  d0sig_neut->Draw();
+  //
+  c4->cd(4);
+  z0sig_neut->GetXaxis()->SetTitle("z_{0}/#sigma_{z_{0}}");
+  c4->cd(4)->SetLogy();
+  z0sig_neut->Draw();
+  //
+  c4->Print("imp_para_neut.pdf");
   
   hists->Close();
 
