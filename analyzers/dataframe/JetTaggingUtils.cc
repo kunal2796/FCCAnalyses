@@ -8,7 +8,9 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour(ROOT::VecOps::RVec<fastjet:
   for (size_t i = 0; i < MCin.size(); ++i) {
     auto & parton = MCin[i];
     //Select partons only (for pythia 71-79):
-    if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
+    //if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
+    //Select outgoing particles only - use ONLY for Zqq events
+    if (parton.generatorStatus!=23) continue;
     if (parton.PDG > 5) continue;
     ROOT::Math::PxPyPzMVector lv(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
 
