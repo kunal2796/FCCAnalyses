@@ -31,16 +31,23 @@ int main()
   cout<<"Number of Events: "<<nEvents<<endl;
 
   TString histfname;
-  histfname = "histZuds_tracks.root";
+  histfname = "histZuds_IP.root";
   TFile *histFile = new TFile(histfname,"RECREATE");
   
   // hists for the track loop
-  TH1F* h_d0 = new TH1F("h_d0","Transverse Impact Parameter",100,-50,50);
-  TH1F* h_z0 = new TH1F("h_z0","Longitudinal Impact Parameter",100,-50,50);
-  TH1F* h_phi0 = new TH1F("h_phi0","Azimuthal Angle at pt of Closest Approach",100,-3.15,3.15);
-  TH1F* h_omega = new TH1F("h_omega","Curvature",100,-0.01,0.01);
-  TH1F* h_tLmda = new TH1F("h_tLmda","tan of Dip Angle",100,-10,10);
-  /*
+  TH1F* h_d0 = new TH1F("h_d0","Transverse Impact Parameter",100,0,100);
+  TH1F* h_z0 = new TH1F("h_z0","Longitudinal Impact Parameter",100,0,100);
+  TH1F* h_d0sig = new TH1F("h_d0sig","Transverse Impact Parameter Significance",100,-5,5);
+  TH1F* h_z0sig = new TH1F("h_z0sig","Longitudinal Impact Parameter Significance",100,-5,5);
+  TH1F* h_d0_chrg = new TH1F("h_d0_chrg","Transverse IP (Charged)",100,0,100);
+  TH1F* h_z0_chrg = new TH1F("h_z0_chrg","Longitudinal IP (Charged)",100,0,100);
+  TH1F* h_d0sig_chrg = new TH1F("h_d0sig_chrg","Transverse IP Significance (Charged)",100,-5,5);
+  TH1F* h_z0sig_chrg = new TH1F("h_z0sig_chrg","Longitudinal IP Significance (Charged)",100,-5,5);
+  TH1F* h_d0_neut = new TH1F("h_d0_neut","Transverse IP (Neutral)",100,0,10000);
+  TH1F* h_z0_neut = new TH1F("h_z0_neut","Longitudinal IP (Neutral)",100,0,10000);
+  TH1F* h_d0sig_neut = new TH1F("h_d0sig_neut","Transverse IP Significance (Neutral)",100,-500,500);
+  TH1F* h_z0sig_neut = new TH1F("h_z0sig_neut","Longitudinal IP Significance (Neutral)",100,-500,500);
+
   // hist by flavour
   TH1F* h_d0_b = new TH1F("h_d0_b","Z #rightarrow b#bar{b}",100,0,100);
   TH1F* h_z0_b = new TH1F("h_z0_b","Z #rightarrow b#bar{b}",100,0,100);
@@ -62,7 +69,7 @@ int main()
   TH1F* h_z0_d = new TH1F("h_z0_d","Z #rightarrow d#bar{d}",100,0,100);
   TH1F* h_d0sig_d = new TH1F("h_d0sig_d","Z #rightarrow d#bar{d}",100,-5,5);
   TH1F* h_z0sig_d = new TH1F("h_z0sig_d","Z #rightarrow d#bar{d}",100,-5,5);
-  */
+  
   // reco particles                                                       
   //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpx(tree, "RP_px");
   //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpy(tree, "RP_py");
@@ -107,24 +114,21 @@ int main()
   while(tree.Next())
     {
       // track loop (assumed to be only charged but actually all reco)
-      float d0=0., z0=0., phi0=0., omega=0., tLmda=0.;
-      int n_chrg=0;
+      float d0=0., z0=0.;
+      float d0sig=0., z0sig=0.;
       
       for(unsigned int ctr=0; ctr<RPD0->size(); ctr++)
-	{
-	  if(RPcharge->at(ctr) == 0) continue; // only charged
+	{	  
+	  d0 = RPD0->at(ctr);
+	  z0 = RPZ0->at(ctr);
 
-	  n_chrg++;
-	  
-	  d0 = RPD0->at(ctr);           // signed transverse IP
-	  z0 = RPZ0->at(ctr);           // signed longitudinal IP
-	  phi0 = RPphi->at(ctr);        // azmthl angle at pt of closest approach
-	  omega = RPomega->at(ctr);     // signed curvature (half curvature?)
-	  tLmda = RPtanLambda->at(ctr); // tan of dip angle [lmda = |pi/2 - thta|]
+	  d0sig = RPD0->at(ctr);
+	  z0sig = RPZ0->at(ctr);
 	  
 	  // transverse IP
-	  h_d0->Fill(d0);
-	  /*
+	  h_d0->Fill(abs(d0));
+	  if(RPcharge->at(ctr) != 0) h_d0_chrg->Fill(abs(d0)); // charged
+	  else h_d0_neut->Fill(abs(d0));                       // neutral
 	  if(jetFlavour->size() != 0)
 	    {
 	      if(jetFlavour->at(0)==5 && jetFlavour->at(1)==5) h_d0_b->Fill(abs(d0)); // b
@@ -133,11 +137,11 @@ int main()
 	      if(jetFlavour->at(0)==2 && jetFlavour->at(1)==2) h_d0_u->Fill(abs(d0)); // u
 	      if(jetFlavour->at(0)==1 && jetFlavour->at(1)==1) h_d0_d->Fill(abs(d0)); // d
 	    }
-	  */
 	  
 	  // longitudinal IP
-	  h_z0->Fill(z0);
-	  /*
+	  h_z0->Fill(abs(z0));
+	  if(RPcharge->at(ctr) != 0) h_z0_chrg->Fill(abs(z0)); // charged
+	  else h_z0_neut->Fill(abs(z0));                       // neutral
 	  if(jetFlavour->size() != 0)
 	    {
 	      if(jetFlavour->at(0)==5 && jetFlavour->at(1)==5) h_z0_b->Fill(abs(z0)); // b
@@ -146,16 +150,32 @@ int main()
 	      if(jetFlavour->at(0)==2 && jetFlavour->at(1)==2) h_z0_u->Fill(abs(z0)); // u
 	      if(jetFlavour->at(0)==1 && jetFlavour->at(1)==1) h_z0_d->Fill(abs(z0)); // d
 	    }
-	  */
-
-	  // phi0
-	  h_phi0->Fill(phi0);
-
-	  // Omega
-	  h_omega->Fill(omega);
-
-	  // tan(lambda)
-	  h_tLmda->Fill(tLmda);
+	  
+	  // transverse IP significance
+	  h_d0sig->Fill(d0sig);
+	  if(RPcharge->at(ctr) != 0) h_d0sig_chrg->Fill(d0sig); // charged
+	  else h_d0sig_neut->Fill(abs(d0sig));                  // neutral
+	  if(jetFlavour->size() != 0)
+	    {
+	      if(jetFlavour->at(0)==5 && jetFlavour->at(1)==5) h_d0sig_b->Fill(d0sig); // b
+	      if(jetFlavour->at(0)==4 && jetFlavour->at(1)==4) h_d0sig_c->Fill(d0sig); // c
+	      if(jetFlavour->at(0)==3 && jetFlavour->at(1)==3) h_d0sig_s->Fill(d0sig); // s
+	      if(jetFlavour->at(0)==2 && jetFlavour->at(1)==2) h_d0sig_u->Fill(d0sig); // u
+	      if(jetFlavour->at(0)==1 && jetFlavour->at(1)==1) h_d0sig_d->Fill(d0sig); // d
+	    }
+	  
+	  // longitudinal IP significance
+	  h_z0sig->Fill(z0sig);
+	  if(RPcharge->at(ctr) != 0) h_z0sig_chrg->Fill(z0sig); // charged
+	  else h_z0sig_neut->Fill(abs(z0sig));                  // neutral
+	  if(jetFlavour->size() != 0)
+	    {
+	      if(jetFlavour->at(0)==5 && jetFlavour->at(1)==5) h_z0sig_b->Fill(z0sig); // b
+	      if(jetFlavour->at(0)==4 && jetFlavour->at(1)==4) h_z0sig_c->Fill(z0sig); // c
+	      if(jetFlavour->at(0)==3 && jetFlavour->at(1)==3) h_z0sig_s->Fill(z0sig); // s
+	      if(jetFlavour->at(0)==2 && jetFlavour->at(1)==2) h_z0sig_u->Fill(z0sig); // u
+	      if(jetFlavour->at(0)==1 && jetFlavour->at(1)==1) h_z0sig_d->Fill(z0sig); // d
+	    }
 	}
 
       evt++;
@@ -164,7 +184,7 @@ int main()
 	{
 	  //cout<<evt<<" events processed"<<endl;
 	  cout<<"Event #"<<evt<<":"<<endl;
-	  cout<<"This event has "<<n_chrg<<" charged tracks"<<endl;
+	  cout<<"This event has "<<RPD0->size()<<" tracks"<<endl;
 	  cout<<"====================="<<endl<<endl;
 	}
     }
@@ -174,10 +194,16 @@ int main()
 
   h_d0->Write();
   h_z0->Write();
-  h_phi0->Write();
-  h_omega->Write();
-  h_tLmda->Write();
-  /*
+  h_d0sig->Write();
+  h_z0sig->Write();
+  h_d0_chrg->Write();
+  h_z0_chrg->Write();
+  h_d0sig_chrg->Write();
+  h_z0sig_chrg->Write();
+  h_d0_neut->Write();
+  h_z0_neut->Write();
+  h_d0sig_neut->Write();
+  h_z0sig_neut->Write();
   h_d0_b->Write();
   h_z0_b->Write();
   h_d0sig_b->Write();
@@ -198,7 +224,6 @@ int main()
   h_z0_d->Write();
   h_d0sig_d->Write();
   h_z0sig_d->Write();
-  */
   histFile->Close();
   cout<<"Histograms written to file and file closed"<<endl;
 

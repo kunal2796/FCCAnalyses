@@ -57,6 +57,7 @@ int main()
   TH1F* h_invMjets_s = new TH1F("h_invMjets_s","s-jets",100,75,100);
   TH1F* h_invMjets_u = new TH1F("h_invMjets_u","u-jets",100,75,100);
   TH1F* h_invMjets_d = new TH1F("h_invMjets_d","d-jets",100,75,100);
+  TH1F* h_jetFlavour = new TH1F("h_jetFlavour","Jet Flavour [status 71-79]",6,0,6);
   
   // hists for the jet constituents
   TH1F* h_angJP = new TH1F("h_angJP","Angle b/n Jet Constituents and Jet Axis",100,0,3.15);
@@ -78,7 +79,7 @@ int main()
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPy(tree, "jets_ee_kt_py");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPz(tree, "jets_ee_kt_pz");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE(tree, "jets_ee_kt_e");
-  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>> jetFlavour(tree, "jets_ee_kt_flavour"); //not in the ntuple yet
+  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>> jetFlavour(tree, "jets_ee_kt_flavour");
 
   // jets and jet constituents - kt     
   //TTreeReaderValue<vector<vector<int>>> jetConst(tree, "jetconstituents_kt");
@@ -100,6 +101,9 @@ int main()
       // particle loop
       float px=0., py=0., pz=0., p=0., e=0.;
       TLorentzVector p4, p4_evt;
+
+      // event multiplicity
+      h_nreco->Fill(RPe->size());
 
       for(unsigned int ctr=0; ctr<RPe->size(); ctr++)
 	{	  
@@ -140,9 +144,6 @@ int main()
 	  if(RPmass->at(ctr) > 0.1 && RPmass->at(ctr) < 0.11) n_muon++;
 	}
 
-      // event multiplicity
-      h_nreco->Fill(RPe->size());
-
       // invariant mass - (particle sum)
       h_invM->Fill(p4_evt.M());
 
@@ -162,6 +163,9 @@ int main()
 
 	  p_Jet[j].SetPxPyPzE(jPx, jPy, jPz, jE);
 
+	  // jet flavour
+	  h_jetFlavour->Fill(jetFlavour->at(j));
+	  
 	  // jet theta
 	  h_jetTheta->Fill(p_Jet[j].Theta());
 	  
@@ -279,6 +283,7 @@ int main()
   h_invMjets_s->Write();
   h_invMjets_u->Write();
   h_invMjets_d->Write();
+  h_jetFlavour->Write();
   h_angJP->Write();
   h_thetaJP->Write();
   h_phiJP->Write();
