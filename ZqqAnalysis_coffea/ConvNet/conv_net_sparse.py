@@ -21,7 +21,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 #Here I will very simply load the data. Note that I should in theory also split a set for validation, and shuffle the data...
 #Can write the decompressor here if I want
 
-dense, pid = sparse2dense('Zuds_sparse_100k_train.h5')
+dense, pid = sparse2denses('Zuds_sparse_300k_noKcut.h5', [0, 20])
 print(pid)
 #f = h5py.File('Zuds_weighted_short.h5', 'r')
 #y = np.array(f['pid'][:])
@@ -86,7 +86,7 @@ model = tf.keras.models.Sequential([
 '''
 
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Conv2D(16, 4, padding = 'same', activation= 'relu', input_shape=(9,29,29), data_format='channels_first'),
+    tf.keras.layers.Conv2D(16, 4, padding = 'same', activation= 'relu', input_shape=(10,29,29), data_format='channels_first'),
     tf.keras.layers.MaxPooling2D(),
     tf.keras.layers.Dropout(0.5),
     tf.keras.layers.Conv2D(16, 4, padding = 'same', activation= 'relu', data_format='channels_first'),
@@ -158,4 +158,4 @@ plt.savefig('training.pdf')
 print('NOT SAVING!')
 np.savez('train_results_LodeNet.npz', acc, val_acc, loss, val_loss, initial_epochs)
 np.savez('training_params.npz', batch_end_loss, batch_end_acc, batch_end_loss_vali, batch_end_acc_vali, initial_epochs)
-model.save('LodeNet.h5')
+model.save('LodeNet_1710.h5')
