@@ -182,10 +182,10 @@ namespace MCParticle{
   ROOT::VecOps::RVec<float> get_scaled_py(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
 
   /// return the momenta of the input MCParticles
-  ROOT::VecOps::RVec<float> get__scaled_pz(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
+  ROOT::VecOps::RVec<float> get_scaled_pz(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
 
   /// return the energy of the input MCParticles
-  ROOT::VecOps::RVec<float> get__scaled_e(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
+  ROOT::VecOps::RVec<float> get_scaled_e(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
   ///----------------------------------------------------
   
   /// concatenate both input vectors and return the resulting vector
