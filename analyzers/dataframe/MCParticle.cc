@@ -121,7 +121,7 @@ ROOT::VecOps::RVec<int> MCParticle::get_tree::operator() (ROOT::VecOps::RVec<edm
     if (p.generatorStatus != m_index) continue;
     ROOT::VecOps::RVec<int> tree;
     tree.push_back(in.at(ind.at(i)).parents_begin);
-    while(true){
+   while(true){
       std::cout <<  "tree back " << tree.back() << std::endl;
       //      std::cout << 
       tree.push_back(in.at(ind.at(tree.back())).parents_begin);
@@ -343,6 +343,43 @@ ROOT::VecOps::RVec<float> MCParticle::get_pz(ROOT::VecOps::RVec<edm4hep::MCParti
   }
   return result;
 }
+
+//----------------------------------------------------------------
+// For ghost-matching (scaled momenta)
+ROOT::VecOps::RVec<float> MCParticle::get_scaled_e(ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
+  ROOT::VecOps::RVec<float> result;
+  for (auto & p: in) {
+    TLorentzVector tlv;
+    tlv.SetXYZM(p.momentum.x, p.momentum.y, p.momentum.z, p.mass);
+    result.push_back(tlv.E() * 1.e-18);
+  }
+  return result;
+}
+
+ROOT::VecOps::RVec<float> MCParticle::get_scaled_px(ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
+  ROOT::VecOps::RVec<float> result;
+  for (auto & p: in) {
+    result.push_back(p.momentum.x * 1.e-18);
+  }
+  return result;
+}
+
+ROOT::VecOps::RVec<float> MCParticle::get_scaled_py(ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
+  ROOT::VecOps::RVec<float> result;
+  for (auto & p: in) {
+    result.push_back(p.momentum.y * 1.e-18);
+  }
+  return result;
+}
+
+ROOT::VecOps::RVec<float> MCParticle::get_scaled_pz(ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
+  ROOT::VecOps::RVec<float> result;
+  for (auto & p: in) {
+    result.push_back(p.momentum.z * 1.e-18);
+  }
+  return result;
+}
+//---------------------------------------------------------------
 
 ROOT::VecOps::RVec<float> MCParticle::get_charge(ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
   ROOT::VecOps::RVec<float> result;

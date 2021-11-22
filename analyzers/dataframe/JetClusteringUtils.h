@@ -33,6 +33,15 @@ namespace JetClusteringUtils{
 						 ROOT::VecOps::RVec<float> pz, 
 						 ROOT::VecOps::RVec<float> e);
 
+  /** Add more particles to fastjet pseudoJet for later reconstruction
+   *(ghostmatching trial)
+   */
+  std::vector<fastjet::PseudoJet> addMore_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
+						     ROOT::VecOps::RVec<float> px, 
+						     ROOT::VecOps::RVec<float> py, 
+						     ROOT::VecOps::RVec<float> pz, 
+						     ROOT::VecOps::RVec<float> e);
+
   /** Set fastjet pseudoJet for later reconstruction using px, py, pz and m
    * 
    * This version is to be preferred over the px,py,pz,E version when m is known 

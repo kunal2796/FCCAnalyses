@@ -172,6 +172,21 @@ namespace MCParticle{
   
   /// return the TlorentzVector of the input MCParticles
   ROOT::VecOps::RVec<TLorentzVector> get_tlv(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
+
+  ///----------------------------------------------------
+  /// For ghost-matching (scaled momenta)
+  /// return the momenta of the input MCParticles
+  ROOT::VecOps::RVec<float> get_scaled_px(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
+
+  /// return the momenta of the input MCParticles
+  ROOT::VecOps::RVec<float> get_scaled_py(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
+
+  /// return the momenta of the input MCParticles
+  ROOT::VecOps::RVec<float> get__scaled_pz(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
+
+  /// return the energy of the input MCParticles
+  ROOT::VecOps::RVec<float> get__scaled_e(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
+  ///----------------------------------------------------
   
   /// concatenate both input vectors and return the resulting vector
   ROOT::VecOps::RVec<edm4hep::MCParticleData> mergeParticles(ROOT::VecOps::RVec<edm4hep::MCParticleData> x, ROOT::VecOps::RVec<edm4hep::MCParticleData> y);
