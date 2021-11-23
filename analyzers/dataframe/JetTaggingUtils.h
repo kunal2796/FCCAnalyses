@@ -20,6 +20,8 @@ namespace JetTaggingUtils{
 
   //Get flavour association of jet 
   ROOT::VecOps::RVec<int> get_flavour(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin);
+  //Get flavour association of jet 
+  ROOT::VecOps::RVec<int> get_flavour_qqbar(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin);
   //Get b-tags with an efficiency applied
   ROOT::VecOps::RVec<int> get_btag(ROOT::VecOps::RVec<int> in, float efficiency);
   //Get c-tags with an efficiency applied
