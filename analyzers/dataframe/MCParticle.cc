@@ -133,7 +133,20 @@ ROOT::VecOps::RVec<int> MCParticle::get_tree::operator() (ROOT::VecOps::RVec<edm
 }
 
 
-
+//my function
+ROOT::VecOps::RVec<int> MCParticle::get_partonIndices(ROOT::VecOps::RVec<edm4hep::MCParticleData> in){
+ ROOT::VecOps::RVec<int> result;
+ for (size_t i = 0; i < in.size(); ++i) {
+   auto & parton = MCin[i];
+   //select outgoing partons
+   if (parton.generatorStatus!=23) continue;
+   if (parton.PDG > 5) continue;
+   //
+   result.push_back(i);
+ }
+ return result;
+}
+//
 
 
 ROOT::VecOps::RVec<float> MCParticle::get_pt(ROOT::VecOps::RVec<edm4hep::MCParticleData> in){

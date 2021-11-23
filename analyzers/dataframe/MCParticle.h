@@ -91,6 +91,10 @@ namespace MCParticle{
                                         			     ROOT::VecOps::RVec<edm4hep::MCParticleData> in , 
 								     ROOT::VecOps::RVec<int> ind);
 
+  /// my function: return the parton indices
+  /// return the PDG of the input MCParticles
+  ROOT::VecOps::RVec<int> get_partonIndices(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
+  ///
 
   /// return the parent index of a given list of MC particles
   ROOT::VecOps::RVec<int> get_parentid(ROOT::VecOps::RVec<int> mcind, ROOT::VecOps::RVec<edm4hep::MCParticleData> mc, ROOT::VecOps::RVec<int> parents);

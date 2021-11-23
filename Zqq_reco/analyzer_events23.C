@@ -36,6 +36,7 @@ int main()
   
   // hists for the jet loop
   TH1F* h_jetFlavour = new TH1F("h_jetFlavour","Jet Flavour [status 23]",6,0,6);
+  TH1F* h_jetFlavour_qqbar = new TH1F("h_jetFlavour_qqbar","Jet Flavour (q-#bar{q} separation) [status 23]",7,-3,4);
 
   // reco particles                                                       
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpx(tree, "RP_px");
@@ -72,7 +73,10 @@ int main()
       for(unsigned int j=0; j<jetE->size(); j++)
 	{
 	  // jet flavour
-	  h_jetFlavour->Fill(jetFlavour->at(j));
+	  h_jetFlavour->Fill(abs(jetFlavour->at(j)));
+
+	  // jet flavour - qqbar separation
+	  h_jetFlavour_qqbar->Fill(jetFlavour->at(j));
 	}
 
       /*======================*/
@@ -98,6 +102,7 @@ int main()
   cout<<"Event file closed"<<endl;
 
   h_jetFlavour->Write();
+  h_jetFlavour_qqbar->Write();
   histFile->Close();
   cout<<"Histograms written to file and file closed"<<endl;
 
