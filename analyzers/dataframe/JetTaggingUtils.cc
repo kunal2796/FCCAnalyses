@@ -73,9 +73,8 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastj
   // can later change the argument from the jet vectors to the number of jets
   // (get_njets)
 
-  // return if no jets
-  if(in.size() == 0) return;
   ROOT::VecOps::RVec<int> result(in.size(),0);
+  if(in.size() == 0) return result;
 
   for (size_t i = 0; i < in.size(); i++) {
     auto & p = in[i];
