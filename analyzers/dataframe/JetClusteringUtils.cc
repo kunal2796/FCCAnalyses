@@ -43,11 +43,8 @@ ROOT::VecOps::RVec<float> JetClusteringUtils::get_gmPDG(ROOT::VecOps::RVec<float
 							ROOT::VecOps::RVec<float> px, 
 							ROOT::VecOps::RVec<float> px_g) {
   // the arguments can later be changed to accept size (get_n) instead of the momentum vectors
-  ROOT::VecOps::RVec<float> result;
   // push back zeros for all the reco particles
-  for (size_t i = 0; i < px.size(); ++i) {
-    result.push_back(0);
-  }
+  ROOT::VecOps::RVec<float> result(px.size(),0);
   // push back the MC pdg ID for all the ghosts
   for (size_t j = 0; j < px_g.size(); ++j) {
     result.push_back(pdg.at(j));
