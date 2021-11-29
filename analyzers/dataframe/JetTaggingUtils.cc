@@ -37,6 +37,8 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour(ROOT::VecOps::RVec<fastjet:
 ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_qqbar(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin){
   ROOT::VecOps::RVec<int> result(in.size(),0);
 
+  // ONLY FOR DIJETS FOR NOW
+  
   int loopcount =0;
   for (size_t i = 0; i < MCin.size(); ++i) {
     auto & parton = MCin[i];
@@ -67,33 +69,22 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_qqbar(ROOT::VecOps::RVec<fa
   return result;
 }
 
-/* //get parton indices before this
-ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin){
+ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<float> pdg_gm){
+  // can later change the argument from the jet vectors to the number of jets
+  // (get_njets)
   ROOT::VecOps::RVec<int> result(in.size(),0);
 
-  int loopcount =0;
-  for (size_t i = 0; i < MCin.size(); ++i) {
-    auto & parton = MCin[i];
-    //Select partons only (for pythia 71-79):
-    //if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
-    //Select outgoing particles only - use ONLY for Zqq events
-    if (parton.generatorStatus!=23) continue;
-    if (parton.PDG > 5) continue;
-    
-    for (size_t j = 0; j < in.size(); ++j) {
-      auto & p = in[j];
+  for (size_t i = 0; i < in.size(); i++) {
+    auto & p = in[i];
 
-      for (size_t k = 0; k < p.constituents.size(); ++k) {
-	
-      }
-
-      if (angle <= 0.3) result[j] = std::max(result[j], std::abs ( parton.PDG ));
+    for (ele : p.constituents) {
+      if (pdg_gm.at(ele) == 0) continue;
+      if (abs(pdg_gm.at(ele)) > abs(result[i])) result[i] = pdg_gm.at(ele);
     }
   }
-
   return result;
 }
-*/
+
 ROOT::VecOps::RVec<int> JetTaggingUtils::get_btag(ROOT::VecOps::RVec<int> in, float efficiency) {
   ROOT::VecOps::RVec<int> result(in.size(),0);
 
