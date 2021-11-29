@@ -77,7 +77,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastj
   for (size_t i = 0; i < in.size(); i++) {
     auto & p = in[i];
 
-    for (ele : p.constituents) {
+    for (int ele : p.constituents) {
       if (pdg_gm.at(ele) == 0) continue;
       if (abs(pdg_gm.at(ele)) > abs(result[i])) result[i] = pdg_gm.at(ele);
     }
