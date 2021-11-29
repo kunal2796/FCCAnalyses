@@ -35,13 +35,21 @@ namespace JetClusteringUtils{
 
   /** Add more particles to fastjet pseudoJet for later reconstruction
    *(ghostmatching trial)
-   */
+  */
   std::vector<fastjet::PseudoJet> addMore_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
 						     ROOT::VecOps::RVec<float> px, 
 						     ROOT::VecOps::RVec<float> py, 
 						     ROOT::VecOps::RVec<float> pz, 
 						     ROOT::VecOps::RVec<float> e);
 
+  /** Get PDG IDs of reco+ghosts
+   * PDG_reco = 0
+   * PDG_ghosts = PDG
+  */
+  ROOT::VecOps::RVec<float> JetClusteringUtils::get_gmPDG(ROOT::VecOps::RVec<float> pdg, 
+							  ROOT::VecOps::RVec<float> px, 
+							  ROOT::VecOps::RVec<float> px_g);
+  
   /** Set fastjet pseudoJet for later reconstruction using px, py, pz and m
    * 
    * This version is to be preferred over the px,py,pz,E version when m is known 
