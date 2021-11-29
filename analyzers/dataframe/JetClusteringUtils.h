@@ -46,9 +46,9 @@ namespace JetClusteringUtils{
    * PDG_reco = 0
    * PDG_ghosts = PDG
   */
-  ROOT::VecOps::RVec<float> JetClusteringUtils::get_gmPDG(ROOT::VecOps::RVec<float> pdg, 
-							  ROOT::VecOps::RVec<float> px, 
-							  ROOT::VecOps::RVec<float> px_g);
+  ROOT::VecOps::RVec<float> get_gmPDG(ROOT::VecOps::RVec<float> pdg, 
+				      ROOT::VecOps::RVec<float> px, 
+				      ROOT::VecOps::RVec<float> px_g);
   
   /** Set fastjet pseudoJet for later reconstruction using px, py, pz and m
    * 
