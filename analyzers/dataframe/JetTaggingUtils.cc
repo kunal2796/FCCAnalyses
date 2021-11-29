@@ -69,15 +69,18 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_qqbar(ROOT::VecOps::RVec<fa
   return result;
 }
 
-ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<float> pdg_gm){
+ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<float> pdg_gm){
   // can later change the argument from the jet vectors to the number of jets
   // (get_njets)
+
+  // return if no jets
+  if(in.size() == 0) return;
   ROOT::VecOps::RVec<int> result(in.size(),0);
 
   for (size_t i = 0; i < in.size(); i++) {
     auto & p = in[i];
 
-    for (int ele : p.constituents.at(i)) {
+    for (int ele : inJC.at(i)) {
       if (pdg_gm.at(ele) == 0) continue;
       if (abs(pdg_gm.at(ele)) > abs(result[i])) result[i] = pdg_gm.at(ele);
     }
