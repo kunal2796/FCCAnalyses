@@ -1,5 +1,6 @@
 #include <TFile.h>
 #include <TH1F.h>
+#include <TH2I.h>
 #include <THStack.h>
 #include <TStyle.h>
 #include <TCanvas.h>
@@ -24,6 +25,9 @@ int main()
   TH1F* phi_neut = (TH1F*)hists->Get("h_phi_neut");
   TH1F* n_neut = (TH1F*)hists->Get("h_n_neut");
 
+  TH2I* CvsN = (TH2I*)hists->Get("h_CvsN");
+
+  //
   
   TCanvas *c1 = new TCanvas("c1","Charged Particles",700,700);
   c1->Divide(2,2);
@@ -112,6 +116,13 @@ int main()
   phi_neut->Draw();
   //
   c5->Print("neutral_angDistribution.pdf");
+
+  TCanvas *c6 = new TCanvas("c6","Charged vs Neutral",750,750);
+  CvsN->GetXaxis()->SetTitle("N_{charged}");
+  CvsN->GetYaxis()->SetTitle("N_{neutral}");
+  CvsN->Draw("SURF2");
+  //
+  c6->Print("CvsN.pdf");
 
   hists->Close();
 

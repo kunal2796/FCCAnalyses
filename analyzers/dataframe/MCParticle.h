@@ -41,7 +41,15 @@ namespace MCParticle{
     float m_status = 1; //> Generator status
     ROOT::VecOps::RVec<edm4hep::MCParticleData>  operator() (ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
   };
-  
+
+  /// select MCParticles with their status (range)
+  struct sel_genStatus_range {
+    sel_genStatus_range(int arg_status_min, int arg_status_max);
+    float m_status_min = 71; //> Generator status
+    float m_status_max = 79; //> Generator status
+    ROOT::VecOps::RVec<edm4hep::MCParticleData>  operator() (ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
+  };
+
   /// select MCParticles with their PDG id
   struct sel_pdgID {
     sel_pdgID(int arg_pdg, bool arg_chargeconjugate);

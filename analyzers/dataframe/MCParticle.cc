@@ -16,6 +16,20 @@ ROOT::VecOps::RVec<edm4hep::MCParticleData>  MCParticle::sel_genStatus::operator
   return result;
 }
 
+// select a range of status
+MCParticle::sel_genStatus_range::sel_genStatus_range(int arg_status_min, int arg_status_max) : m_status_min(arg_status_min), m_status_max(arg_status_max) {};
+ROOT::VecOps::RVec<edm4hep::MCParticleData>  MCParticle::sel_genStatus_range::operator() (ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> result;
+  result.reserve(in.size());
+  for (size_t i = 0; i < in.size(); ++i) {
+    auto & p = in[i];
+    if (p.generatorStatus >= m_status_min && p.generatorStatus <= m_status_max) {
+      result.emplace_back(p);
+    }
+  }
+  return result;
+}
+
 MCParticle::sel_pdgID::sel_pdgID(int arg_pdg, bool arg_chargeconjugate) : m_pdg(arg_pdg), m_chargeconjugate( arg_chargeconjugate )  {};
 ROOT::VecOps::RVec<edm4hep::MCParticleData>  MCParticle::sel_pdgID::operator() (ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
   ROOT::VecOps::RVec<edm4hep::MCParticleData> result;

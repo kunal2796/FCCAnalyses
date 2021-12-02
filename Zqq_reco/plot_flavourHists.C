@@ -21,7 +21,7 @@ int main()
   c1->cd(1)->SetGrid();
   jetFlavour71->GetXaxis()->SetTitle("|PDG ID|");
   jetFlavour71->SetMinimum(300);
-  jetFlavour71->SetMinimum(700000);
+  jetFlavour71->SetMaximum(700000);
   jetFlavour71->Draw();
   //
   c1->cd(2);
@@ -29,7 +29,7 @@ int main()
   c1->cd(2)->SetGrid();
   jetFlavour23->GetXaxis()->SetTitle("|PDG ID|");
   jetFlavour23->SetMinimum(300);
-  jetFlavour23->SetMinimum(700000);
+  jetFlavour23->SetMaximum(700000);
   jetFlavour23->Draw();
   //
   c1->Print("jetFlavour.pdf");  
