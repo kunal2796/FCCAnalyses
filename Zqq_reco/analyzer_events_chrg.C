@@ -13,6 +13,7 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TH1F.h>
+#include <TH2I.h>
 #include <TMath.h>
 #include <TLorentzVector.h>
 #include <TSystem.h>
@@ -43,14 +44,17 @@ int main()
   TH1F* h_invM_chrg = new TH1F("h_invM_chrg","Invariant Mass (event) [GeV]",100,0,100);
   TH1F* h_m_RP_chrg = new TH1F("h_m_RP_chrg","Mass (reco particles) [GeV]",100,0,0.14);
   
-  // hists for charged particles
+  // hists for neutral particles
   TH1F* h_n_neut = new TH1F("h_n_neut","Multiplicity",30,0,30);
   TH1F* h_pT_neut = new TH1F("h_pT_neut","p_{T} [GeV]",100,0,20);
   TH1F* h_p_neut = new TH1F("h_p_neut","|p| [GeV]",100,0,30);
   TH1F* h_e_neut = new TH1F("h_e_neut","E [GeV]",100,0,30);
   TH1F* h_theta_neut = new TH1F("h_theta_neut","Polar Angle (#theta)",100,0,3.15);
   TH1F* h_phi_neut = new TH1F("h_phi_neut","Azimuthal Angle (#phi)",100,-3.15,3.15);
-  
+
+  // 2D hists
+  TH2I* h_CvsN = new TH2I("h_CvsN","Charged vs Neutral - Multiplicity",100,0,50, 100,0,50);
+
   // reco particles                                                       
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpx(tree, "RP_px");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpy(tree, "RP_py");
@@ -146,9 +150,10 @@ int main()
 	}
 
       // event multiplicity
-      h_n_chrg->Fill(n_chrg); // charged
-      h_n_neut->Fill(n_neut); // neutral
-
+      h_n_chrg->Fill(n_chrg);       // charged
+      h_n_neut->Fill(n_neut);       // neutral
+      h_CvsN->Fill(n_chrg, n_neut); // charged vs neutral
+      
       // invariant mass - (charged particle sum)
       h_invM_chrg->Fill(p4_chrg.M());
 
@@ -180,6 +185,7 @@ int main()
   h_e_neut->Write();
   h_theta_neut->Write();
   h_phi_neut->Write();
+  h_CvsN->Write();
   histFile->Close();
   cout<<"Histograms written to file and file closed"<<endl;
 
