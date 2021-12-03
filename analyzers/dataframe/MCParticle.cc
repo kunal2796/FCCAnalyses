@@ -16,13 +16,15 @@ ROOT::VecOps::RVec<edm4hep::MCParticleData>  MCParticle::sel_genStatus::operator
   return result;
 }
 
-// select a range of status
+// select a range of status - but only partons
+// pdg = [1,5]
 MCParticle::sel_genStatus_range::sel_genStatus_range(int arg_status_min, int arg_status_max) : m_status_min(arg_status_min), m_status_max(arg_status_max) {};
 ROOT::VecOps::RVec<edm4hep::MCParticleData>  MCParticle::sel_genStatus_range::operator() (ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
   ROOT::VecOps::RVec<edm4hep::MCParticleData> result;
   result.reserve(in.size());
   for (size_t i = 0; i < in.size(); ++i) {
     auto & p = in[i];
+    if (abs(p.PDG) > 5) continue;
     if (p.generatorStatus >= m_status_min && p.generatorStatus <= m_status_max) {
       result.emplace_back(p);
     }
