@@ -1,6 +1,7 @@
 // Studying the Spring2021 event files (Zuds files in particular): ghost matching - reco level (exclusive with exactly 2 jets [for now])
 // Note: Close the event file before writing histograms to prevent seg faults
 // No cuts
+// status 71-79 for parton selection
 
 #include <iostream>
 #include <cmath>
@@ -24,13 +25,13 @@ int main()
 {
   gInterpreter->GenerateDictionary("vector<vector<int> >","vector");
 
-  TFile *file = TFile::Open("p8_ee_Zuds_ecm91_gm.root");
+  TFile *file = TFile::Open("p8_ee_Zuds_ecm91_gm7x.root");
   TTreeReader tree("events", file);
   int nEvents = tree.GetEntries();
   cout<<"Number of Events: "<<nEvents<<endl;
 
   TString histfname;
-  histfname = "histZuds_gm.root";
+  histfname = "histZuds_gm7x.root";
   TFile *histFile = new TFile(histfname,"RECREATE");
     
   // hists for the jet loop

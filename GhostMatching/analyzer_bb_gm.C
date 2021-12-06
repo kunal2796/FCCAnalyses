@@ -24,21 +24,17 @@ int main()
 {
   gInterpreter->GenerateDictionary("vector<vector<int> >","vector");
 
-  TFile *file = TFile::Open("p8_ee_Zuds_ecm91_gm.root");
+  TFile *file = TFile::Open("p8_ee_Zbb_ecm91_gm.root");
   TTreeReader tree("events", file);
   int nEvents = tree.GetEntries();
   cout<<"Number of Events: "<<nEvents<<endl;
 
   TString histfname;
-  histfname = "histZuds_gm.root";
+  histfname = "histZbb_gm.root";
   TFile *histFile = new TFile(histfname,"RECREATE");
     
   // hists for the jet loop
   TH1F* h_jetFlavour = new TH1F("h_jetFlavour","Jet Flavour",11,-5,6);
-  TH1F* h_jetTheta = new TH1F("h_jetTheta","Jet Axis Polar Angle",100,0,3.15);
-  TH1F* h_jetPhi = new TH1F("h_jetPhi","Jet Axis Azimuthal Angle",100,-3.15,3.15);
-  TH1F* h_pjet = new TH1F("h_pjet","|p| - jets [GeV]",100,0,50);
-  TH1F* h_pTjet = new TH1F("h_pTjet","p_T - jets [GeV]",100,0,50);
   
   // reco particles                                                       
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpx(tree, "RP_px");
@@ -65,31 +61,11 @@ int main()
     {
       // jet loop
       int nJet = jetE->size();
-      float Px=0, Py=0, Pz=0, E=0;
-      TLorentzVector p_Jet[nJet];
+      
       for(unsigned int j=0; j<nJet; j++)
 	{
-	  Px = jetPx->at(j);
-	  Py = jetPy->at(j);
-	  Pz = jetPz->at(j);
-	  E  = jetE->at(j);
-	  
-	  p_Jet[j].SetPxPyPzE(Px,Py,Pz,E);
-
 	  // jet flavour
 	  h_jetFlavour->Fill(jetFlavour->at(j));
-
-	  // jet theta
-	  h_jetTheta->Fill(p_Jet[j].Theta());
-
-	  // jet phi
-	  h_jetPhi->Fill(p_Jet[j].Phi());	
-
-	  // jet p
-	  h_pjet->Fill(p_Jet[j].P());	
-
-	  // jet pT
-	  h_pTjet->Fill(p_Jet[j].Pt());	
 	}
 
       if(abs(jetFlavour->at(0)) != abs(jetFlavour->at(1))) flv_mm++;
@@ -145,10 +121,6 @@ int main()
   cout<<"Event file closed"<<endl;
 
   h_jetFlavour->Write();
-  h_jetTheta->Write();
-  h_jetPhi->Write();
-  h_pjet->Write();
-  h_pTjet->Write();
   histFile->Close();
   cout<<"Histograms written to file and file closed"<<endl;
   
