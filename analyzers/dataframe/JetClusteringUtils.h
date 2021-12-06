@@ -2,6 +2,8 @@
 #ifndef  JETCLUSTERINGUTILS_ANALYZERS_H
 #define  JETCLUSTERINGUTILS_ANALYZERS_H
 
+#include "TLorentzVector.h"
+#include <cmath>
 #include <vector>
 #include "Math/Vector4D.h"
 #include "ROOT/RVec.hxx"
@@ -42,6 +44,12 @@ namespace JetClusteringUtils{
 						     ROOT::VecOps::RVec<float> pz, 
 						     ROOT::VecOps::RVec<float> e);
 
+  /** Add partons with scaled momenta to fastjet pseudoJet for later reconstruction
+   *(ghostmatching trial)
+  */
+  std::vector<fastjet::PseudoJet> addGhosts_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
+						       ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin);
+  
   /** Get PDG IDs of reco+ghosts
    * PDG_reco = 0
    * PDG_ghosts = PDG

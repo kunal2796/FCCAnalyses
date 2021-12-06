@@ -39,6 +39,26 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::addMore_pseudoJets(std::vect
   return pseudoJ;
 }
 
+std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
+									 ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin) {
+  unsigned index = pseudoJ.size();
+  for (size_t i = 0; i < MCin.size(); ++i) {
+    auto & parton = MCin[i];
+    // select outgoing partons from the hardest reaction
+    // later introduce a way for user to choose from the 2 status code options
+    if (parton.generatorStatus!=23) continue;
+    //if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
+    if (parton.PDG > 5) continue;
+
+    TLorentzVector tlv;
+    tlv.SetXYZM(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
+    pseudoJ.emplace_back(parton.momentum.x * 1.e-18, parton.momentum.y * 1.e-18, parton.momentum.z * 1.e-18, tlv.E() * 1.e-18);
+    pseudoJ.back().set_user_index(index);
+    ++index;
+  }
+  return pseudoJ;
+}
+
 ROOT::VecOps::RVec<float> JetClusteringUtils::get_gmPDG(ROOT::VecOps::RVec<float> pdg, 
 							ROOT::VecOps::RVec<float> px, 
 							ROOT::VecOps::RVec<float> px_g) {
