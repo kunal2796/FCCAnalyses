@@ -31,18 +31,33 @@ class analysis():
         df2 = (self.df
 
                
+               #select partons (for now status 23; use *_range for 71-79)
+               #.Define("q_gm", "MCParticle::sel_genStatus(23)(Particle)")
+               #select partons 71-79 [only partons]
+               .Define("q_gm", "MCParticle::sel_genStatus_range(71,79)(Particle)")
+               #get scaled momenta for partons
+               .Define("q_px", "MCParticle::get_scaled_px(q_gm)")
+               .Define("q_py", "MCParticle::get_scaled_py(q_gm)")
+               .Define("q_pz", "MCParticle::get_scaled_pz(q_gm)")
+               .Define("q_e",  "MCParticle::get_scaled_e(q_gm)")
+               #get pdg of partons to use for ghost matching
+               .Define("q_pdg",  "MCParticle::get_pdg(q_gm)")
+               
                #reco particles
                .Define("RP_px",  "ReconstructedParticle::get_px(ReconstructedParticles)")
                .Define("RP_py",  "ReconstructedParticle::get_py(ReconstructedParticles)")
                .Define("RP_pz",  "ReconstructedParticle::get_pz(ReconstructedParticles)")
                .Define("RP_e",  "ReconstructedParticle::get_e(ReconstructedParticles)")
 
+               #make pdg vector to assign flavour via ghost matching
+               .Define("pdg_gm", "JetClusteringUtils::get_gmPDG(q_pdg, RP_px, q_px)")
+               
+               
                #EE-KT ALGORITHM
                #build psedo-jets with the Reconstructed particles
                .Define("pseudo_jets", "JetClusteringUtils::set_pseudoJets(RP_px, RP_py, RP_pz, RP_e)")
                #add ghosts to psedo-jets
-               #currently selecting status 23 [plan to make it more general soon]
-               .Define("pseudo_jets_gm", "JetClusteringUtils::addGhosts_pseudoJets(pseudo_jets, Particle)")
+               .Define("pseudo_jets_gm", "JetClusteringUtils::addMore_pseudoJets(pseudo_jets, q_px, q_py, q_pz, q_e)")
 
                #run jet clustering with all reco particles. ee_kt_algorithm, exclusive clustering, exactly 2 jets, E-scheme
                .Define("FCCAnalysesJets_ee_kt", "JetClustering::clustering_ee_kt(2, 2, 1, 0)(pseudo_jets_gm)")
@@ -60,8 +75,7 @@ class analysis():
                .Define("jets_ee_kt_pz", "JetClusteringUtils::get_pz(jets_ee_kt)")
 
                #get jet flavour
-               #last argument is the pseudojet vector before adding ghosts [selecting status 23]
-               .Define("jets_ee_kt_flavour", "JetTaggingUtils::get_flavour_gm_auto(jets_ee_kt, jetconstituents_ee_kt, Particle, pseudo_jets)")
+               .Define("jets_ee_kt_flavour", "JetTaggingUtils::get_flavour_gm(jets_ee_kt, jetconstituents_ee_kt, pdg_gm)")
                
         )
 
@@ -76,6 +90,8 @@ class analysis():
                 "RP_pz",
                 "RP_e",
 
+                "pdg_gm",
+                
                 "jets_ee_kt_e",
                 "jets_ee_kt_px",
                 "jets_ee_kt_py",
