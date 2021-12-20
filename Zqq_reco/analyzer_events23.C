@@ -36,7 +36,7 @@ int main()
   
   // hists for the jet loop
   TH1F* h_jetFlavour = new TH1F("h_jetFlavour","Jet Flavour [status 23]",6,0,6);
-  TH1F* h_jetFlavour_qqbar = new TH1F("h_jetFlavour_qqbar","Jet Flavour (q-#bar{q} separation) [status 23]",7,-3,4);
+  TH1F* h_jetFlavour_qqbar = new TH1F("h_jetFlavour_qqbar","Jet Flavour (q-#bar{q} separation) [status 23]",11,-6,6);
 
   // reco particles                                                       
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpx(tree, "RP_px");
