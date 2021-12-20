@@ -99,9 +99,10 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_auto(ROOT::VecOps::RVec<
   for (size_t j = 0; j < MCin.size(); ++j) {
     auto & parton = MCin[j];
     // CAUTION: use the SAME selection here as in addGhosts_pseudoJets
-    if (parton.generatorStatus!=23) continue;
-    //if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
+    //if (parton.generatorStatus!=23) continue;
+    if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
     if (parton.PDG > 5) continue;   
+    //if (parton.PDG > 5 && parton.PDG != 23) continue; // while adding gluons  
     pdg_gm.push_back(parton.PDG);
   }
   
