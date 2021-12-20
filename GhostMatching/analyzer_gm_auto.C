@@ -24,13 +24,13 @@ int main()
 {
   gInterpreter->GenerateDictionary("vector<vector<int> >","vector");
 
-  TFile *file = TFile::Open("p8_ee_Zuds_ecm91_gm.root");
+  TFile *file = TFile::Open("p8_ee_Zuds_ecm91_gm_auto.root");
   TTreeReader tree("events", file);
   int nEvents = tree.GetEntries();
   cout<<"Number of Events: "<<nEvents<<endl;
 
   TString histfname;
-  histfname = "histZuds_gm.root";
+  histfname = "histZuds_gm_auto.root";
   TFile *histFile = new TFile(histfname,"RECREATE");
     
   // hists for the jet loop
@@ -39,16 +39,12 @@ int main()
   TH1F* h_jetPhi = new TH1F("h_jetPhi","Jet Axis Azimuthal Angle",100,-3.15,3.15);
   TH1F* h_pjet = new TH1F("h_pjet","|p| - jets [GeV]",100,0,50);
   TH1F* h_pTjet = new TH1F("h_pTjet","p_T - jets [GeV]",100,0,50);
-  TH1F* h_jetFlavour_org = new TH1F("h_jetFlavour_org","Jet Flavour (Original)",11,-5,6);
   
   // reco particles                                                       
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpx(tree, "RP_px");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpy(tree, "RP_py");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpz(tree, "RP_pz");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPe(tree, "RP_e");
-
-  //
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> gmPDG(tree, "pdg_gm");
   
   // jets and jet constituents - eekt     
   TTreeReaderValue<vector<vector<int>>> jetConst(tree, "jetconstituents_ee_kt");
@@ -67,13 +63,6 @@ int main()
   // event loop
   while(tree.Next())
     {
-      // particle loop
-      for(unsigned int i=0; i<gmPDG->size(); i++)
-	{
-	  if(gmPDG->at(i) == 0) continue;
-	  h_jetFlavour_org->Fill(gmPDG->at(i));
-	}
-      
       // jet loop
       int nJet = jetE->size();
       float Px=0, Py=0, Pz=0, E=0;
@@ -156,7 +145,6 @@ int main()
   cout<<"Event file closed"<<endl;
 
   h_jetFlavour->Write();
-  h_jetFlavour_org->Write();
   h_jetTheta->Write();
   h_jetPhi->Write();
   h_pjet->Write();

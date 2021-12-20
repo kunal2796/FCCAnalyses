@@ -6,35 +6,23 @@
 
 int main()
 {
-  TFile *hists =TFile::Open("histZuds_gm.root");
+  TFile *hists=TFile::Open("histZuds_gm_auto.root");
   TFile *hists1=TFile::Open("histZuds_excl_st23.root");
   
-  TH1F* jetFlavour     = (TH1F*)hists->Get("h_jetFlavour");
-  TH1F* jetFlavour_org = (TH1F*)hists->Get("h_jetFlavour_org");
-  TH1F* jetTheta       = (TH1F*)hists->Get("h_jetTheta");
-  TH1F* jetPhi         = (TH1F*)hists->Get("h_jetPhi");
+  TH1F* jetFlavour = (TH1F*)hists->Get("h_jetFlavour");
+  TH1F* jetTheta = (TH1F*)hists->Get("h_jetTheta");
+  TH1F* jetPhi = (TH1F*)hists->Get("h_jetPhi");
   //
-  TH1F* jetFlavour23   = (TH1F*)hists1->Get("h_jetFlavour_qqbar");
+  TH1F* jetFlavour23 = (TH1F*)hists1->Get("h_jetFlavour_qqbar");
   
 
   TCanvas *c1 = new TCanvas("c1","Jet Flavour : Ghost-Matching",700,700);
-  c1->Divide(2,1);
-  //
-  c1->cd(1);
-  c1->cd(1)->SetLogy();
-  c1->cd(1)->SetGrid();
+  c1->SetLogy();
+  c1->SetGrid();
   jetFlavour->GetXaxis()->SetTitle("PDG ID");
-  jetFlavour->SetMinimum(2000);
   jetFlavour->Draw();
   //
-  c1->cd(2);
-  c1->cd(2)->SetLogy();
-  c1->cd(2)->SetGrid();
-  jetFlavour_org->GetXaxis()->SetTitle("PDG ID");
-  jetFlavour_org->SetMinimum(2000);
-  jetFlavour_org->Draw();
-  //
-  c1->Print("jetFlavour_gm.pdf");
+  c1->Print("auto_jetFlavour_gm.pdf");
 
   TCanvas *c2 = new TCanvas("c2","Jet Flavour Assignment",710,710);
   c2->Divide(2,1);
@@ -57,7 +45,7 @@ int main()
   jetFlavour23->SetMaximum(700000);
   jetFlavour23->Draw();
   //
-  c2->Print("jetFlavour_comparison.pdf");  
+  c2->Print("auto_jetFlavour_comparison.pdf");  
   
   TCanvas *c3 = new TCanvas("c3","Jet Angular Distribution (GM)",720,720);
   c3->Divide(1,2);
@@ -72,7 +60,7 @@ int main()
   jetPhi->GetXaxis()->SetTitle("#phi");
   jetPhi->Draw();
   //
-  c3->Print("jetAngularDist_gm.pdf");  
+  c3->Print("auto_jetAngularDist_gm.pdf");  
   
   hists->Close();
   hists1->Close();
