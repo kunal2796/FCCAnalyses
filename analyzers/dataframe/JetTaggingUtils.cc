@@ -34,7 +34,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour(ROOT::VecOps::RVec<fastjet:
   return result;
 }
 
-ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_qqbar(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin){
+hROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_qqbar(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin){
   ROOT::VecOps::RVec<int> result(in.size(),0);
 
   // ONLY FOR DIJETS FOR NOW
@@ -101,8 +101,8 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_auto(ROOT::VecOps::RVec<
     // CAUTION: use the SAME selection here as in addGhosts_pseudoJets
     //if (parton.generatorStatus!=23) continue;
     if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
-    if (parton.PDG > 5) continue;   
-    //if (parton.PDG > 5 && parton.PDG != 23) continue; // while adding gluons  
+    //if (parton.PDG > 5) continue;                     // only partons
+    if (parton.PDG > 5 && parton.PDG != 23) continue; // partons + gluons  
     pdg_gm.push_back(parton.PDG);
   }
   
