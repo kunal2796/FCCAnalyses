@@ -48,8 +48,8 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets(std::ve
     // later introduce a way for user to choose from the 2 status code options
     //if (parton.generatorStatus!=23) continue;
     if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
-    if (parton.PDG > 5) continue;
-    //if (parton.PDG > 5 && parton.PDG != 23) continue; // while adding gluons
+    //if (parton.PDG > 5) continue;                     // only partons
+    if (parton.PDG > 5 && parton.PDG != 23) continue; // partons + gluons
 
     TLorentzVector tlv;
     tlv.SetXYZM(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
