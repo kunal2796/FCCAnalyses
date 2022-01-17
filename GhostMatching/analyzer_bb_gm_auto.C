@@ -25,31 +25,22 @@ int main()
 {
   gInterpreter->GenerateDictionary("vector<vector<int> >","vector");
 
-  TFile *file = TFile::Open("p8_ee_Zbb_ecm91_gm7x_auto.root");
+  TFile *file = TFile::Open("p8_ee_Zbb_ecm91_gm_auto.root");
   TTreeReader tree("events", file);
   int nEvents = tree.GetEntries();
   cout<<"Number of Events: "<<nEvents<<endl;
 
   TString histfname;
-  histfname = "histZbb_gm7x_auto.root";
+  histfname = "histZbb_gm_auto.root";
   TFile *histFile = new TFile(histfname,"RECREATE");
     
   // hists for the jet loop
   TH1F* h_jetFlavour = new TH1F("h_jetFlavour","Jet Flavour",11,-5,6);
-  TH1F* h_jetFlavour_diff = new TH1F("h_jetFlavour_diff","Jet Flavour (MC - GM)",21,-10,11);
   TH1F* h_jetTheta = new TH1F("h_jetTheta","Jet Axis Polar Angle",100,0,3.15);
   TH1F* h_jetPhi = new TH1F("h_jetPhi","Jet Axis Azimuthal Angle",100,-3.15,3.15);
   TH1F* h_pjet = new TH1F("h_pjet","|p| - jets [GeV]",100,0,50);
   TH1F* h_pTjet = new TH1F("h_pTjet","p_T - jets [GeV]",100,0,50);
 
-  // MC particles                                                       
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpx(tree, "MC_px");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpy(tree, "MC_py");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpz(tree, "MC_pz");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCe(tree,  "MC_e");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpdg(tree,"MC_pdg");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCstatus(tree,"MC_status");
-  
   // reco particles                                                       
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpx(tree, "RP_px");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpy(tree, "RP_py");
@@ -69,7 +60,6 @@ int main()
 
   // flavour mismatch counter
   int flv_mm = 0;
-  int flv_inc = 0; // incorrect flavour counter
   
   // event loop
   while(tree.Next())
@@ -101,41 +91,12 @@ int main()
 
 	  // jet pT
 	  h_pTjet->Fill(p_Jet[j].Pt());	
-
-	  if(abs(jetFlavour->at(j)) != 5) flv_inc++;
 	}
 
       if(abs(jetFlavour->at(0)) != abs(jetFlavour->at(1))) flv_mm++;
       //if(jetFlavour->at(0) == 0 || jetFlavour->at(1) == 0) flv_mm++;
       //if(jetFlavour->at(0) == 0) flv_mm += jetFlavour->at(1)/jetFlavour->at(1);
       //if(jetFlavour->at(1) == 0) flv_mm += jetFlavour->at(0)/jetFlavour->at(0);
-
-      // map MC partons with the closest jet and check the diff b/n MC and assigned flavour
-      int MC_flv_diff[2];
-      float pxMC=0, pyMC=0, pzMC=0, eMC=0;
-      TLorentzVector parton;
-      for(unsigned int i=0; i<MCe->size(); i++)
-	{
-	  //if(MCstatus->at(i) < 70 && MCstatus->at(i) > 80) continue;
-	  if(MCstatus->at(i) != 23) continue;
-	  if(MCpdg->at(i) > 5) continue;
-
-	  pxMC = MCpx->at(i);
-	  pyMC = MCpy->at(i);
-	  pzMC = MCpz->at(i);
-	  eMC  = MCe->at(i);
-	  parton.SetPxPyPzE(pxMC, pyMC, pzMC, eMC);
-
-	  // find closer jet
-	  float ang1 = parton.Angle(p_Jet[0].Vect());
-	  float ang2 = parton.Angle(p_Jet[1].Vect());
-
-	  if(ang1 < ang2) MC_flv_diff[0] = MCpdg->at(i) - jetFlavour->at(0);
-	  if(ang1 > ang2) MC_flv_diff[1] = MCpdg->at(i) - jetFlavour->at(1);
-	}
-
-      h_jetFlavour_diff->Fill(MC_flv_diff[0]);
-      h_jetFlavour_diff->Fill(MC_flv_diff[1]);
       
       /*======================*/
       
@@ -180,13 +141,11 @@ int main()
     }
 
   cout<<flv_mm<<" events have jets with differently assigned flavours"<<endl;
-  cout<<flv_inc<<" jets out of "<<2*nEvents<<" are assigned flavours incorrectly"<<endl;
   
   file->Close();
   cout<<"Event file closed"<<endl;
 
   h_jetFlavour->Write();
-  h_jetFlavour_diff->Write();
   h_jetTheta->Write();
   h_jetPhi->Write();
   h_pjet->Write();
