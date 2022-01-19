@@ -25,7 +25,8 @@ int main()
 {
   gInterpreter->GenerateDictionary("vector<vector<int> >","vector");
 
-  TFile *file = TFile::Open("p8_ee_Zbb_ecm91_gm7x_auto.root");
+  //TFile *file = TFile::Open("p8_ee_Zbb_ecm91_gm7x_auto.root");
+  TFile *file = TFile::Open("p8_ee_Zbb_ecm91_gm7xflip_auto.root");
   TTreeReader tree("events", file);
   int nEvents = tree.GetEntries();
   cout<<"Number of Events: "<<nEvents<<endl;

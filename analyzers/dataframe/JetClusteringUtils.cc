@@ -46,8 +46,8 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets(std::ve
     auto & parton = MCin[i];
     // select outgoing partons from the hardest reaction
     // later introduce a way for user to choose from the 2 status code options
-    //if (parton.generatorStatus!=23) continue;
-    if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
+    if (parton.generatorStatus!=23) continue;
+    //if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
     if (parton.PDG > 5) continue;                     // only partons
     //if (parton.PDG > 5 && parton.PDG != 21) continue; // partons + gluons
 

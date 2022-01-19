@@ -64,7 +64,7 @@ int main()
   unsigned int evt = 0;
 
   // cc, uu, dd, ss event counter
-  unsigned int ccEvt=0, uuEvt=0, ddEvt=0, ssEvt=0;
+  unsigned int ccEvt=0, uuEvt=0, ddEvt=0, ssEvt=0, Evt00=0;
   
   // event loop
   while(tree1.Next() && tree2.Next())
@@ -86,6 +86,7 @@ int main()
       else if(jetFlavour7x->at(0) == -2 && jetFlavour7x->at(1) == 2) uuEvt++;
       if(     jetFlavour7x->at(0) == 1 && jetFlavour7x->at(1) == -1) ddEvt++;
       else if(jetFlavour7x->at(0) == -1 && jetFlavour7x->at(1) == 1) ddEvt++;
+      if(     jetFlavour7x->at(0) == 0 && jetFlavour7x->at(1) ==  0) Evt00++;
       
       // jet loop
       if(jetE7x->size() != jetE23->size()) cout<<"Something's wrong with event no. "<<evt+1<<endl;
@@ -137,9 +138,10 @@ int main()
     }
 
   cout<<"cc events = "<<ccEvt<<endl;
+  cout<<"ss events = "<<ssEvt<<endl;
   cout<<"uu events = "<<uuEvt<<endl;
   cout<<"dd events = "<<ddEvt<<endl;
-  cout<<"ss events = "<<ssEvt<<endl;
+  cout<<"00 events = "<<Evt00<<endl;
   
   file1->Close();
   file2->Close();
