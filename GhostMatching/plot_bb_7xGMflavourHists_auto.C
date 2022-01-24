@@ -12,6 +12,7 @@ int main()
   TFile *hists7x=TFile::Open("histZbb_gm7x_auto.root");
   TFile *hists23=TFile::Open("histZbb_gm_auto.root");
   //TFile *hists1=TFile::Open("histZuds_excl_st23.root");
+  TFile *hists7xflip=TFile::Open("histZbb_gm7xflip_auto.root");
 
   //
   
