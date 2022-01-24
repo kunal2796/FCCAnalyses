@@ -133,7 +133,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm7x_auto(ROOT::VecOps::RVe
   ROOT::VecOps::RVec<float> pdg_gm(PJin.size(),0);
   // push back the MC pdg ID for all the ghosts
   for (size_t j = 0; j < MCin.size(); ++j) {
-    auto & parton = MCin[i];
+    auto & parton = MCin[j];
     // CAUTION: use the SAME selection here as in addGhosts_pseudoJets
     //if (parton.generatorStatus!=23) continue;
     if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
