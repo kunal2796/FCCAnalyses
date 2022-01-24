@@ -1,4 +1,4 @@
-// Studying the Spring2021 event files (Zbb): ghost matching - reco level (exclusive with exactly 2 jets [for now])
+// Studying the Spring2021 event files (Zbb): ghost matching - MC level (exclusive with exactly 2 jets [for now])
 // Note: Close the event file before writing histograms to prevent seg faults
 // No cuts
 // studying status 71-79 to understand the charge imbalance in Zbb & Zcc samples while using GM
