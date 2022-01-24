@@ -49,7 +49,13 @@ namespace JetClusteringUtils{
   */
   std::vector<fastjet::PseudoJet> addGhosts_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
 						       ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin);
-  
+
+  /** Add partons with scaled momenta to fastjet pseudoJet for later reconstruction
+   *(ghostmatching trial with status 71-79)
+  */
+  std::vector<fastjet::PseudoJet> addGhosts7x_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
+							 ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin);
+
   /** Get PDG IDs of reco+ghosts
    * PDG_reco = 0
    * PDG_ghosts = PDG
