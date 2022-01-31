@@ -26,52 +26,66 @@ int main()
 {
   gInterpreter->GenerateDictionary("vector<vector<int> >","vector");
 
-  TFile *file1 = TFile::Open("p8_ee_Zbb_ecm91_gm7x_auto.root");
-  TTreeReader tree1("events", file1);
-  int nEvents = tree1.GetEntries();
+  TFile *file = TFile::Open("p8_ee_Zbb_ecm91_gm7x23_auto.root");
+  TTreeReader tree("events", file);
+  int nEvents = tree.GetEntries();
   cout<<"Number of Events: "<<nEvents<<endl;
-  //
-  TFile *file2 = TFile::Open("p8_ee_Zbb_ecm91_gm_auto.root");
-  TTreeReader tree2("events", file2);
   
   TString histfname;
   histfname = "histZbb_partonMom.root";
   TFile *histFile = new TFile(histfname,"RECREATE");
     
   // hists for the particle loop
-  //TH1F* h_flv7x = new TH1F("h_flv7x","Multiplicity in Status 71-79 (No Gluons)",11,-5,6);
+  TH2F* h_mom7x23      = new TH2F("h_mom7x23",     "Flavour Assigning Parton's Momentum",100,0,50,100,0,50);
+  TH2F* h_mom7x23_non0 = new TH2F("h_mom7x23_non0","Flavour Assigning Parton's Momentum",100,0,50,100,0,50);
+  //
+  TH1F* h_mom7xb = new TH1F("h_mom7xb","Flavour Assigning Parton's Momentum - 7x (b)",100,0,50);
+  TH1F* h_mom7xc = new TH1F("h_mom7xc","Flavour Assigning Parton's Momentum - 7x (c)",100,0,50);
+  TH1F* h_mom7xs = new TH1F("h_mom7xs","Flavour Assigning Parton's Momentum - 7x (s)",100,0,50);
+  TH1F* h_mom7xu = new TH1F("h_mom7xu","Flavour Assigning Parton's Momentum - 7x (u)",100,0,50);
+  TH1F* h_mom7xd = new TH1F("h_mom7xd","Flavour Assigning Parton's Momentum - 7x (d)",100,0,50);
+  TH1F* h_mom7x0 = new TH1F("h_mom7x0","Flavour Assigning Parton's Momentum - 7x (0)",100,0,50);
+  //
+  TH1F* h_mom7xbbar = new TH1F("h_mom7xbbar","Flavour Assigning Parton's Momentum - 7x (#bar{b})",100,0,50);
+  TH1F* h_mom7xcbar = new TH1F("h_mom7xcbar","Flavour Assigning Parton's Momentum - 7x (#bar{c})",100,0,50);
+  TH1F* h_mom7xsbar = new TH1F("h_mom7xsbar","Flavour Assigning Parton's Momentum - 7x (#bar{s})",100,0,50);
+  TH1F* h_mom7xubar = new TH1F("h_mom7xubar","Flavour Assigning Parton's Momentum - 7x (#bar{u})",100,0,50);
+  TH1F* h_mom7xdbar = new TH1F("h_mom7xdbar","Flavour Assigning Parton's Momentum - 7x (#bar{d})",100,0,50);
   
   // MC Particles
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpx(tree1, "MC_px");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpy(tree1, "MC_py");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpz(tree1, "MC_pz");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCe(tree1,  "MC_e");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpdg(tree1,"MC_pdg");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCstatus(tree1,"MC_status");  
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpx(tree, "MC_px");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpy(tree, "MC_py");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpz(tree, "MC_pz");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCe(tree,  "MC_e");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpdg(tree,"MC_pdg");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCstatus(tree,"MC_status");  
   // Reco Particles
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPe(tree1,  "RP_e");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPe(tree,  "RP_e");
 
   // Jets (Status 71-79)     
-  TTreeReaderValue<vector<vector<int>>> jetConst7x(tree1, "jetconstituents_ee_kt");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPx7x(tree1, "jets_ee_kt_px");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPy7x(tree1, "jets_ee_kt_py");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPz7x(tree1, "jets_ee_kt_pz");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE7x(tree1,  "jets_ee_kt_e");
-  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>>     jetFlavour7x(tree1,"jets_ee_kt_flavour");
+  TTreeReaderValue<vector<vector<int>>> jetConst7x(tree, "jetconstituents_ee_kt7x");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPx7x(tree, "jets_ee_kt_px7x");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPy7x(tree, "jets_ee_kt_py7x");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPz7x(tree, "jets_ee_kt_pz7x");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE7x(tree,  "jets_ee_kt_e7x");
+  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>>     jetFlavour7x(tree,"jets_ee_kt_flavour7x");
 
   // Jets (Status 23)     
-  TTreeReaderValue<vector<vector<int>>> jetConst23(tree2, "jetconstituents_ee_kt");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPx23(tree2, "jets_ee_kt_px");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPy23(tree2, "jets_ee_kt_py");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPz23(tree2, "jets_ee_kt_pz");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE23(tree2,  "jets_ee_kt_e");
-  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>>     jetFlavour23(tree2,"jets_ee_kt_flavour");
+  TTreeReaderValue<vector<vector<int>>> jetConst23(tree, "jetconstituents_ee_kt23");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPx23(tree, "jets_ee_kt_px23");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPy23(tree, "jets_ee_kt_py23");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPz23(tree, "jets_ee_kt_pz23");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE23(tree,  "jets_ee_kt_e23");
+  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>>     jetFlavour23(tree,"jets_ee_kt_flavour23");
 
   // event counter
   unsigned int evt = 0;
+
+  // jet counter
+  unsigned int bad_jet = 0;
   
   // event loop
-  while(tree1.Next() && tree2.Next())
+  while(tree.Next())
     {
       ROOT::VecOps::RVec<float> pdg_gm7x(RPe->size(),0);
       ROOT::VecOps::RVec<float> pdg_gm23(RPe->size(),0);
@@ -93,17 +107,21 @@ int main()
 	  // 71-79
 	  if(MCstatus->at(ip) > 70 && MCstatus->at(ip) < 80)
 	    {
-	      if(MCpdg->at(ip) > 5) continue; //only partons
-	      pdg_gm7x.push_back(MCpdg->at(ip));
-	      p4_gm7x.push_back(p4);
+	      if(MCpdg->at(ip) <= 5) //only partons
+		{
+		  pdg_gm7x.push_back(MCpdg->at(ip));
+		  p4_gm7x.push_back(p4);
+		}
 	    }
 
 	  // 23
 	  if(MCstatus->at(ip) == 23)
 	    {
-	      //if(MCpdg->at(ip) > 5) continue; //only partons
-	      pdg_gm23.push_back(MCpdg->at(ip));
-	      p4_gm23.push_back(p4);
+	      if(MCpdg->at(ip) <= 5) //only partons
+		{
+		  pdg_gm23.push_back(MCpdg->at(ip));
+		  p4_gm23.push_back(p4);
+		}
 	    }
 	}
       
@@ -119,17 +137,6 @@ int main()
       else cout<<"**No jet constituents found in event#"<<evt+1<<"**"<<endl;
       if(jetConst23->size()>=2)      jet2Const23 = jetConst23->at(1);
       else cout<<"**Second jet constituents not found in event#"<<evt+1<<"**"<<endl;
-      
-      if(evt == 5224)
-	{
-	  cout<<"Reco size = "<<RPe->size()<<endl;
-	  cout<<"pdg_gm7x size = "<<pdg_gm7x.size()<<endl;
-	  cout<<"pdg_gm23 size = "<<pdg_gm23.size()<<endl;
-	  cout<<"jet1Const7x size = "<<jet1Const7x.size()<<endl;
-	  cout<<"jet2Const7x size = "<<jet2Const7x.size()<<endl;
-	  cout<<"jet1Const23 size = "<<jet1Const23.size()<<endl;
-	  cout<<"jet2Const23 size = "<<jet2Const23.size()<<endl;
-	}
       
       TLorentzVector jet1P7x, jet2P7x, jet1P23, jet2P23; //deciding parton 4-momenta
       int j1result7x=0, j2result7x=0, j1result23=0, j2result23=0;
@@ -155,7 +162,6 @@ int main()
 	    }
 	}
 
-      cout<<"check 5 in "<<evt+1<<endl;
       // Status 23
       // JET 1
       for(int ele : jet1Const23) 
@@ -167,7 +173,6 @@ int main()
 	      jet1P23    = p4_gm23.at(ele);
 	    }
 	}
-      cout<<"check 6"<<endl;
       // JET 2
       for(int ele : jet2Const23) 
 	{
@@ -178,6 +183,38 @@ int main()
 	      jet2P23    = p4_gm23.at(ele);
 	    }
 	}
+    
+      h_mom7x23->Fill(jet1P7x.P(), jet1P23.P());
+      h_mom7x23->Fill(jet2P7x.P(), jet2P23.P());
+      
+      if(j1result23!=0 && j1result7x!=0) h_mom7x23_non0->Fill(jet1P7x.P(), jet1P23.P());
+      if(j2result23!=0 && j2result7x!=0) h_mom7x23_non0->Fill(jet2P7x.P(), jet2P23.P());
+      
+      if(jet1P7x.P() > jet1P23.P()) bad_jet++;
+      if(jet2P7x.P() > jet2P23.P()) bad_jet++;
+
+      if(j1result7x == 5) h_mom7xb->Fill(jet1P7x.P());
+      if(j2result7x == 5) h_mom7xb->Fill(jet2P7x.P());
+      if(j1result7x == 4) h_mom7xc->Fill(jet1P7x.P());
+      if(j2result7x == 4) h_mom7xc->Fill(jet2P7x.P());
+      if(j1result7x == 3) h_mom7xs->Fill(jet1P7x.P());
+      if(j2result7x == 3) h_mom7xs->Fill(jet2P7x.P());
+      if(j1result7x == 2) h_mom7xu->Fill(jet1P7x.P());
+      if(j2result7x == 2) h_mom7xu->Fill(jet2P7x.P());
+      if(j1result7x == 1) h_mom7xd->Fill(jet1P7x.P());
+      if(j2result7x == 1) h_mom7xd->Fill(jet2P7x.P());
+      if(j1result7x == 0) h_mom7x0->Fill(jet1P7x.P());
+      if(j2result7x == 0) h_mom7x0->Fill(jet2P7x.P());
+      if(j1result7x == -5) h_mom7xbbar->Fill(jet1P7x.P());
+      if(j2result7x == -5) h_mom7xbbar->Fill(jet2P7x.P());
+      if(j1result7x == -4) h_mom7xcbar->Fill(jet1P7x.P());
+      if(j2result7x == -4) h_mom7xcbar->Fill(jet2P7x.P());
+      if(j1result7x == -3) h_mom7xsbar->Fill(jet1P7x.P());
+      if(j2result7x == -3) h_mom7xsbar->Fill(jet2P7x.P());
+      if(j1result7x == -2) h_mom7xubar->Fill(jet1P7x.P());
+      if(j2result7x == -2) h_mom7xubar->Fill(jet2P7x.P());
+      if(j1result7x == -1) h_mom7xdbar->Fill(jet1P7x.P());
+      if(j2result7x == -1) h_mom7xdbar->Fill(jet2P7x.P());
 
       evt++;
 
@@ -188,11 +225,25 @@ int main()
 	}
     }
 
-  file1->Close();
-  file2->Close();
-  cout<<"Event files closed"<<endl;
+  cout<<"There are "<<bad_jet<<" inconsistent jets (p_7x > p_23 for deciding parton)"<<endl;
+  
+  file->Close();
+  cout<<"Event file closed"<<endl;
 
-  //  h_flv7x->Write();
+  h_mom7x23->Write();
+  h_mom7x23_non0->Write();
+  h_mom7xb->Write();
+  h_mom7xc->Write();
+  h_mom7xs->Write();
+  h_mom7xu->Write();
+  h_mom7xd->Write();
+  h_mom7x0->Write();
+  h_mom7xbbar->Write();
+  h_mom7xcbar->Write();
+  h_mom7xsbar->Write();
+  h_mom7xubar->Write();
+  h_mom7xdbar->Write();
+  //
   histFile->Close();
   cout<<"Histograms written to file and file closed"<<endl;
   
