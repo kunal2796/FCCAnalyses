@@ -30,93 +30,51 @@ class analysis():
     def run(self):
         df2 = (self.df
 
-               .Alias("Particle0", "Particle#0.index")
-               .Alias("Particle1", "Particle#1.index")
-               .Alias("Jet3", "Jet#3.index") #alias for dealing with # in python
-
-               #selecting only final particles (status=1)
-               .Define("MC_final", "MCParticle::sel_genStatus(1)(Particle)")
-
-               .Define("MC_px",  "MCParticle::get_px(Particle)")
-               .Define("MC_py",  "MCParticle::get_py(Particle)")
-               .Define("MC_pz",  "MCParticle::get_pz(Particle)")
-               .Define("MC_p",  "MCParticle::get_p(Particle)")
-               .Define("MC_e",  "MCParticle::get_e(Particle)")
-               .Define("MC_theta",  "MCParticle::get_theta(Particle)")
-               .Define("MC_pdg", "MCParticle::get_pdg(Particle)")
-               .Define("MC_status", "MCParticle::get_genStatus(Particle)")
-
-               #momenta etc of final particles
-               .Define("MC_px_f",  "MCParticle::get_px(MC_final)")
-               .Define("MC_py_f",  "MCParticle::get_py(MC_final)")
-               .Define("MC_pz_f",  "MCParticle::get_pz(MC_final)")
-               .Define("MC_e_f",  "MCParticle::get_e(MC_final)")
-               .Define("MC_theta_f",  "MCParticle::get_theta(MC_final)")
-               .Define("MC_pdg_f", "MCParticle::get_pdg(MC_final)")
-
-               #get Ks->pi+-
-               .Define("K0spipi_indices", "MCParticle::get_indices_ExclusiveDecay(310, {211, -211}, true, true) (Particle, Particle1)")
-               .Define("pi0gammagamma_indices", "MCParticle::get_indices_ExclusiveDecay( 111, {22, 22}, true, true) ( Particle, Particle1)" )
-
-               #get parent indices
-               #.Define("MC_parent", "MCParticle::get_parentid(Particle0, Particle, Particle0)")
                
-               #KT ALGORITHM
-               #build psedo-jets with the MC final particles (status = 0)
-               .Define("pseudo_jets",        "JetClusteringUtils::set_pseudoJets(MC_px_f, MC_py_f, MC_pz_f, MC_e_f)")
+               #select partons (for now status 23; use *_range for 71-79)
+               .Define("q_gm", "MCParticle::sel_genStatus(23)(Particle)")
+               #get scaled momenta for partons
+               .Define("q_px", "MCParticle::get_scaled_px(q_gm)")
+               .Define("q_py", "MCParticle::get_scaled_py(q_gm)")
+               .Define("q_pz", "MCParticle::get_scaled_pz(q_gm)")
+               .Define("q_e",  "MCParticle::get_scaled_e(q_gm)")
+               #get pdg of partons to use for ghost matching
+               .Define("q_pdg",  "MCParticle::get_pdg(q_gm)")
+               
+               #reco particles
+               .Define("RP_px",  "ReconstructedParticle::get_px(ReconstructedParticles)")
+               .Define("RP_py",  "ReconstructedParticle::get_py(ReconstructedParticles)")
+               .Define("RP_pz",  "ReconstructedParticle::get_pz(ReconstructedParticles)")
+               .Define("RP_e",  "ReconstructedParticle::get_e(ReconstructedParticles)")
 
-               #run jet clustering with all MC particles. kt_algorithm, R=0.5, exclusive clustering, exactly 2 jets, E-scheme
-               .Define("FCCAnalysesJets_kt", "JetClustering::clustering_kt(0.5, 2, 2, 1, 0)(pseudo_jets)")
-
-               #get the jets out of the structure
-               .Define("jets_kt",            "JetClusteringUtils::get_pseudoJets(FCCAnalysesJets_kt)")
-
-               #get the jet constituents out of the structure
-               .Define("jetconstituents_kt", "JetClusteringUtils::get_constituents(FCCAnalysesJets_kt)")
-
-               #get some jet variables
-               .Define("jets_kt_e",          "JetClusteringUtils::get_e(jets_kt)")
-               .Define("jets_kt_px",         "JetClusteringUtils::get_px(jets_kt)")
-               .Define("jets_kt_py",         "JetClusteringUtils::get_py(jets_kt)")
-               .Define("jets_kt_pz",         "JetClusteringUtils::get_pz(jets_kt)")
-               .Define("jets_kt_flavour", "JetTaggingUtils::get_flavour(jets_kt, Particle)")
-
-
-               #EE-GENKT ALGORITHM
-               #run jet clustering with all reconstructed particles. ee_genkt_algorithm, R=0.5, inclusive clustering, E-scheme 
-               .Define("FCCAnalysesJets_ee_genkt","JetClustering::clustering_ee_genkt(0.5, 0, 0, 1, 0, 1)(pseudo_jets)")
-
-               #get the jets out of the struct
-               .Define("jets_ee_genkt",           "JetClusteringUtils::get_pseudoJets(FCCAnalysesJets_ee_genkt)")
-
-               #get the jets constituents out of the struct
-               .Define("jetconstituents_ee_genkt","JetClusteringUtils::get_constituents(FCCAnalysesJets_ee_genkt)")
-
-               #get some variables
-               .Define("jets_ee_genkt_e",         "JetClusteringUtils::get_e(jets_ee_genkt)")
-               .Define("jets_ee_genkt_px",        "JetClusteringUtils::get_px(jets_ee_genkt)")
-               .Define("jets_ee_genkt_py",        "JetClusteringUtils::get_py(jets_ee_genkt)")
-               .Define("jets_ee_genkt_pz",        "JetClusteringUtils::get_pz(jets_ee_genkt)")
-               .Define("jets_ee_genkt_flavour",   "JetTaggingUtils::get_flavour(jets_ee_genkt, Particle)")
-
-
+               #make pdg vector to assign flavour via ghost matching
+               .Define("pdg_gm", "JetClusteringUtils::get_gmPDG(q_pdg, RP_px, q_px)")
+               
+               
                #EE-KT ALGORITHM
-               #run jet clustering with all MC particles. ee_kt_algorithm, exclusive clustering, exactly 2 jets, E-scheme
-               .Define("FCCAnalysesJets_ee_kt", "JetClustering::clustering_ee_kt(2, 2, 1, 0)(pseudo_jets)")
+               #build psedo-jets with the Reconstructed particles
+               .Define("pseudo_jets", "JetClusteringUtils::set_pseudoJets(RP_px, RP_py, RP_pz, RP_e)")
+               #add ghosts to psedo-jets
+               .Define("pseudo_jets_gm", "JetClusteringUtils::addMore_pseudoJets(pseudo_jets, q_px, q_py, q_pz, q_e)")
+
+               #run jet clustering with all reco particles. ee_kt_algorithm, exclusive clustering, exactly 2 jets, E-scheme
+               .Define("FCCAnalysesJets_ee_kt", "JetClustering::clustering_ee_kt(2, 2, 1, 0)(pseudo_jets_gm)")
 
                #get the jets out of the structure
-               .Define("jets_ee_kt",            "JetClusteringUtils::get_pseudoJets(FCCAnalysesJets_ee_kt)")
+               .Define("jets_ee_kt", "JetClusteringUtils::get_pseudoJets(FCCAnalysesJets_ee_kt)")
 
                #get the jet constituents out of the structure
                .Define("jetconstituents_ee_kt", "JetClusteringUtils::get_constituents(FCCAnalysesJets_ee_kt)")
 
                #get some jet variables
-               .Define("jets_ee_kt_e",          "JetClusteringUtils::get_e(jets_ee_kt)")
-               .Define("jets_ee_kt_px",         "JetClusteringUtils::get_px(jets_ee_kt)")
-               .Define("jets_ee_kt_py",         "JetClusteringUtils::get_py(jets_ee_kt)")
-               .Define("jets_ee_kt_pz",         "JetClusteringUtils::get_pz(jets_ee_kt)")
-               .Define("jets_ee_kt_flavour",    "JetTaggingUtils::get_flavour(jets_ee_kt, Particle)")
+               .Define("jets_ee_kt_e",  "JetClusteringUtils::get_e(jets_ee_kt)")
+               .Define("jets_ee_kt_px", "JetClusteringUtils::get_px(jets_ee_kt)")
+               .Define("jets_ee_kt_py", "JetClusteringUtils::get_py(jets_ee_kt)")
+               .Define("jets_ee_kt_pz", "JetClusteringUtils::get_pz(jets_ee_kt)")
 
+               #get jet flavour
+               .Define("jets_ee_kt_flavour", "JetTaggingUtils::get_flavour_gm(jets_ee_kt, jetconstituents_ee_kt, pdg_gm)")
+               
         )
 
         
@@ -125,38 +83,12 @@ class analysis():
         # select branches for output file
         branchList = ROOT.vector('string')()
         for branchName in [
-                "MC_px",
-                "MC_py",
-                "MC_pz",
-                "MC_p",
-                "MC_e",
-                "MC_theta",
-                "MC_pdg",
-                "MC_status",
+                "RP_px",
+                "RP_py",
+                "RP_pz",
+                "RP_e",
 
-                "MC_px_f",
-                "MC_py_f",
-                "MC_pz_f",
-                "MC_e_f",
-                "MC_theta_f",
-                "MC_pdg_f",
-
-                "K0spipi_indices",
-                "pi0gammagamma_indices",
-
-                "jets_kt_e",
-                "jets_kt_px",
-                "jets_kt_py",
-                "jets_kt_pz",
-                "jets_kt_flavour",
-                "jetconstituents_kt",
-                
-                "jets_ee_genkt_e",
-                "jets_ee_genkt_px",
-                "jets_ee_genkt_py",
-                "jets_ee_genkt_pz",
-                "jets_ee_genkt_flavour",
-                "jetconstituents_ee_genkt",
+                "pdg_gm",
                 
                 "jets_ee_kt_e",
                 "jets_ee_kt_px",
