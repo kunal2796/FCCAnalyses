@@ -43,10 +43,10 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_qqbar(ROOT::VecOps::RVec<fa
   for (size_t i = 0; i < MCin.size(); ++i) {
     auto & parton = MCin[i];
     //Select partons only (for pythia 71-79):
-    //if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
+    if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
     //Select outgoing partons from the hardest process - use ONLY(?) for Zqq events
     //(For Zqq, ideally, don't even need anything else, just identify the partons)
-    if (parton.generatorStatus!=23) continue;
+    //if (parton.generatorStatus!=23) continue;
     if (parton.PDG > 5) continue;
     ROOT::Math::PxPyPzMVector lv(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
 
@@ -149,6 +149,41 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm7x_auto(ROOT::VecOps::RVe
 
     for (int ele : inJC.at(i)) {
       if (pdg_gm.at(ele) == 0) continue;
+      if (abs(pdg_gm.at(ele)) > abs(result[i])) result[i] = pdg_gm.at(ele);
+    }
+  }
+  return result;
+}
+
+ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_pcut(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, float p_cut) {
+
+  // push back zeros for all the particles other except for ghosts
+  ROOT::VecOps::RVec<float> pdg_gm(PJin.size(),0);
+  TLorentzVector zero(0,0,0,0);
+  ROOT::VecOps::RVec<TLorentzVector> p4_gm(PJin.size(),zero);
+  // push back the MC pdg ID for all the ghosts
+  for (size_t j = 0; j < MCin.size(); ++j) {
+    auto & parton = MCin[j];
+    // CAUTION: use the SAME selection here as in addGhosts_pseudoJets
+    //if (parton.generatorStatus!=23) continue;
+    if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
+    if (parton.PDG > 5) continue;                     // only partons
+    pdg_gm.push_back(parton.PDG);
+    //
+    TLorentzVector p4;
+    p4.SetXYZM(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
+    p4_gm.push_back(p4);
+  }
+  
+  ROOT::VecOps::RVec<int> result(in.size(),0);
+  if(in.size() == 0) return result;
+
+  for (size_t i = 0; i < in.size(); i++) {
+    auto & p = in[i];
+
+    for (int ele : inJC.at(i)) {
+      if (pdg_gm.at(ele) == 0) continue;
+      if (p4_gm.at(ele).P() < p_cut) continue; // apply momentum cut
       if (abs(pdg_gm.at(ele)) > abs(result[i])) result[i] = pdg_gm.at(ele);
     }
   }
