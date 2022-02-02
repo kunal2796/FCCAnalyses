@@ -43,10 +43,10 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_qqbar(ROOT::VecOps::RVec<fa
   for (size_t i = 0; i < MCin.size(); ++i) {
     auto & parton = MCin[i];
     //Select partons only (for pythia 71-79):
-    //if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
+    if (parton.generatorStatus>80 || parton.generatorStatus<70) continue;
     //Select outgoing partons from the hardest process - use ONLY(?) for Zqq events
     //(For Zqq, ideally, don't even need anything else, just identify the partons)
-    if (parton.generatorStatus!=23) continue;
+    //if (parton.generatorStatus!=23) continue;
     if (parton.PDG > 5) continue;
     ROOT::Math::PxPyPzMVector lv(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
 
