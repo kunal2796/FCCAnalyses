@@ -26,15 +26,20 @@ int main()
 {
   gInterpreter->GenerateDictionary("vector<vector<int> >","vector");
 
-  TFile *file = TFile::Open("p8_ee_Zbb_ecm91_gm7x23_auto.root");
+  TFile *file = TFile::Open("p8_ee_Zuds_ecm91_gm7x23.root");
   TTreeReader tree("events", file);
   int nEvents = tree.GetEntries();
   cout<<"Number of Events: "<<nEvents<<endl;
   
   TString histfname;
-  histfname = "histZbb_partonMom.root";
+  histfname = "histZuds_partonMom.root";
   TFile *histFile = new TFile(histfname,"RECREATE");
-    
+
+  //
+  TH1F* h_jetFlavour7x    = new TH1F("h_jetFlavour7x","Jet Flavour - 71-79",   11,-5,6);
+  TH1F* h_jetFlavour23    = new TH1F("h_jetFlavour23","Jet Flavour - 23",      11,-5,6);
+  TH1F* h_jetFlavour_cone = new TH1F("h_jetFlavour_cone","Jet Flavour - cone", 11,-5,6);
+
   // hists for the particle loop
   TH2F* h_mom7x23      = new TH2F("h_mom7x23",     "Flavour Assigning Parton's Momentum",100,0,50,100,0,50);
   TH2F* h_mom7x23_non0 = new TH2F("h_mom7x23_non0","Flavour Assigning Parton's Momentum",100,0,50,100,0,50);
@@ -78,6 +83,9 @@ int main()
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE23(tree,  "jets_ee_kt_e23");
   TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>>     jetFlavour23(tree,"jets_ee_kt_flavour23");
 
+  // Jet Flavour (cone definition)
+  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>> jetFlavour_cone(tree,"jets_ee_kt_flavour_cone");
+  
   // event counter
   unsigned int evt = 0;
 
@@ -123,6 +131,14 @@ int main()
 		  p4_gm23.push_back(p4);
 		}
 	    }
+	}
+
+      // jet loop
+      for(unsigned int ij=0; ij<jetE23->size(); ij++)
+	{
+	  h_jetFlavour7x->Fill(jetFlavour7x->at(ij));
+	  h_jetFlavour23->Fill(jetFlavour23->at(ij));
+	  h_jetFlavour_cone->Fill(jetFlavour_cone->at(ij));
 	}
       
       // jet constituents
@@ -230,6 +246,10 @@ int main()
   file->Close();
   cout<<"Event file closed"<<endl;
 
+  h_jetFlavour7x->Write();
+  h_jetFlavour23->Write();
+  h_jetFlavour_cone->Write();
+  //
   h_mom7x23->Write();
   h_mom7x23_non0->Write();
   h_mom7xb->Write();

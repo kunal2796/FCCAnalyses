@@ -27,13 +27,10 @@ int main()
 {
   gInterpreter->GenerateDictionary("vector<vector<int> >","vector");
 
-  TFile *file1 = TFile::Open("p8_ee_Zbb_ecm91_gm7x_auto.root");
-  TTreeReader tree1("events", file1);
-  int nEvents = tree1.GetEntries();
+  TFile *file = TFile::Open("p8_ee_Zbb_ecm91_gm7x23_auto.root");
+  TTreeReader tree("events", file);
+  int nEvents = tree.GetEntries();
   cout<<"Number of Events: "<<nEvents<<endl;
-  //
-  TFile *file2 = TFile::Open("p8_ee_Zbb_ecm91_gm_auto.root");
-  TTreeReader tree2("events", file2);
   
   TString histfname;
   histfname = "histZbb_gm_chrgImb.root";
@@ -153,26 +150,26 @@ int main()
   //
   
   // Jets (Status 71-79)     
-  TTreeReaderValue<vector<vector<int>>> jetConst7x(tree1, "jetconstituents_ee_kt");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPx7x(tree1, "jets_ee_kt_px");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPy7x(tree1, "jets_ee_kt_py");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPz7x(tree1, "jets_ee_kt_pz");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE7x(tree1,  "jets_ee_kt_e");
-  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>>     jetFlavour7x(tree1,"jets_ee_kt_flavour");
+  TTreeReaderValue<vector<vector<int>>> jetConst7x(tree, "jetconstituents_ee_kt7x");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPx7x(tree, "jets_ee_kt_px7x");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPy7x(tree, "jets_ee_kt_py7x");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPz7x(tree, "jets_ee_kt_pz7x");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE7x(tree,  "jets_ee_kt_e7x");
+  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>>     jetFlavour7x(tree,"jets_ee_kt_flavour7x");
 
   // Jets (Status 23)     
-  TTreeReaderValue<vector<vector<int>>> jetConst23(tree2, "jetconstituents_ee_kt");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPx23(tree2, "jets_ee_kt_px");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPy23(tree2, "jets_ee_kt_py");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPz23(tree2, "jets_ee_kt_pz");
-  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE23(tree2,  "jets_ee_kt_e");
-  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>>     jetFlavour23(tree2,"jets_ee_kt_flavour");
+  TTreeReaderValue<vector<vector<int>>> jetConst23(tree, "jetconstituents_ee_kt23");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPx23(tree, "jets_ee_kt_px23");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPy23(tree, "jets_ee_kt_py23");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetPz23(tree, "jets_ee_kt_pz23");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE23(tree,  "jets_ee_kt_e23");
+  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>>     jetFlavour23(tree,"jets_ee_kt_flavour23");
 
   // event counter
   unsigned int evt = 0;
 
   // event loop
-  while(tree1.Next() && tree2.Next())
+  while(tree.Next())
     {
       // jet loop
       if(jetE7x->size() != jetE23->size()) cout<<"Something's wrong with event no. "<<evt+1<<endl;
@@ -443,9 +440,8 @@ int main()
 	}
     }
 
-  file1->Close();
-  file2->Close();
-  cout<<"Event files closed"<<endl;
+  file->Close();
+  cout<<"Event file closed"<<endl;
 
   h_p_q->Write();
   h_p_qbar->Write();
