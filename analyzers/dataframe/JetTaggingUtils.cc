@@ -155,7 +155,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm7x_auto(ROOT::VecOps::RVe
   return result;
 }
 
-ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_pcut(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, float p_cut){
+ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_pcut(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, float p_cut) {
 
   // push back zeros for all the particles other except for ghosts
   ROOT::VecOps::RVec<float> pdg_gm(PJin.size(),0);
