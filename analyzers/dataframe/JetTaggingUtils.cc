@@ -240,7 +240,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastj
   // initiate with 0 because unassigned jets are given flvour=0 for now
   std::vector<int> partonFlv(in.size(),0);
   std::vector<int> hadronFlv(in.size(),0); // currently only absolute flavour
-  std::vecotr<std::vector<int>> result;
+  std::vector<std::vector<int>> result;
   if(in.size() == 0) return result;
 
   for (size_t i = 0; i < in.size(); i++) {
@@ -251,25 +251,28 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastj
       if (p4_gm.at(ele).P() < p_cut) continue; // apply momentum cut (p_cut=0 for no cut)
 
       // hadron flavour
-      if (abs(int(pdg_gm.at(ele)/1000)%10) == 5 || abs(int(pdg_gm.at(ele)/100)%10) == 5) hadronFlav[i] = 5;
-      else if (abs(int(pdg_gm.at(ele)/1000)%10) == 4 || abs(int(pdg_gm.at(ele)/100)%10) == 4) hadronFlav[i] = 4;
-      else if (abs(int(pdg_gm.at(ele)/1000)%10) == 3 || abs(int(pdg_gm.at(ele)/100)%10) == 3 || abs(pdg_gm.at(ele)) == 130) hadronFlav[i] = 3;
+      if (abs(int(pdg_gm.at(ele)/1000)%10) == 5 || abs(int(pdg_gm.at(ele)/100)%10) == 5) hadronFlv[i] = 5;
+      else if (abs(int(pdg_gm.at(ele)/1000)%10) == 4 || abs(int(pdg_gm.at(ele)/100)%10) == 4) hadronFlv[i] = 4;
+      else if (abs(int(pdg_gm.at(ele)/1000)%10) == 3 || abs(int(pdg_gm.at(ele)/100)%10) == 3 || abs(pdg_gm.at(ele)) == 130) hadronFlv[i] = 3;
       // can be updated to only 1 flavour vector as an output instead of separate hadron and parton flavour vectors
       // in that case, if no b- or c-hadron is found, start searching for partons
 
       // parton flavour
       float parton_mom = 0;
       if (abs(pdg_gm.at(ele)) == 5 && p4_gm.at(ele).P() > parton_mom) {
-	partonFlav[i] = pdg_gm.at(ele);
+	partonFlv[i] = pdg_gm.at(ele);
 	parton_mom = p4_gm.at(ele).P(); }
       else if (abs(pdg_gm.at(ele)) == 4 && p4_gm.at(ele).P() > parton_mom) {
-	partonFlav[i] = pdg_gm.at(ele);
+	partonFlv[i] = pdg_gm.at(ele);
 	parton_mom = p4_gm.at(ele).P(); }
       else if (p4_gm.at(ele).P() > parton_mom) {
-	partonFlav[i] = pdg_gm.at(ele);
+	partonFlv[i] = pdg_gm.at(ele);
 	parton_mom = p4_gm.at(ele).P(); }
     }
   }
+  //
+  result.push_back(hadronFlv);
+  result.push_back(partonFlv);
   return result;
 }
 
