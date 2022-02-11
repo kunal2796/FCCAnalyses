@@ -39,8 +39,8 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::addMore_pseudoJets(std::vect
   return pseudoJ;
 }
 
-std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
-									 ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin) {
+std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets_old(std::vector<fastjet::PseudoJet> pseudoJ,
+									     ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin) {
   unsigned index = pseudoJ.size();
   for (size_t i = 0; i < MCin.size(); ++i) {
     auto & parton = MCin[i];
@@ -56,6 +56,48 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets(std::ve
     pseudoJ.emplace_back(parton.momentum.x * 1.e-18, parton.momentum.y * 1.e-18, parton.momentum.z * 1.e-18, tlv.E() * 1.e-18);
     pseudoJ.back().set_user_index(index);
     ++index;
+  }
+  return pseudoJ;
+}
+
+std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
+									 ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin,
+									 int statCode) {
+  unsigned index = pseudoJ.size();
+  for (size_t i = 0; i < MCin.size(); ++i) {
+    auto & parton = MCin[i];
+
+    TLorentzVector tlv;
+    tlv.SetXYZM(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
+
+    // statCode==0 : select outgoing particles from hardest reaction
+    if (statCode==0) {
+      if (parton.generatorStatus!=23)
+	{
+	  //if (parton.PDG > 5) continue;                     // only partons
+	  pseudoJ.emplace_back(parton.momentum.x * 1.e-18, parton.momentum.y * 1.e-18, parton.momentum.z * 1.e-18, tlv.E() * 1.e-18);
+	  pseudoJ.back().set_user_index(index);
+	  ++index;
+	}
+    }
+    // statCode==1 : select partons just before hadronisation
+    else if (statCode==1) {
+      if (parton.generatorStatus<80 && parton.generatorStatus>70)
+	{
+	  //if (parton.PDG > 5) continue;                     // only partons
+	  pseudoJ.emplace_back(parton.momentum.x * 1.e-18, parton.momentum.y * 1.e-18, parton.momentum.z * 1.e-18, tlv.E() * 1.e-18);
+	  pseudoJ.back().set_user_index(index);
+	  ++index;
+	}
+    }
+    
+    // select primary hadrons after hadronisation
+    if (parton.generatorStatus>80 && parton.generatorStatus<90)
+      {
+	pseudoJ.emplace_back(parton.momentum.x * 1.e-18, parton.momentum.y * 1.e-18, parton.momentum.z * 1.e-18, tlv.E() * 1.e-18);
+	pseudoJ.back().set_user_index(index);
+	++index;
+      }
   }
   return pseudoJ;
 }

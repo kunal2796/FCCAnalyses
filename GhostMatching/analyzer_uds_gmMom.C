@@ -91,6 +91,7 @@ int main()
 
   // jet counter
   unsigned int bad_jet = 0;
+  unsigned int s_jets = 0, u_jets = 0, d_jets = 0;
   
   // event loop
   while(tree.Next())
@@ -129,6 +130,10 @@ int main()
 		{
 		  pdg_gm23.push_back(MCpdg->at(ip));
 		  p4_gm23.push_back(p4);
+		  //
+		  if(abs(MCpdg->at(ip)) == 3) s_jets++;
+		  if(abs(MCpdg->at(ip)) == 2) u_jets++;
+		  if(abs(MCpdg->at(ip)) == 1) d_jets++;
 		}
 	    }
 	}
@@ -242,6 +247,7 @@ int main()
     }
 
   cout<<"There are "<<bad_jet<<" inconsistent jets (p_7x > p_23 for deciding parton)"<<endl;
+  cout<<"There are "<<s_jets<<" s-jets, "<<u_jets<<" u-jets, & "<<d_jets<<" d-jets in "<<2*nEvents<<" jets"<<endl;
   
   file->Close();
   cout<<"Event file closed"<<endl;
