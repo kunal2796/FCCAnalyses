@@ -240,7 +240,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastj
   // initiate with 0 because unassigned jets are given flvour=0 for now
   std::vector<int> partonFlv(in.size(),0);
   std::vector<int> hadronFlv(in.size(),0); // currently only absolute flavour
-  std::vecotr<std::vector<int>> result;
+  std::vector<std::vector<int>> result;
   if(in.size() == 0) return result;
 
   for (size_t i = 0; i < in.size(); i++) {
