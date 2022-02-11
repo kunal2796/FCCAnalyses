@@ -1,4 +1,3 @@
-.
 #include "JetClusteringUtils.h"
 using namespace JetClusteringUtils;
 
@@ -71,24 +70,18 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets(std::ve
     tlv.SetXYZM(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
 
     // statCode==0 : select outgoing particles from hardest reaction
-    if (statCode==0) {
-      if (parton.generatorStatus==23)
-	{
-	  //if (parton.PDG > 5) continue;                     // only partons
-	  pseudoJ.emplace_back(parton.momentum.x * 1.e-18, parton.momentum.y * 1.e-18, parton.momentum.z * 1.e-18, tlv.E() * 1.e-18);
-	  pseudoJ.back().set_user_index(index);
-	  ++index;
-	}
+    if (statCode==0 && parton.generatorStatus==23) {
+      //if (parton.PDG > 5) continue;                     // only partons
+      pseudoJ.emplace_back(parton.momentum.x * 1.e-18, parton.momentum.y * 1.e-18, parton.momentum.z * 1.e-18, tlv.E() * 1.e-18);
+      pseudoJ.back().set_user_index(index);
+      ++index;
     }
     // statCode==1 : select partons just before hadronisation
-    else if (statCode==1) {
-      if (parton.generatorStatus<80 && parton.generatorStatus>70)
-	{
-	  //if (parton.PDG > 5) continue;                     // only partons
-	  pseudoJ.emplace_back(parton.momentum.x * 1.e-18, parton.momentum.y * 1.e-18, parton.momentum.z * 1.e-18, tlv.E() * 1.e-18);
-	  pseudoJ.back().set_user_index(index);
-	  ++index;
-	}
+    else if (statCode==1 && parton.generatorStatus<80 && parton.generatorStatus>70) {
+      //if (parton.PDG > 5) continue;                     // only partons
+      pseudoJ.emplace_back(parton.momentum.x * 1.e-18, parton.momentum.y * 1.e-18, parton.momentum.z * 1.e-18, tlv.E() * 1.e-18);
+      pseudoJ.back().set_user_index(index);
+      ++index;
     }
     
     // select primary hadrons after hadronisation
