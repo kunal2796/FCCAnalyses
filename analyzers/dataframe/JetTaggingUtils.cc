@@ -69,7 +69,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_qqbar(ROOT::VecOps::RVec<fa
   return result;
 }
 
-ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<float> pdg_gm){
+ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_manual(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<float> pdg_gm){
   // can later change the argument from the jet vectors to the number of jets
   // (get_njets)
 
@@ -93,7 +93,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_auto(ROOT::VecOps::RVec<
   // get the pdg_gm vector here (instead of in a separate fn)
   // if pseudoJet doesn't work, replace it with (not as general) reco particles
 
-  // push back zeros for all the particles other except for ghosts
+  // push back zeros for all the particles except for ghosts
   ROOT::VecOps::RVec<float> pdg_gm(PJin.size(),0);
   // push back the MC pdg ID for all the ghosts
   for (size_t j = 0; j < MCin.size(); ++j) {
@@ -129,7 +129,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm7x_auto(ROOT::VecOps::RVe
   // get the pdg_gm vector here (instead of in a separate fn)
   // if pseudoJet doesn't work, replace it with (not as general) reco particles
 
-  // push back zeros for all the particles other except for ghosts
+  // push back zeros for all the particles except for ghosts
   ROOT::VecOps::RVec<float> pdg_gm(PJin.size(),0);
   // push back the MC pdg ID for all the ghosts
   for (size_t j = 0; j < MCin.size(); ++j) {
@@ -157,7 +157,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm7x_auto(ROOT::VecOps::RVe
 
 ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_pcut(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, float p_cut) {
 
-  // push back zeros for all the particles other except for ghosts
+  // push back zeros for all the particles except for ghosts
   ROOT::VecOps::RVec<float> pdg_gm(PJin.size(),0);
   TLorentzVector zero(0,0,0,0);
   ROOT::VecOps::RVec<TLorentzVector> p4_gm(PJin.size(),zero);
@@ -185,6 +185,89 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_pcut(ROOT::VecOps::RVec<
       if (pdg_gm.at(ele) == 0) continue;
       if (p4_gm.at(ele).P() < p_cut) continue; // apply momentum cut
       if (abs(pdg_gm.at(ele)) > abs(result[i])) result[i] = pdg_gm.at(ele);
+    }
+  }
+  return result;
+}
+
+ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, int statCode, float p_cut) {
+
+  // CAUTION: use the SAME statCode here as in addGhosts_pseudoJets
+    
+  // push back zeros (later update to NaN) for all the particles except for ghosts
+  ROOT::VecOps::RVec<float> pdg_gm(PJin.size(),0);
+  TLorentzVector zero(0,0,0,0);
+  ROOT::VecOps::RVec<TLorentzVector> p4_gm(PJin.size(),zero);
+  // push back the MC pdg ID for all the ghosts
+  for (size_t j = 0; j < MCin.size(); ++j) {
+    auto & parton = MCin[j];
+
+    TLorentzVector p4;
+    
+    // statCode==0 : select outgoing particles from hardest reaction
+    if (statCode==0) {
+      if (parton.generatorStatus!=23)
+	{
+	  //if (parton.PDG > 5) continue;                     // only partons
+	  pdg_gm.push_back(parton.PDG);
+	  //
+	  p4.SetXYZM(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
+	  p4_gm.push_back(p4);
+	}
+    }
+    // statCode==1 : select partons just before hadronisation
+    else if (statCode==1) {
+      if (parton.generatorStatus<80 && parton.generatorStatus>70)
+	{
+	  //if (parton.PDG > 5) continue;                     // only partons
+	  pdg_gm.push_back(parton.PDG);
+	  //
+	  p4.SetXYZM(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
+	  p4_gm.push_back(p4);
+	}
+    }
+    
+    // select primary hadrons after hadronisation
+    if (parton.generatorStatus>80 && parton.generatorStatus<90)
+      {
+	pdg_gm.push_back(parton.PDG);
+	//
+	p4.SetXYZM(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
+	p4_gm.push_back(p4);
+      }
+  }
+
+  // initiate with 0 because unassigned jets are given flvour=0 for now
+  std::vector<int> partonFlv(in.size(),0);
+  std::vector<int> hadronFlv(in.size(),0); // currently only absolute flavour
+  std::vecotr<std::vector<int>> result;
+  if(in.size() == 0) return result;
+
+  for (size_t i = 0; i < in.size(); i++) {
+    auto & p = in[i];
+
+    for (int ele : inJC.at(i)) {
+      if (pdg_gm.at(ele) == 0) continue;
+      if (p4_gm.at(ele).P() < p_cut) continue; // apply momentum cut (p_cut=0 for no cut)
+
+      // hadron flavour
+      if (abs(int(pdg_gm.at(ele)/1000)%10) == 5 || abs(int(pdg_gm.at(ele)/100)%10) == 5) hadronFlav[i] = 5;
+      else if (abs(int(pdg_gm.at(ele)/1000)%10) == 4 || abs(int(pdg_gm.at(ele)/100)%10) == 4) hadronFlav[i] = 4;
+      else if (abs(int(pdg_gm.at(ele)/1000)%10) == 3 || abs(int(pdg_gm.at(ele)/100)%10) == 3 || abs(pdg_gm.at(ele)) == 130) hadronFlav[i] = 3;
+      // can be updated to only 1 flavour vector as an output instead of separate hadron and parton flavour vectors
+      // in that case, if no b- or c-hadron is found, start searching for partons
+
+      // parton flavour
+      float parton_mom = 0;
+      if (abs(pdg_gm.at(ele)) == 5 && p4_gm.at(ele).P() > parton_mom) {
+	partonFlav[i] = pdg_gm.at(ele);
+	parton_mom = p4_gm.at(ele).P(); }
+      else if (abs(pdg_gm.at(ele)) == 4 && p4_gm.at(ele).P() > parton_mom) {
+	partonFlav[i] = pdg_gm.at(ele);
+	parton_mom = p4_gm.at(ele).P(); }
+      else if (p4_gm.at(ele).P() > parton_mom) {
+	partonFlav[i] = pdg_gm.at(ele);
+	parton_mom = p4_gm.at(ele).P(); }
     }
   }
   return result;

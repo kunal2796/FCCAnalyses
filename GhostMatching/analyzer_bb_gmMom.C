@@ -83,6 +83,9 @@ int main()
 
   // jet counter
   unsigned int bad_jet = 0;
+
+  // print event counter
+  unsigned int jet2GeV = 0;
   
   // event loop
   while(tree.Next())
@@ -216,6 +219,31 @@ int main()
       if(j1result7x == -1) h_mom7xdbar->Fill(jet1P7x.P());
       if(j2result7x == -1) h_mom7xdbar->Fill(jet2P7x.P());
 
+      // print all ghosts' momenta for an event with |p|_q < 2GeV
+      if(jet1P7x.P() < 2 && jet2GeV<5 && j1result7x != 0)
+	{
+	  for(int ele : jet1Const7x) 
+	    {
+	      if(pdg_gm7x.at(ele) == 0) continue;
+	      cout<<p4_gm7x.at(ele).P()<<", ";
+	    }
+	  cout<<endl;
+	  
+	  jet2GeV++;
+	}
+      //
+      if(jet2P7x.P() < 2 && jet2GeV<5 && j2result7x != 0)
+	{
+	  for(int ele : jet2Const7x) 
+	    {
+	      if(pdg_gm7x.at(ele) == 0) continue;
+	      cout<<p4_gm7x.at(ele).P()<<", ";
+	    }
+	  cout<<endl;
+	  	  
+	  jet2GeV++;
+	}      
+      
       evt++;
 
       if(evt%100000==0)
