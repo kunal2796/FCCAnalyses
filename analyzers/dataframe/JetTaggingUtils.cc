@@ -190,7 +190,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_pcut(ROOT::VecOps::RVec<
   return result;
 }
 
-ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, int statCode, float p_cut) {
+std::vector<std::vector<int>> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, int statCode, float p_cut) {
 
   // CAUTION: use the SAME statCode here as in addGhosts_pseudoJets
     
