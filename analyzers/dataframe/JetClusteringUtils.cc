@@ -1,4 +1,4 @@
-
+.
 #include "JetClusteringUtils.h"
 using namespace JetClusteringUtils;
 
@@ -72,7 +72,7 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets(std::ve
 
     // statCode==0 : select outgoing particles from hardest reaction
     if (statCode==0) {
-      if (parton.generatorStatus!=23)
+      if (parton.generatorStatus==23)
 	{
 	  //if (parton.PDG > 5) continue;                     // only partons
 	  pseudoJ.emplace_back(parton.momentum.x * 1.e-18, parton.momentum.y * 1.e-18, parton.momentum.z * 1.e-18, tlv.E() * 1.e-18);
