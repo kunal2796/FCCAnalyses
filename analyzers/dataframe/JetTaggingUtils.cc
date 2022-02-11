@@ -205,26 +205,20 @@ std::vector<std::vector<int>> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec
     TLorentzVector p4;
     
     // statCode==0 : select outgoing particles from hardest reaction
-    if (statCode==0) {
-      if (parton.generatorStatus!=23)
-	{
-	  //if (parton.PDG > 5) continue;                     // only partons
-	  pdg_gm.push_back(parton.PDG);
-	  //
-	  p4.SetXYZM(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
-	  p4_gm.push_back(p4);
-	}
+    if (statCode==0 && parton.generatorStatus==23) {
+      //if (parton.PDG > 5) continue;                     // only partons
+      pdg_gm.push_back(parton.PDG);
+      //
+      p4.SetXYZM(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
+      p4_gm.push_back(p4);
     }
     // statCode==1 : select partons just before hadronisation
-    else if (statCode==1) {
-      if (parton.generatorStatus<80 && parton.generatorStatus>70)
-	{
-	  //if (parton.PDG > 5) continue;                     // only partons
-	  pdg_gm.push_back(parton.PDG);
-	  //
-	  p4.SetXYZM(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
-	  p4_gm.push_back(p4);
-	}
+    else if (statCode==1 && parton.generatorStatus<80 && parton.generatorStatus>70) {
+      //if (parton.PDG > 5) continue;                     // only partons
+      pdg_gm.push_back(parton.PDG);
+      //
+      p4.SetXYZM(parton.momentum.x, parton.momentum.y, parton.momentum.z, parton.mass);
+      p4_gm.push_back(p4);
     }
     
     // select primary hadrons after hadronisation
