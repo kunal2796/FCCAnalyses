@@ -34,7 +34,7 @@ namespace JetTaggingUtils{
   ROOT::VecOps::RVec<int> get_flavour_gm_pcut(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, float p_cut);
 
   //Get flavour association of jet via ghost matching with cut on |p|
-  ROOT::VecOps::RVec<int> get_flavour_gm(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, int statCode, float p_cut);
+  std::vector<std::vector<int>> get_flavour_gm(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, int statCode, float p_cut);
   // in: jets that need to be assigned a flavour
   // inJC: jet constituents after clustering (including ghosts)
   // MCin: MC particle collection
