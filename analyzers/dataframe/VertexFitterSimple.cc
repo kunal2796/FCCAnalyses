@@ -827,3 +827,203 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::IsPrimary_forTracks( ROOT::VecOps::
 
 
 
+///////////////////////////
+//** SV Finder (LCFI+) **//
+///////////////////////////
+
+ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+						  VertexingUtils::FCCAnalysesVertex PV,
+						  bool tight) {
+  // V0 rejection
+  // fn can be updated to reconstruct V0 and output its momentum, PID, etc instead
+
+  // take all non-primary tracks & assign "true" to pairs that form V0
+  // if(tight)  -> tight constraints
+  // if(!tight) -> loose constraints
+
+  int nTr = np_tracks.size();
+
+  ROOT::VecOps::RVec<bool> result(nTr, false);
+  // true -> forms a V0, false -> doesn't form a V0
+  if(nTracks<2) return result;
+  
+  edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
+  
+  ROOT::VecOps::RVec<edm4hep::TrackState> t_pair;
+  t_pair.push_back(np_tracks[0]);
+  t_pair.push_back(np_tracks[1]);
+  VertexingUtils::FCCAnalysesVertex V0;
+  //
+  for(unsigned int i=0; i<nTr-1; i++) {
+    if(i!=0) t_pair[0] = np_tracks[i];
+
+    for(unsigned int j=i+1; j<nTr; j++) {
+      if(j!=1) t_pair[1] = np_tracks[j];
+
+      V0 = VertexFitter_Tk(0, t_pair, false, 0, 0, 0, 0, 0, 0);
+
+      double m_pi = 0.13957; // pi+- mass [GeV]
+      double m_p  = 0.93827; // p+- mass
+      double m_e  = 0.00051; // e+- mass
+
+      // invariant masses for V0 candidates
+      double invM_Ks      = get_invM_pairs(V0, m_pi, m_pi);
+      double invM_Lambda1 = get_invM_pairs(V0, m_pi, m_p);
+      double invM_Lambda2 = get_invM_pairs(V0, m_p, m_pi);
+      double invM_Gamma   = get_invM_pairs(V0, m_e, m_e);
+
+      // V0 candidate distance from PV
+      edm4hep::Vector3f r_V0 = V0.vertex.position; // in mm
+      // does Vector3f class has similar functions as root vectors?
+      TVector3 r_V0_PV = (r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
+      double r = r_V0_PV.Mag(); // in mm
+
+      // angle b/n V0 candidate momentum & PV-V0 displacement vector
+      double p_r = get_PV2V0angle(V0, PV);
+
+      if(tight) {
+	// Ks -> pi + pi
+	if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
+	  result[i] = true;
+	  result[j] = true;
+	}
+
+	// Lambda0 -> pi + p or p + pi
+	else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
+	  result[i] = true;
+	  result[j] = true;
+	}
+	else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
+	  result[i] = true;
+	  result[j] = true;
+	}
+
+	// photon conversion
+	else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
+	  result[i] = true;
+	  result[j] = true;
+	}	
+      }
+
+      else {
+	// Ks
+	if(invM_Ks>0.488 && invM_Ks<0.508 && r>0.3 && p_r>0.999) {
+	  result[i] = true;
+	  result[j] = true;
+	}
+	
+	// Lambda0
+	else if(invM_Lambda1>1.106 && invM_Lambda1<1.126 && r>0.3 && p_r>0.999) {
+	  result[i] = true;
+	  result[j] = true;
+	}
+	else if(invM_Lambda2>1.106 && invM_Lambda2<1.126 && r>0.3 && p_r>0.999) {
+	  result[i] = true;
+	  result[j] = true;
+	}
+	
+	// photon conversion
+	else if(invM_Gamma<0.01 && r>9 && p_r>0.999) {
+	  result[i] = true;
+	  result[j] = true;
+	}	
+      }
+      
+    }
+  }
+
+  return result;
+}
+
+// invariant mass of a two track vertex
+double VertexFitterSimple::get_invM_pairs(VertexingUtils::FCCAnalysesVertex vertex,
+					  double m1,
+					  double m2) {
+  // CAUTION: m1 -> first track; m2 -> second track
+  
+  double result;
+  
+  ROOT::VecOps::RVec<TVector3> p_tracks = vertex.updated_track_momentum_at_vertex;
+
+  TLorentzVector p4_vtx;
+  double m[2] = {m1, m2};
+  int nTr = p_tracks.size();
+
+  for(unsigned int i=0; i<nTr; i++) {
+    TLorentzVector p4_tr;
+    p4_tr.SetXYZM(p_tracks[i].X(), p_tracks[i].Y(), p_tracks[i].Z(), m[i]);
+    p4_vtx += p4_tr;
+  }
+
+  result = p4_vtx.M();
+  return result;
+}
+
+// invariant mass of a vertex (assuming all tracks to be pions)
+double VertexFitterSimple::get_invM(VertexingUtils::FCCAnalysesVertex vertex) {
+
+  double result;
+  
+  ROOT::VecOps::RVec<TVector3> p_tracks = vertex.updated_track_momentum_at_vertex;
+
+  TLorentzVector p4_vtx;
+  double m = 0.13957; // pion mass
+
+  for(TVector3 p_tr : p_tracks) {
+    TLorentzVector p4_tr;
+    p4_tr.SetXYZM(p_tr.X(), p_tr.Y(), p_tr.Z(), m);
+    p4_vtx += p4_tr;
+  }
+
+  result = p4_vtx.M();
+  return result;
+}
+
+// cos(angle) b/n V0 candidate's (or any vtx) momentum & PV to V0 displacement vector
+double VertexFitterSimple::get_PV2V0angle(VertexingUtils::FCCAnalysesVertex V0,
+					  VertexingUtils::FCCAnalysesVertex PV) {
+  double result;
+
+  ROOT::VecOps::RVec<TVector3> p_tracks = V0.updated_track_momentum_at_vertex;
+
+  TVector3 p_vtx;
+  for(TVector3 p_tr : p_tracks) p_vtx += p_tr;
+
+  edm4hep::Vector3f r_V0 = V0.vertex.position; // in mm
+  edm4hep::Vector3f r_PV = PV.vertex.position; // in mm
+
+  TVector3 r_V0_PV = (r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
+  
+  double pDOTr = p_vtx.Dot(r_V0_PV);
+  double p_mag = p_vtx.Mag();
+  double r_mag = r_V0_PV.Mag();
+
+  result = pDOTr / (p_mag * r_mag);
+  return result;
+}
+
+// cos(angle) b/n track momentum sum & PV to vtx displacement vector
+double VertexFitterSimple::get_PV2vtx_angle(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+					    VertexingUtils::FCCAnalysesVertex vtx,
+					    VertexingUtils::FCCAnalysesVertex PV) {
+  double result;
+
+  TVector3 p_sum;
+  for(edm4hep::TrackState tr : tracks) {
+    TVectorD ipar = VertexingUtils::get_trackParam(tr);
+    TVector3 ip   = ParToP(ipar);
+    p_sum += ip;
+  }
+  
+  edm4hep::Vector3f r_vtx = vtx.vertex.position; // in mm
+  edm4hep::Vector3f r_PV  = PV.vertex.position;  // in mm
+
+  TVector3 r_vtx_PV = (r_vtx[0] - r_PV[0], r_vtx[1] - r_PV[1], r_vtx[2] - r_PV[2]);
+  
+  double pDOTr = p_sum.Dot(r_vtx_PV);
+  double p_mag = p_sum.Mag();
+  double r_mag = r_vtx_PV.Mag();
+
+  result = pDOTr / (p_mag * r_mag);
+  return result;
+}

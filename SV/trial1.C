@@ -1,7 +1,7 @@
 // LCFI+ (SV Finding - Clustering First)
 // 1. select all non-primary tracks in a jet
-// 2. find best possible pair of tracks (seed vertex) using vertex fitter
-// 3. remove V0s (or store them separately)
+// 2. remove V0s (or store them separately)
+// 3. find best possible pair of tracks (seed vertex) using vertex fitter
 // 4. keep adding the best possible track to the seed (non V0) until no track passes the constraints
 // 5. remove tracks forming this vertex from the set of non-primary tracks
 // 6. repeat 2, 3, 4 until no seed more seed vertices can be found
@@ -17,7 +17,8 @@
 // another to output a vector of psedo-vertices
 // yet another to get V0s (isV0 tells which tracks form a V0)
 
-ROOT::VecOps::RVec<VertexingUtils::FCCAnslysesVertex> VertexFitterSimple::get_SV(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+// change to vec of vec to separate SV from diff jets
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
 										 ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 										 VertexingUtils::FCCAnalysesVertex PV,
 										 ROOT::VecOps::RVec<bool> isInPrimary,
@@ -26,8 +27,9 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnslysesVertex> VertexFitterSimple::get_SV
 
   // find SVs using LCFI+ (clustering first)
   // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
-
-  ROOT::VecOps::RVec<VertexingUtils::FCCAnslysesVertex> result;
+  // write one for finding SVs in jets, another for finding SVs in whole evt
+  
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
   
   // retrieve the tracks associated to the recoparticles
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
@@ -49,7 +51,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnslysesVertex> VertexFitterSimple::get_SV
   // should all this be inside the jet loop
   // that way don't need to define the track collection as an array
 
-  // separate the tracks from different jets (only non-primary)
+  // find SV inside the jet loop (from only non-primary tracks)
   int nJet = jets.size();
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_j;
   //
@@ -58,7 +60,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnslysesVertex> VertexFitterSimple::get_SV
       if (!isInPrimary.at(ele)) tracks_j.push_back(tracks.at(ele));
     }
 
-    // V0 rejection
+    // V0 rejection (tight)
     ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
     bool tight = true;
     ROOT::VecOps::RVec<bool> isInV0 = isV0(tracks_j, PV, tight);
@@ -67,17 +69,32 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnslysesVertex> VertexFitterSimple::get_SV
     }
 
     // THIS SHOULD BE IN A LOOP {
-    
-    // find vertex seed
-    ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV);
-    
-    // add tracks to the seed
-    // check if a track is added; if not break loop
-    ROOT::VecOps::RVec<int> vtx_fin = vtx_seed;
-    int vtx_fin_size = 0; // to start the loop
-    while(vtx_fin_size != vtx_fin.size()) {
-      vtx_fin_size = vtx_fin.size();
-      vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV);
+
+    while(tracks_fin.size > 1) {
+      // find vertex seed
+      ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV);
+      if(vtx_seed.size() == 0) break;
+      // should the constraint thresholds be passed as arguments so user can choose?
+      
+      // add tracks to the seed
+      // check if a track is added; if not break loop
+      ROOT::VecOps::RVec<int> vtx_fin = vtx_seed;
+      int vtx_fin_size = 0; // to start the loop
+      while(vtx_fin_size != vtx_fin.size()) {
+	vtx_fin_size = vtx_fin.size();
+	vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV);
+      }
+
+      // fit tracks to SV and remove from tracks_fin
+      VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, vtx_fin, false, 0, 0, 0, 0, 0, 0);
+      result.push_back(sec_vtx);
+      //
+      ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
+      tracks_fin.clear();
+      for(unsigned int t=0; t<temp.size(); t++) {
+	if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
+      }
+      // all this cause don't know how to remove multiple elements at once
     }
 
     // } THIS SHOULD BE IN A LOOP
@@ -86,6 +103,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnslysesVertex> VertexFitterSimple::get_SV
     tracks_j.clear();
   }
 
+  // currently don't know which SV is from which jet (FIX SOON)
   return result;
 }
 
@@ -203,6 +221,8 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_best(ROOT::VecOps::RVec<edm
   // adds index of the best track to the (seed) vtx
   
   ROOT::VecOps::RVec<int> result = vtx_tr;
+  if(tracks.size() == vtx_tr.size()) return result;
+  
   int isel = -1;
 
   int nTr = tracks.size();
@@ -224,13 +244,15 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_best(ROOT::VecOps::RVec<edm
     vtx = VertexFitter_Tk(0, tr_vtx, false, 0, 0, 0, 0, 0, 0);
 
     // Constraints
+    // chi2_contribution(track) < threshold (yet to add)
+    ROOT::VecOps::RVec<float> chi2_tr = vtx.reco_chi2;
+    if(chi2_tr[iTr] > 5) continue; // ?
+    //
     // invM < cut (10GeV)
     double invM_vtx = get_invM(vtx);
     if(invM_vtx >= 10) continue;
     //
     // invM < sum of energy (yet to add)
-    //
-    // chi2_contribution(track) < threshold (yet to add)
     //
     // chi2 < cut (9)
     double chi2_vtx = vtx.vertex.chi2;
@@ -258,6 +280,7 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_multi(ROOT::VecOps::RVec<ed
   // adds indices of all tracks passing constraints to the (seed) vtx
   
   ROOT::VecOps::RVec<int> result = vtx_tr;
+  if(tracks.size() == vtx_tr.size()) return result;
 
   int nTr = tracks.size();
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx;
@@ -277,13 +300,15 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_multi(ROOT::VecOps::RVec<ed
     vtx = VertexFitter_Tk(0, tr_vtx, false, 0, 0, 0, 0, 0, 0);
 
     // Constraints
+    // chi2_contribution < threshold (yet to add)
+    ROOT::VecOps::RVec<float> chi2_tr = vtx.reco_chi2;
+    if(chi2_tr[iTr] > 5) continue; // ?
+    //
     // invM < cut (10GeV)
     double invM_vtx = get_invM(vtx);
     if(invM_vtx >= 10) continue;
     //
     // invM < sum of energy (yet to add)
-    //
-    // chi2_contribution < threshold (yet to add)
     //
     // chi2 < cut (9)
     double chi2_vtx = vtx.vertex.chi2;
@@ -312,26 +337,28 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
   // if(tight)  -> tight constraints
   // if(!tight) -> loose constraints
 
-  edm4hep::Vector3f r_PV = PV.vertex.position; // in mm
-  
   int nTr = np_tracks.size();
 
   ROOT::VecOps::RVec<bool> result(nTr, false);
   // true -> forms a V0, false -> doesn't form a V0
   if(nTracks<2) return result;
   
-  edm4hep::TrackState t_pair[2];
+  edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
+  
+  ROOT::VecOps::RVec<edm4hep::TrackState> t_pair;
+  t_pair.push_back(np_tracks[0]);
+  t_pair.push_back(np_tracks[1]);
   VertexingUtils::FCCAnalysesVertex V0;
   //
   for(unsigned int i=0; i<nTr-1; i++) {
-    t_pair[0] = np_tracks[i];
+    if(i!=0) t_pair[0] = np_tracks[i];
 
     for(unsigned int j=i+1; j<nTr; j++) {
-      t_pair[1] = np_tracks[j];
+      if(j!=1) t_pair[1] = np_tracks[j];
 
       V0 = VertexFitter_Tk(0, t_pair, false, 0, 0, 0, 0, 0, 0);
 
-      double m_pi = 0.13957; // pi+- mass
+      double m_pi = 0.13957; // pi+- mass [GeV]
       double m_p  = 0.93827; // p+- mass
       double m_e  = 0.00051; // e+- mass
 
@@ -408,6 +435,8 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
 double VertexFitterSimple::get_invM_pairs(VertexingUtils::FCCAnalysesVertex vertex,
 					  double m1,
 					  double m2) {
+  // CAUTION: m1 -> first track; m2 -> second track
+
   double result;
   
   ROOT::VecOps::RVec<TVector3> p_tracks = vertex.updated_track_momentum_at_vertex;
@@ -417,7 +446,8 @@ double VertexFitterSimple::get_invM_pairs(VertexingUtils::FCCAnalysesVertex vert
   int nTr = p_tracks.size();
   
   for(unsigned int i=0; i<nTr; i++) {
-    TLorentzVector p4_tr(p_tracks[i], m[i]);
+    TLorentzVector p4_tr;
+    p4_tr.SetXYZM(p_tracks[i].X(), p_tracks[i].Y(), p_tracks[i].Z(), m[i]);
     p4_vtx += p4_tr;
   }
 
@@ -436,7 +466,8 @@ double VertexFitterSimple::get_invM(VertexingUtils::FCCAnalysesVertex vertex) {
   double m = 0.13957; // pion mass
 
   for(TVector3 p_tr : p_tracks) {
-    TLorentzVector p4_tr(p_tr, m);
+    TLorentzVector p4_tr;
+    p4_tr.SetXYZM(p_tr.X(), p_tr.Y(), p_tr.Z(), m);
     p4_vtx += p4_tr;
   }
 
@@ -444,7 +475,7 @@ double VertexFitterSimple::get_invM(VertexingUtils::FCCAnalysesVertex vertex) {
   return result;
 }
 
-// cos(theta) b/n V0 candidate's momentum & PV to V0 displacement vector
+// cos(angle) b/n V0 candidate's momentum & PV to V0 displacement vector
 double VertexFitterSimple::get_PV2V0angle(VertexingUtils::FCCAnalysesVertex V0,
 					  VertexingUtils::FCCAnalysesVertex PV) {
   double result;
@@ -467,18 +498,16 @@ double VertexFitterSimple::get_PV2V0angle(VertexingUtils::FCCAnalysesVertex V0,
   return result;
 }
 
-// cos(theta) b/n track momentum sum & PV to vtx displacement vector
+// cos(angle) b/n track momentum sum & PV to vtx displacement vector
 double VertexFitterSimple::get_PV2vtx_angle(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
 					    VertexingUtils::FCCAnalysesVertex vtx,
 					    VertexingUtils::FCCAnalysesVertex PV) {
   double result;
 
-  int nTr = tracks.size();
   TVector3 p_sum;
-  for(unsigned int i=0; i<nTr; i++) {
-    TVectorD ipar = VertexingUtils::get_trackParam(tracks[i]);
+  for(edm4hep::TrackState tr : tracks) {
+    TVectorD ipar = VertexingUtils::get_trackParam(tr);
     TVector3 ip   = ParToP(ipar);
-
     p_sum += ip;
   }
   
@@ -489,7 +518,7 @@ double VertexFitterSimple::get_PV2vtx_angle(ROOT::VecOps::RVec<edm4hep::TrackSta
   
   double pDOTr = p_sum.Dot(r_vtx_PV);
   double p_mag = p_sum.Mag();
-  double r_mag = r_sum_PV.Mag();
+  double r_mag = r_vtx_PV.Mag();
 
   result = pDOTr / (p_mag * r_mag);
   return result;
