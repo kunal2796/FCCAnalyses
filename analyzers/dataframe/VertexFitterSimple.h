@@ -78,23 +78,37 @@ namespace VertexFitterSimple{
   //** SV Finder (LCFI+) **//
   ///////////////////////////
 
-  /** returns indices of the best pair of tracks from a vector of (non-primary) tracks */
+  /** returns indices of the best pair of tracks from a vector of (non-primary) tracks 
+   *  default chi2 threshold is 9 and default invariant mass threshold is 10GeV
+   */
   ROOT::VecOps::RVec<int> VertexSeed_best( ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
-					   VertexingUtils::FCCAnalysesVertex PV ) ;
+					   VertexingUtils::FCCAnalysesVertex PV,
+					   double chi2_cut=9., double invM_cut=10.) ;
 
-  /** returns indices of the all pairs of tracks that pass a set of constraints from a vector of (non-primary) tracks */
+  /** returns indices of the all pairs of tracks that pass a set of constraints from a vector of (non-primary) tracks
+   *  default chi2 threshold is 9 and default invariant mass threshold is 10GeV
+   */
   std::vector<std::vector<int>> VertexSeed_all( ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
-						VertexingUtils::FCCAnalysesVertex PV ) ;
+						VertexingUtils::FCCAnalysesVertex PV,
+						double chi2_cut=9., double invM_cut=10.) ;
 
-  /** adds index of the best track (from the remaining tracks) to the (seed) vtx */
+  /** adds index of the best track (from the remaining tracks) to the (seed) vtx 
+   *  default chi2 threshold is 9 and default invariant mass threshold is 10GeV
+   *  default threshold for track's chi2 contribution is 5 (?)
+   */
   ROOT::VecOps::RVec<int> addTrack_best( ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
 					 ROOT::VecOps::RVec<int> vtx_tr,
-					 VertexingUtils::FCCAnalysesVertex PV ) ;
+					 VertexingUtils::FCCAnalysesVertex PV,
+					 double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5.) ;
 
-  /** adds indices of tracks (from the remaining tracks) that pass a set of constraints to the (seed) vtx */
+  /** adds indices of tracks (from the remaining tracks) that pass a set of constraints to the (seed) vtx 
+   *  default chi2 threshold is 9 and default invariant mass threshold is 10GeV
+   *  default threshold for track's chi2 contribution is 5 (?)
+   */
   ROOT::VecOps::RVec<int> addTrack_multi( ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
 					  ROOT::VecOps::RVec<int> vtx_tr,
-					  VertexingUtils::FCCAnalysesVertex PV ) ;
+					  VertexingUtils::FCCAnalysesVertex PV,
+					  double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5.) ;
 
   /** V0 rejection/identification
    *  takes all (non-primary) tracks & assigns "true" to pairs that form a V0
