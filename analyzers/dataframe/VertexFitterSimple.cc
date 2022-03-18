@@ -843,16 +843,19 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::VertexSeed_best(ROOT::VecOps::RVec<e
   
   int nTr = tracks.size();
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
-  tr_pair.push_back(tracks[0]);
-  tr_pair.push_back(tracks[1]);
+  // push empty tracks to make a size=2 vector
+  edm4hep::TrackState tr_i;
+  edm4hep::TrackState tr_j;
+  tr_pair.push_back(tr_i);
+  tr_pair.push_back(tr_j);
   VertexingUtils::FCCAnalysesVertex vtx_seed;
   double chi2_min = 99;
   
   for(unsigned int i=0; i<nTr-1; i++) {
-    if(i!=0) tr_pair[0] = tracks[i];
+    tr_pair[0] = tracks[i];
     
     for(unsigned int j=i+1; j<nTr; j++) {
-      if(j!=1) tr_pair[1] = tracks[j];
+      tr_pair[1] = tracks[j];
       
       // V0 rejection (loose)
       ROOT::VecOps::RVec<bool> isInV0 = isV0(tr_pair, PV, false);
@@ -901,8 +904,11 @@ std::vector<std::vector<int>> VertexFitterSimple::VertexSeed_all(ROOT::VecOps::R
   
   int nTr = tracks.size();
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
-  tr_pair.push_back(tracks[0]);
-  tr_pair.push_back(tracks[1]);
+  // push empty tracks to make a size=2 vector
+  edm4hep::TrackState tr_i;
+  edm4hep::TrackState tr_j;
+  tr_pair.push_back(tr_i);
+  tr_pair.push_back(tr_j);
   VertexingUtils::FCCAnalysesVertex vtx_seed;
   
   for(unsigned int i=0; i<nTr-1; i++) {
@@ -966,12 +972,14 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_best(ROOT::VecOps::RVec<edm
     tr_vtx.push_back(tracks[tr]);
   }
   int iTr = tr_vtx.size();
-  tr_vtx.push_back(tracks[0]);
+  // add an empty track to increase vector size by 1
+  edm4hep::TrackState tr_i;
+  tr_vtx.push_back(tr_i);
 
   // find best track to add to the vtx
   for(unsigned int i=0; i<nTr; i++) {
     if(std::find(vtx_tr.begin(), vtx_tr.end(), i) != vtx_tr.end()) continue;
-    if(i!=0) tr_vtx[iTr] = tracks[i];
+    tr_vtx[iTr] = tracks[i];
     
     vtx = VertexFitter_Tk(0, tr_vtx);
 
@@ -991,6 +999,9 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_best(ROOT::VecOps::RVec<edm
     if(invM_vtx >= invM_cut) continue;
     //
     // invM < sum of energy (should it be or not?)
+    double E_vtx = 0.;
+    for(edm4hep::TrackState tr_e : tr_vtx) E_vtx += get_trackE(tr_e);
+    if(invM_seed >= E_vtx) continue;
     //
     // momenta sum & vtx r on same side
     double angle = get_PV2vtx_angle(tr_vtx, vtx, PV);
@@ -1051,6 +1062,9 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_multi(ROOT::VecOps::RVec<ed
     if(invM_vtx >= invM_cut) continue;
     //
     // invM < sum of energy (should it be or not?)
+    double E_vtx = 0.;
+    for(edm4hep::TrackState tr_e : tr_vtx) E_vtx += get_trackE(tr_e);
+    if(invM_seed >= E_vtx) continue;
     //
     // momenta sum & vtx r on same side
     double angle = get_PV2vtx_angle(tr_vtx, vtx, PV);
@@ -1083,8 +1097,11 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
   
   ROOT::VecOps::RVec<edm4hep::TrackState> t_pair;
-  t_pair.push_back(np_tracks[0]);
-  t_pair.push_back(np_tracks[1]);
+  // push empty tracks to make a size=2 vector
+  edm4hep::TrackState tr_i;
+  edm4hep::TrackState tr_j;
+  t_pair.push_back(tr_i);
+  t_pair.push_back(tr_j);
   VertexingUtils::FCCAnalysesVertex V0;
   //
   const double m_pi = 0.13957039; // pi+- mass [GeV]
@@ -1093,11 +1110,11 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
   //
   for(unsigned int i=0; i<nTr-1; i++) {
     if(result[i] == true) continue;
-    if(i!=0) t_pair[0] = np_tracks[i];
+    t_pair[0] = np_tracks[i];
 
     for(unsigned int j=i+1; j<nTr; j++) {
       if(result[j] == true) continue;
-      if(j!=1) t_pair[1] = np_tracks[j];
+      t_pair[1] = np_tracks[j];
 
       V0 = VertexFitter_Tk(0, t_pair);
 
@@ -1225,16 +1242,16 @@ double VertexFitterSimple::get_PV2V0angle(VertexingUtils::FCCAnalysesVertex V0,
 
   ROOT::VecOps::RVec<TVector3> p_tracks = V0.updated_track_momentum_at_vertex;
 
-  TVector3 p_vtx;
-  for(TVector3 p_tr : p_tracks) p_vtx += p_tr;
+  TVector3 p_sum;
+  for(TVector3 p_tr : p_tracks) p_sum += p_tr;
 
   edm4hep::Vector3f r_V0 = V0.vertex.position; // in mm
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm
 
   TVector3 r_V0_PV(r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
   
-  double pDOTr = p_vtx.Dot(r_V0_PV);
-  double p_mag = p_vtx.Mag();
+  double pDOTr = p_sum.Dot(r_V0_PV);
+  double p_mag = p_sum.Mag();
   double r_mag = r_V0_PV.Mag();
 
   result = pDOTr / (p_mag * r_mag);
