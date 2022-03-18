@@ -376,4 +376,3 @@ std::vector<std::vector<int>> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec
   result.push_back(partonFlv);
   return result;
 }
-=======
