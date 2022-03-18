@@ -1078,7 +1078,7 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
 
   ROOT::VecOps::RVec<bool> result(nTr, false);
   // true -> forms a V0, false -> doesn't form a V0
-  if(nTracks<2) return result;
+  if(nTr<2) return result;
   
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
   
@@ -1110,7 +1110,7 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
       // V0 candidate distance from PV
       edm4hep::Vector3f r_V0 = V0.vertex.position; // in mm
       // does Vector3f class has similar functions as root vectors?
-      TVector3 r_V0_PV = (r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
+      TVector3 r_V0_PV(r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
       double r = r_V0_PV.Mag(); // in mm
 
       // angle b/n V0 candidate momentum & PV-V0 displacement vector
@@ -1231,7 +1231,7 @@ double VertexFitterSimple::get_PV2V0angle(VertexingUtils::FCCAnalysesVertex V0,
   edm4hep::Vector3f r_V0 = V0.vertex.position; // in mm
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm
 
-  TVector3 r_V0_PV = (r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
+  TVector3 r_V0_PV(r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
   
   double pDOTr = p_vtx.Dot(r_V0_PV);
   double p_mag = p_vtx.Mag();
@@ -1257,7 +1257,7 @@ double VertexFitterSimple::get_PV2vtx_angle(ROOT::VecOps::RVec<edm4hep::TrackSta
   edm4hep::Vector3f r_vtx = vtx.vertex.position; // in mm
   edm4hep::Vector3f r_PV  = PV.vertex.position;  // in mm
 
-  TVector3 r_vtx_PV = (r_vtx[0] - r_PV[0], r_vtx[1] - r_PV[1], r_vtx[2] - r_PV[2]);
+  TVector3 r_vtx_PV(r_vtx[0] - r_PV[0], r_vtx[1] - r_PV[1], r_vtx[2] - r_PV[2]);
   
   double pDOTr = p_sum.Dot(r_vtx_PV);
   double p_mag = p_sum.Mag();
