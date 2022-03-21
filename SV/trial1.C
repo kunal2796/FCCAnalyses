@@ -87,7 +87,9 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
       }
       
       // fit tracks to SV and remove from tracks_fin
-      VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, vtx_fin);
+      ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
+      for(int i_tr : vtx_fin) tr_vtx_fin.push_back(tracks_fin[i_tr]);
+      VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
       result.push_back(sec_vtx);
       //
       ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
