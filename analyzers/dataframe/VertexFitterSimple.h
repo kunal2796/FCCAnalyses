@@ -22,6 +22,7 @@
 #include "edm4hep/VertexData.h"
 #include "edm4hep/Vertex.h"
 
+#include "fastjet/JetDefinition.hh"
 
 /** Vertex interface using Franco Bedeshi's code. 
 This represents a set functions and utilities to perfom vertexing from a list of tracks.  
