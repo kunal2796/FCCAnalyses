@@ -36,7 +36,7 @@ namespace VertexingUtils{
 
   /// Structure to keep useful track information that is related to the V0
   struct FCCAnalysesV0{
-    VertexingUtils FCCAnalysesVetex; // vertex object
+    VertexingUtils FCCAnalysesVertex; // vertex object
     int pdgAbs;                      // pdg ID from reconstructions
   };
   
