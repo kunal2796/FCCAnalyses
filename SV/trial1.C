@@ -17,17 +17,18 @@
 // another to output a vector of psedo-vertices
 // yet another to get V0s (isV0 tells which tracks form a V0)
 
-// change to vec of vec to separate SV from diff jets
-ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-										 ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-										 VertexingUtils::FCCAnalysesVertex PV,
-										 ROOT::VecOps::RVec<bool> isInPrimary,
-										 std::vector<fastjet::PseudoJet> jets,
-										 std::vector<std::vector<int>> jet_consti) {
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+										      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+										      VertexingUtils::FCCAnalysesVertex PV,
+										      ROOT::VecOps::RVec<bool> isInPrimary,
+										      std::vector<fastjet::PseudoJet> jets,
+										      std::vector<std::vector<int>> jet_consti,
+										      double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
   // find SVs using LCFI+ (clustering first)
   // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
-  // write one for finding SVs in jets, another for finding SVs in whole evt
+  // also write another for finding SVs in whole evt
+  // change to vec of vec to separate SV from diff jets, currently don't separate SVs by jet
   
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
   
@@ -68,11 +69,11 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
     for(unsigned int i=0; i<isInV0.size(); i++) {
       if (!isInV0[i]) tracks_fin.push_back(tracks_j[i]);
     }
-
+    
     while(tracks_fin.size > 1) {
       // find vertex seed
-      ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV);
-      // constraints can be chosen by user, here using default cuts
+      ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
+      // constraint thresholds can be chosen by user, here using default cuts
       if(vtx_seed.size() == 0) break;
       
       // add tracks to the seed
@@ -81,8 +82,8 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
       int vtx_fin_size = 0; // to start the loop
       while(vtx_fin_size != vtx_fin.size()) {
 	vtx_fin_size = vtx_fin.size();
-	vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV);
-      // constraints can be chosen by user, here using default cuts
+	vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
+      // constraint thresholds can be chosen by user, here using default cuts
       }
       
       // fit tracks to SV and remove from tracks_fin
@@ -116,16 +117,19 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::VertexSeed_best(ROOT::VecOps::RVec<e
   
   int nTr = tracks.size();
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
-  tr_pair.push_back(tracks[0]);
-  tr_pair.push_back(tracks[1]);
+  // push empty tracks to make a size=2 vector
+  edm4hep::TrackState tr_i;
+  edm4hep::TrackState tr_j;
+  tr_pair.push_back(tr_i);
+  tr_pair.push_back(tr_j);
   VertexingUtils::FCCAnalysesVertex vtx_seed;
   double chi2_min = 99;
   
   for(unsigned int i=0; i<nTr-1; i++) {
-    if(i!=0) tr_pair[0] = tracks[i];
+    tr_pair[0] = tracks[i];
 
     for(unsigned int j=i+1; j<nTr; j++) {
-      if(j!=1) tr_pair[1] = tracks[j];
+      tr_pair[1] = tracks[j];
 
       // V0 rejection (loose)
       ROOT::VecOps::RVec<bool> isInV0 = isV0(tr_pair, PV, false);
@@ -174,15 +178,18 @@ std::vector<std::vector<int>> VertexFitterSimple::VertexSeed_all(ROOT::VecOps::R
   
   int nTr = tracks.size();
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
-  tr_pair.push_back(tracks[0]);
-  tr_pair.push_back(tracks[1]);
+  // push empty tracks to make a size=2 vector
+  edm4hep::TrackState tr_i;
+  edm4hep::TrackState tr_j;
+  tr_pair.push_back(tr_i);
+  tr_pair.push_back(tr_j);
   VertexingUtils::FCCAnalysesVertex vtx_seed;
   
   for(unsigned int i=0; i<nTr-1; i++) {
-    if(i!=0) tr_pair[0] = tracks[i];
+    tr_pair[0] = tracks[i];
 
     for(unsigned int j=i+1; j<nTr; j++) {
-      if(j!=1) tr_pair[1] = tracks[j];
+      tr_pair[1] = tracks[j];
 
       // V0 rejection (loose)
       ROOT::VecOps::RVec<bool> isInV0 = isV0(tr_pair, PV, false);
@@ -239,12 +246,14 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_best(ROOT::VecOps::RVec<edm
     tr_vtx.push_back(tracks[tr]);
   }
   int iTr = tr_vtx.size();
-  tr_vtx.push_back(tracks[0]);
+  // push empty track to increase vector size by 1
+  edm4hep::TrackState tr_i;
+  tr_vtx.push_back(tr_i);
 
   // find best track to add to the vtx
   for(unsigned int i=0; i<nTr; i++) {
     if(std::find(vtx_tr.begin(), vtx_tr.end(), i) != vtx_tr.end()) continue;
-    if(i!=0) tr_vtx[iTr] = tracks[i];
+    tr_vtx[iTr] = tracks[i];
     
     vtx = VertexFitter_Tk(0, tr_vtx);
 
@@ -264,6 +273,9 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_best(ROOT::VecOps::RVec<edm
     if(invM_vtx >= invM_cut) continue;
     //
     // invM < sum of energy (should it be or not?)
+    double E_vtx = 0.;
+    for(edm4hep::TrackState tr_e : tr_vtx) E_vtx += get_trackE(tr_e);
+    if(invM_seed >= E_vtx) continue;
     //
     // momenta sum & vtx r on same side
     double angle = get_PV2vtx_angle(tr_vtx, vtx, PV);
@@ -324,6 +336,9 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_multi(ROOT::VecOps::RVec<ed
     if(invM_vtx >= invM_cut) continue;
     //
     // invM < sum of energy (should it be or not?)
+    double E_vtx = 0.;
+    for(edm4hep::TrackState tr_e : tr_vtx) E_vtx += get_trackE(tr_e);
+    if(invM_seed >= E_vtx) continue;
     //
     // momenta sum & vtx r on same side
     double angle = get_PV2vtx_angle(tr_vtx, vtx, PV);
@@ -356,8 +371,11 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
   
   ROOT::VecOps::RVec<edm4hep::TrackState> t_pair;
-  t_pair.push_back(np_tracks[0]);
-  t_pair.push_back(np_tracks[1]);
+  // push empty tracks to make a size=2 vector
+  edm4hep::TrackState tr_i;
+  edm4hep::TrackState tr_j;
+  t_pair.push_back(tr_i);
+  t_pair.push_back(tr_j);
   VertexingUtils::FCCAnalysesVertex V0;
   //
   const double m_pi = 0.13957039; // pi+- mass [GeV]
@@ -366,11 +384,11 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
   //
   for(unsigned int i=0; i<nTr-1; i++) {
     if(result[i] == true) continue;
-    if(i!=0) t_pair[0] = np_tracks[i];
+    t_pair[0] = np_tracks[i];
 
     for(unsigned int j=i+1; j<nTr; j++) {
       if(result[j] == true) continue;
-      if(j!=1) t_pair[1] = np_tracks[j];
+      t_pair[1] = np_tracks[j];
 
       V0 = VertexFitter_Tk(0, t_pair);
 
@@ -421,7 +439,7 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
 	// Ks
 	if(invM_Ks>0.488 && invM_Ks<0.508 && r>0.3 && p_r>0.999) {
 	  result[i] = true;
-	  result[j] = true;
+/	  result[j] = true;
 	}
 	
 	// Lambda0
@@ -498,16 +516,16 @@ double VertexFitterSimple::get_PV2V0angle(VertexingUtils::FCCAnalysesVertex V0,
 
   ROOT::VecOps::RVec<TVector3> p_tracks = V0.updated_track_momentum_at_vertex;
 
-  TVector3 p_vtx;
-  for(TVector3 p_tr : p_tracks) p_vtx += p_tr;
+  TVector3 p_sum;
+  for(TVector3 p_tr : p_tracks) p_sum += p_tr;
 
   edm4hep::Vector3f r_V0 = V0.vertex.position; // in mm
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm
 
   TVector3 r_V0_PV(r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
   
-  double pDOTr = p_vtx.Dot(r_V0_PV);
-  double p_mag = p_vtx.Mag();
+  double pDOTr = p_sum.Dot(r_V0_PV);
+  double p_mag = p_sum.Mag();
   double r_mag = r_V0_PV.Mag();
 
   result = pDOTr / (p_mag * r_mag);
@@ -554,5 +572,105 @@ double VertexFitterSimple::get_trackE(edm4hep::TrackState track) {
   p4.SetXYZM(p[0], p[1], p[2], m_pi);
 
   result = p4.E();
+  return result;
+}
+
+///////////////////////
+
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+									     VertexingUtils::FCCAnalysesVertex PV) {
+  // V0 reconstruction
+
+  // should there be an option for tight and loose constraints?
+  // also look into how to reconstruct pi0 soon
+
+  // make it stand-alone (removing primary tracks etc)
+
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> result;
+  int nTr = np_tracks.size();
+  if(nTr<2) return result;
+  ROOT::VecOps::RVec<bool> isInV0(nTr, false);
+  
+  edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
+  
+  ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
+  // push empty tracks to make a size=2 vector
+  edm4hep::TrackState tr_i;
+  edm4hep::TrackState tr_j;
+  tr_pair.push_back(tr_i);
+  tr_pair.push_back(tr_j);
+  VertexingUtils::FCCAnalysesVertex V0_vtx; // FCCAnalyses vertex object
+  VertexingUtils::FCCAnalysesV0 V0_obj;     // FCCAnalyses V0 object
+  //
+  const double m_pi = 0.13957039; // pi+- mass [GeV]
+  const double m_p  = 0.93827208; // p+- mass
+  const double m_e  = 0.00051099; // e+- mass
+  //
+  for(unsigned int i=0; i<nTr-1; i++) {
+    if(isInV0[i] == true) continue; // don't pair a track if it already forms a V0
+    tr_pair[0] = np_tracks[i];
+
+    for(unsigned int j=i+1; j<nTr; j++) {
+      if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
+      tr_pair[1] = np_tracks[j];
+
+      V0_vtx = VertexFitter_Tk(0, tr_pair);
+
+      // invariant masses for V0 candidates
+      double invM_Ks      = get_invM_pairs(V0_vtx, m_pi, m_pi);
+      double invM_Lambda1 = get_invM_pairs(V0_vtx, m_pi, m_p);
+      double invM_Lambda2 = get_invM_pairs(V0_vtx, m_p, m_pi);
+      double invM_Gamma   = get_invM_pairs(V0_vtx, m_e, m_e);
+
+      // V0 candidate distance from PV
+      edm4hep::Vector3f r_V0 = V0_vtx.vertex.position; // in mm
+      // does Vector3f class has similar functions as root vectors?
+      TVector3 r_V0_PV(r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
+      double r = r_V0_PV.Mag(); // in mm
+
+      // angle b/n V0 candidate momentum & PV-V0 displacement vector
+      double p_r = get_PV2V0angle(V0_vtx, PV);
+
+      // Ks
+      if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
+	isInV0[i] = true;
+	isInV0[j] = true;
+	V0_obj.vtx = V0_vtx;
+	V0_obj.pdgAbs = 310;
+	result.push_back(V0_obj);
+	break;
+      }
+      
+      // Lambda0
+      else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
+	isInV0[i] = true;
+	isInV0[j] = true;
+	V0_obj.vtx = V0_vtx;
+	V0_obj.pdgAbs = 3122;
+	result.push_back(V0_obj);
+	break;
+      }
+      else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
+	isInV0[i] = true;
+	isInV0[j] = true;
+	V0_obj.vtx = V0_vtx;
+	V0_obj.pdgAbs = 3122;
+	result.push_back(V0_obj);
+	break;
+      }
+      
+      // photon conversion
+      else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
+	isInV0[i] = true;
+	isInV0[j] = true;
+	V0_obj.vtx = V0_vtx;
+	V0_obj.pdgAbs = 22;
+	result.push_back(V0_obj);
+	break;
+      }	
+      
+    }
+  }
+
   return result;
 }

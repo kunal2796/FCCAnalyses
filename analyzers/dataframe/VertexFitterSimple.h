@@ -78,6 +78,17 @@ namespace VertexFitterSimple{
   //** SV Finder (LCFI+) **//
   ///////////////////////////
 
+  /** returns SVs reconstructed from non-primary tracks of jets
+   *  currently not separating SVs by jet
+   */
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_jets( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+								     ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+								     VertexingUtils::FCCAnalysesVertex PV,
+								     ROOT::VecOps::RVec<bool> isInPrimary,
+								     std::vector<fastjet::PseudoJet> jets,
+								     std::vector<std::vector<int>> jet_consti,
+								     double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. )
+  
   /** returns indices of the best pair of tracks from a vector of (non-primary) tracks 
    *  default chi2 threshold is 9 and default invariant mass threshold is 10GeV
    */
@@ -146,6 +157,13 @@ namespace VertexFitterSimple{
    *  assuming the track to be a pion
    */
   double get_trackE( edm4hep::TrackState track ) ;
+
+  ///
+  
+  /** returns V0s reconstructed from a set of tracks (as an FCCAnalysesV0 object)
+   */
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> get_V0( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+							  VertexingUtils::FCCAnalysesVertex PV )
 
 }
 
