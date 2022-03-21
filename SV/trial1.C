@@ -35,7 +35,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
   // retrieve the tracks associated to the recoparticles
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
 
-  if(tracks.size() != isInPrimary) cout<<"ISSUE: track vector and primary-nonprimary vector of diff sizes"<<endl;
+  if(tracks.size() != isInPrimary.size()) std::cout<<"ISSUE: track vector and primary-nonprimary vector of diff sizes"<<std::endl;
 
   /*
   // separate the tracks from different jets (only non-primary)
@@ -70,7 +70,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
       if (!isInV0[i]) tracks_fin.push_back(tracks_j[i]);
     }
     
-    while(tracks_fin.size > 1) {
+    while(tracks_fin.size() > 1) {
       // find vertex seed
       ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
       // constraint thresholds can be chosen by user, here using default cuts
@@ -275,7 +275,7 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_best(ROOT::VecOps::RVec<edm
     // invM < sum of energy (should it be or not?)
     double E_vtx = 0.;
     for(edm4hep::TrackState tr_e : tr_vtx) E_vtx += get_trackE(tr_e);
-    if(invM_seed >= E_vtx) continue;
+    if(invM_vtx >= E_vtx) continue;
     //
     // momenta sum & vtx r on same side
     double angle = get_PV2vtx_angle(tr_vtx, vtx, PV);
@@ -338,7 +338,7 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_multi(ROOT::VecOps::RVec<ed
     // invM < sum of energy (should it be or not?)
     double E_vtx = 0.;
     for(edm4hep::TrackState tr_e : tr_vtx) E_vtx += get_trackE(tr_e);
-    if(invM_seed >= E_vtx) continue;
+    if(invM_vtx >= E_vtx) continue;
     //
     // momenta sum & vtx r on same side
     double angle = get_PV2vtx_angle(tr_vtx, vtx, PV);
