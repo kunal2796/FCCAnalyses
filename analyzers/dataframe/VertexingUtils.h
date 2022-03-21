@@ -34,6 +34,12 @@ namespace VertexingUtils{
     ROOT::VecOps::RVec<float> final_track_phases;
   };
 
+  /// Structure to keep useful track information that is related to the V0
+  struct FCCAnalysesV0{
+    VertexingUtils FCCAnalysesVetex; // vertex object
+    int pdgAbs;                      // pdg ID from reconstructions
+  };
+  
   /// Structure to keep useful track information that is related to the vertex
   struct FCCAnalysesVertexMC{
     TVector3 vertex;

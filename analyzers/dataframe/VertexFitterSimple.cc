@@ -1371,3 +1371,105 @@ double VertexFitterSimple::get_trackE(edm4hep::TrackState track) {
   result = p4.E();
   return result;
 }
+
+///////////////////////////
+//** V0 Reconstruction **//
+///////////////////////////
+
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+									     VertexingUtils::FCCAnalysesVertex PV) {
+  // V0 reconstruction
+
+  // should there be an option for tight and loose constraints?
+  // also look into how to reconstruct pi0 soon
+
+  // make it stand-alone (removing primary tracks etc)
+
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> result;
+  int nTr = np_tracks.size();
+  if(nTr<2) return result;
+  ROOT::VecOps::RVec<bool> isInV0(nTr, false);
+  
+  edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
+  
+  ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
+  // push empty tracks to make a size=2 vector
+  edm4hep::TrackState tr_i;
+  edm4hep::TrackState tr_j;
+  tr_pair.push_back(tr_i);
+  tr_pair.push_back(tr_j);
+  VertexingUtils::FCCAnalysesVertex V0_vtx; // FCCAnalyses vertex object
+  VertexingUtils::FCCAnalysesV0 V0_obj;     // FCCAnalyses V0 object
+  //
+  const double m_pi = 0.13957039; // pi+- mass [GeV]
+  const double m_p  = 0.93827208; // p+- mass
+  const double m_e  = 0.00051099; // e+- mass
+  //
+  for(unsigned int i=0; i<nTr-1; i++) {
+    if(isInV0[i] == true) continue; // don't pair a track if it already forms a V0
+    tr_pair[0] = np_tracks[i];
+
+    for(unsigned int j=i+1; j<nTr; j++) {
+      if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
+      tr_pair[1] = np_tracks[j];
+
+      V0_vtx = VertexFitter_Tk(0, tr_pair);
+
+      // invariant masses for V0 candidates
+      double invM_Ks      = get_invM_pairs(V0_vtx, m_pi, m_pi);
+      double invM_Lambda1 = get_invM_pairs(V0_vtx, m_pi, m_p);
+      double invM_Lambda2 = get_invM_pairs(V0_vtx, m_p, m_pi);
+      double invM_Gamma   = get_invM_pairs(V0_vtx, m_e, m_e);
+
+      // V0 candidate distance from PV
+      edm4hep::Vector3f r_V0 = V0_vtx.vertex.position; // in mm
+      // does Vector3f class has similar functions as root vectors?
+      TVector3 r_V0_PV(r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
+      double r = r_V0_PV.Mag(); // in mm
+
+      // angle b/n V0 candidate momentum & PV-V0 displacement vector
+      double p_r = get_PV2V0angle(V0_vtx, PV);
+
+      // Ks
+      if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
+	isInV0[i] = true;
+	isInV0[j] = true;
+	V0_obj.vtx = V0_vtx;
+	V0_obj.pdgAbs = 310;
+	result.push_back(V0_obj);
+	break;
+      }
+      
+      // Lambda0
+      else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
+	isInV0[i] = true;
+	isInV0[j] = true;
+	V0_obj.vtx = V0_vtx;
+	V0_obj.pdgAbs = 3122;
+	result.push_back(V0_obj);
+	break;
+      }
+      else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
+	isInV0[i] = true;
+	isInV0[j] = true;
+	V0_obj.vtx = V0_vtx;
+	V0_obj.pdgAbs = 3122;
+	result.push_back(V0_obj);
+	break;
+      }
+      
+      // photon conversion
+      else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
+	isInV0[i] = true;
+	isInV0[j] = true;
+	V0_obj.vtx = V0_vtx;
+	V0_obj.pdgAbs = 22;
+	result.push_back(V0_obj);
+	break;
+      }	
+      
+    }
+  }
+
+  return result;
+}
