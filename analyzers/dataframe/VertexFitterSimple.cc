@@ -1438,6 +1438,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
 	isInV0[j] = true;
 	V0_obj.vtx = V0_vtx;
 	V0_obj.pdgAbs = 310;
+	V0_obj.invM = invM_Ks;
 	result.push_back(V0_obj);
 	break;
       }
@@ -1448,6 +1449,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
 	isInV0[j] = true;
 	V0_obj.vtx = V0_vtx;
 	V0_obj.pdgAbs = 3122;
+	V0_obj.invM = invM_Lambda1;
 	result.push_back(V0_obj);
 	break;
       }
@@ -1456,6 +1458,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
 	isInV0[j] = true;
 	V0_obj.vtx = V0_vtx;
 	V0_obj.pdgAbs = 3122;
+	V0_obj.invM = invM_Lambda2;
 	result.push_back(V0_obj);
 	break;
       }
@@ -1466,6 +1469,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
 	isInV0[j] = true;
 	V0_obj.vtx = V0_vtx;
 	V0_obj.pdgAbs = 22;
+	V0_obj.invM = invM_Gamma;
 	result.push_back(V0_obj);
 	break;
       }	
