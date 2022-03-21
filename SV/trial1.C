@@ -17,18 +17,18 @@
 // another to output a vector of psedo-vertices
 // yet another to get V0s (isV0 tells which tracks form a V0)
 
-// change to vec of vec to separate SV from diff jets
-ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-										 ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-										 VertexingUtils::FCCAnalysesVertex PV,
-										 ROOT::VecOps::RVec<bool> isInPrimary,
-										 std::vector<fastjet::PseudoJet> jets,
-										 std::vector<std::vector<int>> jet_consti,
-										 double chi2_cut, double invM_cut, double chi2Tr_cut) {
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+										      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+										      VertexingUtils::FCCAnalysesVertex PV,
+										      ROOT::VecOps::RVec<bool> isInPrimary,
+										      std::vector<fastjet::PseudoJet> jets,
+										      std::vector<std::vector<int>> jet_consti,
+										      double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
   // find SVs using LCFI+ (clustering first)
   // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
-  // write one for finding SVs in jets, another for finding SVs in whole evt
+  // also write another for finding SVs in whole evt
+  // change to vec of vec to separate SV from diff jets, currently don't separate SVs by jet
   
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
   
@@ -73,7 +73,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
     while(tracks_fin.size > 1) {
       // find vertex seed
       ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
-      // constraints can be chosen by user, here using default cuts
+      // constraint thresholds can be chosen by user, here using default cuts
       if(vtx_seed.size() == 0) break;
       
       // add tracks to the seed
@@ -83,7 +83,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
       while(vtx_fin_size != vtx_fin.size()) {
 	vtx_fin_size = vtx_fin.size();
 	vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
-      // constraints can be chosen by user, here using default cuts
+      // constraint thresholds can be chosen by user, here using default cuts
       }
       
       // fit tracks to SV and remove from tracks_fin
