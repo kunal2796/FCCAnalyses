@@ -1376,8 +1376,8 @@ double VertexFitterSimple::get_trackE(edm4hep::TrackState track) {
 //** V0 Reconstruction **//
 ///////////////////////////
 
-ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-									     VertexingUtils::FCCAnalysesVertex PV) {
+ROOT::VecOps::RVec<VertexFitterSimple::FCCAnalysesV0> VertexFitterSimple::get_V0(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+										 VertexingUtils::FCCAnalysesVertex PV) {
   // V0 reconstruction
 
   // should there be an option for tight and loose constraints?
@@ -1385,7 +1385,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
 
   // make it stand-alone (removing primary tracks etc)
 
-  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> result;
+  ROOT::VecOps::RVec<VertexFitterSimple::FCCAnalysesV0> result;
   int nTr = np_tracks.size();
   if(nTr<2) return result;
   ROOT::VecOps::RVec<bool> isInV0(nTr, false);
@@ -1399,7 +1399,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
   tr_pair.push_back(tr_i);
   tr_pair.push_back(tr_j);
   VertexingUtils::FCCAnalysesVertex V0_vtx; // FCCAnalyses vertex object
-  VertexingUtils::FCCAnalysesV0 V0_obj;     // FCCAnalyses V0 object
+  VertexFitterSimple::FCCAnalysesV0 V0_obj; // FCCAnalyses V0 object
   //
   const double m_pi = 0.13957039; // pi+- mass [GeV]
   const double m_p  = 0.93827208; // p+- mass
