@@ -29,12 +29,6 @@ This represents a set functions and utilities to perfom vertexing from a list of
 
 namespace VertexFitterSimple{
 
-  /// Structure to keep useful track information that is related to the V0
-  struct FCCAnalysesV0{
-    VertexingUtils FCCAnalysesVertex; // vertex object
-    int pdgAbs;                       // pdg ID from reconstructions
-  };
-
   /// Vertex (code from Franco Bedeschi): passing the recoparticles. Units for the beamspot constraint: mum
   VertexingUtils::FCCAnalysesVertex  VertexFitter( int Primary, 
 						   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
@@ -168,8 +162,8 @@ namespace VertexFitterSimple{
   
   /** returns V0s reconstructed from a set of tracks (as an FCCAnalysesV0 object)
    */
-  ROOT::VecOps::RVec<FCCAnalysesV0> get_V0( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-					    VertexingUtils::FCCAnalysesVertex PV ) ;
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> get_V0( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+							    VertexingUtils::FCCAnalysesVertex PV ) ;
 
 }
 
