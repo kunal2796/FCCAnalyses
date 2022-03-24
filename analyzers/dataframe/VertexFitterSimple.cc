@@ -840,8 +840,6 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
 										      double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
   // find SVs using LCFI+ (clustering first)
-  // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
-  // also write another for finding SVs in whole evt
   // change to vec of vec (RVec of RVec breaking) to separate SV from diff jets, currently don't separate SVs by jet
   
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
@@ -902,6 +900,183 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
   }
 
   // currently don't know which SV is from which jet (FIX SOON)
+  return result;
+}
+
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+										      VertexingUtils::FCCAnalysesVertex PV,
+										      std::vector<fastjet::PseudoJet> jets,
+										      std::vector<std::vector<int>> jet_consti,
+										      double chi2_cut, double invM_cut, double chi2Tr_cut) {
+
+  // find SVs using LCFI+ (clustering first)
+  // input non-primary tracks instead of doing the separation inside the funtion
+  
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
+  
+  // find SV inside the jet loop (only from non-primary tracks)
+
+  // TROUBLE
+  // jet constituents have neutrals, tracks don't: how to associate?
+
+  int nJet = jets.size();
+  ROOT::VecOps::RVec<edm4hep::TrackState> tracks_j;
+  //
+  for (unsigned int j=0; j<nJet; j++) {
+    for (unsigned int ele : jet_consti.at(j)) tracks_j.push_back(np_tracks.at(ele));
+
+    // V0 rejection (tight)
+    ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
+    bool tight = true;
+    ROOT::VecOps::RVec<bool> isInV0 = isV0(tracks_j, PV, tight);
+    for(unsigned int i=0; i<isInV0.size(); i++) {
+      if (!isInV0[i]) tracks_fin.push_back(tracks_j[i]);
+    }
+    
+    while(tracks_fin.size() > 1) {
+      // find vertex seed
+      ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
+      // constraint thresholds can be chosen by user, here using default cuts
+      if(vtx_seed.size() == 0) break;
+      
+      // add tracks to the seed
+      // check if a track is added; if not break loop
+      ROOT::VecOps::RVec<int> vtx_fin = vtx_seed;
+      int vtx_fin_size = 0; // to start the loop
+      while(vtx_fin_size != vtx_fin.size()) {
+	vtx_fin_size = vtx_fin.size();
+	vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
+      // constraint thresholds can be chosen by user, here using default cuts
+      }
+      
+      // fit tracks to SV and remove from tracks_fin
+      ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
+      for(int i_tr : vtx_fin) tr_vtx_fin.push_back(tracks_fin[i_tr]);
+      VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
+      result.push_back(sec_vtx);
+      //
+      ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
+      tracks_fin.clear();
+      for(unsigned int t=0; t<temp.size(); t++) {
+	if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
+      }
+      // all this cause don't know how to remove multiple elements at once
+    }
+
+    tracks_j.clear();
+  }
+
+  // currently don't know which SV is from which jet (FIX SOON)
+  return result;
+}
+
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+										       ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+										       VertexingUtils::FCCAnalysesVertex PV,
+										       ROOT::VecOps::RVec<bool> isInPrimary,
+										       double chi2_cut, double invM_cut, double chi2Tr_cut) {
+
+  // find SVs using LCFI+ (w/o clustering)
+  // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
+  
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
+  
+  // retrieve the tracks associated to the recoparticles
+  ROOT::VecOps::RVec<edm4hep::TrackState> tracks = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
+
+  if(tracks.size() != isInPrimary.size()) std::cout<<"ISSUE: track vector and primary-nonprimary vector of diff sizes"<<std::endl;
+
+  // find SV from non-primary tracks
+  ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks;
+  for(unsigned int i=0; i<tracks.size(); i++) {
+    if (!isInPrimary.at(i)) np_tracks.push_back(tracks.at(i));
+  }
+
+  // V0 rejection (tight)
+  ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
+  bool tight = true;
+  ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
+  for(unsigned int i=0; i<isInV0.size(); i++) {
+    if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
+  }
+  
+  while(tracks_fin.size() > 1) {
+    // find vertex seed
+    ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
+    if(vtx_seed.size() == 0) break;
+    
+    // add tracks to the seed
+    // check if a track is added; if not break loop
+    ROOT::VecOps::RVec<int> vtx_fin = vtx_seed;
+    int vtx_fin_size = 0; // to start the loop
+    while(vtx_fin_size != vtx_fin.size()) {
+      vtx_fin_size = vtx_fin.size();
+      vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
+    }
+    
+    // fit tracks to SV and remove from tracks_fin
+    ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
+    for(int i_tr : vtx_fin) tr_vtx_fin.push_back(tracks_fin[i_tr]);
+    VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
+    result.push_back(sec_vtx);
+    //
+    ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
+    tracks_fin.clear();
+    for(unsigned int t=0; t<temp.size(); t++) {
+	if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
+    }
+    // all this cause don't know how to remove multiple elements at once
+  }
+  
+  return result;
+}
+
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+										       VertexingUtils::FCCAnalysesVertex PV,
+										       double chi2_cut, double invM_cut, double chi2Tr_cut) {
+
+  // find SVs from non-primary tracks using LCFI+ (w/o clustering)
+  // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
+  // primary - non-primary separation done externally
+  
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
+  
+  // V0 rejection (tight)
+  ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
+  bool tight = true;
+  ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
+  for(unsigned int i=0; i<isInV0.size(); i++) {
+    if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
+  }
+  
+  while(tracks_fin.size() > 1) {
+    // find vertex seed
+    ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
+    if(vtx_seed.size() == 0) break;
+    
+    // add tracks to the seed
+    // check if a track is added; if not break loop
+    ROOT::VecOps::RVec<int> vtx_fin = vtx_seed;
+    int vtx_fin_size = 0; // to start the loop
+    while(vtx_fin_size != vtx_fin.size()) {
+      vtx_fin_size = vtx_fin.size();
+      vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
+    }
+    
+    // fit tracks to SV and remove from tracks_fin
+    ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
+    for(int i_tr : vtx_fin) tr_vtx_fin.push_back(tracks_fin[i_tr]);
+    VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
+    result.push_back(sec_vtx);
+    //
+    ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
+    tracks_fin.clear();
+    for(unsigned int t=0; t<temp.size(); t++) {
+	if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
+    }
+    // all this cause don't know how to remove multiple elements at once
+  }
+  
   return result;
 }
 
