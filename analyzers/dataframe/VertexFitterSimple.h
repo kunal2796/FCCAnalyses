@@ -91,15 +91,6 @@ namespace VertexFitterSimple{
 								     std::vector<std::vector<int>> jet_consti,
 								     double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
 
-  /** returns SVs reconstructed from non-primary tracks of jets
-   *  currently not separating SVs by jet
-   */
-  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_jets( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-								     VertexingUtils::FCCAnalysesVertex PV,
-								     std::vector<fastjet::PseudoJet> jets,
-								     std::vector<std::vector<int>> jet_consti,
-								     double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ; 
-
   /** returns SVs reconstructed from non-primary tracks of the event
    *  SV finding done before jet clustering
    *  non-primary separated from all tracks using isInPrimary (bool) vector
