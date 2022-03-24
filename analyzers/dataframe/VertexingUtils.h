@@ -38,6 +38,7 @@ namespace VertexingUtils{
   struct FCCAnalysesV0{
     FCCAnalysesVertex vtx; // vertex object
     int pdgAbs;            // pdg ID from reconstructions
+    double invM;           // invariant mass
   };
   
   /// Structure to keep useful track information that is related to the vertex
