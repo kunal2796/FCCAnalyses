@@ -843,11 +843,6 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
   // change to vec of vec (RVec of RVec breaking) to separate SV from diff jets, currently don't separate SVs by jet
   
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
-  
-  // retrieve the tracks associated to the recoparticles
-  ROOT::VecOps::RVec<edm4hep::TrackState> tracks = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
-
-  if(tracks.size() != isInPrimary.size()) std::cout<<"ISSUE: track vector and primary-nonprimary vector of diff sizes"<<std::endl;
 
   // find SV inside the jet loop (only from non-primary tracks)
   // first separate reco particles by jet then get the associated tracks
