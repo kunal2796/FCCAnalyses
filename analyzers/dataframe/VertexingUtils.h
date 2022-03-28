@@ -36,9 +36,9 @@ namespace VertexingUtils{
 
   /// Structure to keep useful track information that is related to the V0
   struct FCCAnalysesV0{
-    FCCAnalysesVertex vtx; // vertex object
-    int pdgAbs;            // pdg ID from reconstructions
-    double invM;           // invariant mass
+    ROOT::VecOps::RVec<FCCAnalysesVertex> vtx; // vertex object
+    ROOT::VecOps::RVec<int> pdgAbs;            // pdg ID from reconstructions
+    ROOT::VecOps::RVec<double> invM;           // invariant mass
   };
   
   /// Structure to keep useful track information that is related to the vertex
