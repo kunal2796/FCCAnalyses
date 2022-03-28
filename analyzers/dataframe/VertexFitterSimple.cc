@@ -1537,8 +1537,8 @@ double VertexFitterSimple::get_trackE(edm4hep::TrackState track) {
 //** V0 Reconstruction **//
 ///////////////////////////
 
-ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-									     VertexingUtils::FCCAnalysesVertex PV) {
+VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+							  VertexingUtils::FCCAnalysesVertex PV) {
   // V0 reconstruction
 
   // should there be an option for tight and loose constraints?
@@ -1546,7 +1546,16 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
 
   // make it stand-alone (removing primary tracks etc)
 
-  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> result;
+  VertexingUtils::FCCAnalysesV0 result;
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> vtx; // FCCAnalyses vertex object
+  ROOT::VecOps::RVec<int> pdgAbs;                            // absolute PDG ID
+  ROOT::VecOps::RVec<double> invM;                           // invariant mass
+  result.vtx = vtx;
+  result.pdgAbs = pdgAbs;
+  result.invM = invM;
+
+  VertexingUtils::FCCAnalysesVertex V0_vtx;
+  
   int nTr = np_tracks.size();
   if(nTr<2) return result;
   ROOT::VecOps::RVec<bool> isInV0(nTr, false);
@@ -1562,8 +1571,6 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
   edm4hep::TrackState tr_j;
   tr_pair.push_back(tr_i);
   tr_pair.push_back(tr_j);
-  VertexingUtils::FCCAnalysesVertex V0_vtx; // FCCAnalyses vertex object
-  VertexingUtils::FCCAnalysesV0 V0_obj;     // FCCAnalyses V0 object
   //
   const double m_pi = 0.13957039; // pi+- mass [GeV]
   const double m_p  = 0.93827208; // p+- mass
@@ -1599,10 +1606,9 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
 	if(debug) std::cout<<"Found a Ks"<<std::endl;
 	isInV0[i] = true;
 	isInV0[j] = true;
-	V0_obj.vtx = V0_vtx;
-	V0_obj.pdgAbs = 310;
-	V0_obj.invM = invM_Ks;
-	result.push_back(V0_obj);
+	vtx.push_back(V0_vtx);
+	pdgAbs.push_back(310);
+	invM.push_back(invM_Ks);
 	break;
       }
       
@@ -1611,20 +1617,18 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
 	if(debug) std::cout<<"Found a Lambda0"<<std::endl;
 	isInV0[i] = true;
 	isInV0[j] = true;
-	V0_obj.vtx = V0_vtx;
-	V0_obj.pdgAbs = 3122;
-	V0_obj.invM = invM_Lambda1;
-	result.push_back(V0_obj);
+	vtx.push_back(V0_vtx);
+	pdgAbs.push_back(3122);
+	invM.push_back(invM_Lambda1);
 	break;
       }
       else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
 	if(debug) std::cout<<"Found a Lambda0"<<std::endl;
 	isInV0[i] = true;
 	isInV0[j] = true;
-	V0_obj.vtx = V0_vtx;
-	V0_obj.pdgAbs = 3122;
-	V0_obj.invM = invM_Lambda2;
-	result.push_back(V0_obj);
+	vtx.push_back(V0_vtx);
+	pdgAbs.push_back(3122);
+	invM.push_back(invM_Lambda2);
 	break;
       }
       
@@ -1633,15 +1637,18 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
 	if(debug) std::cout<<"Found a Photon coversion"<<std::endl;
 	isInV0[i] = true;
 	isInV0[j] = true;
-	V0_obj.vtx = V0_vtx;
-	V0_obj.pdgAbs = 22;
-	V0_obj.invM = invM_Gamma;
-	result.push_back(V0_obj);
+	vtx.push_back(V0_vtx);
+	pdgAbs.push_back(22);
+	invM.push_back(invM_Gamma);
 	break;
       }	
       
     }
   }
 
+  result.vtx = vtx;
+  result.pdgAbs = pdgAbs;
+  result.invM = invM;
+  //
   return result;
 }

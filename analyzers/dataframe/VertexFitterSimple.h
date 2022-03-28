@@ -181,8 +181,8 @@ namespace VertexFitterSimple{
   
   /** returns V0s reconstructed from a set of tracks (as an FCCAnalysesV0 object)
    */
-  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> get_V0( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-							    VertexingUtils::FCCAnalysesVertex PV ) ;
+  VertexingUtils::FCCAnalysesV0 get_V0s( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+					 VertexingUtils::FCCAnalysesVertex PV ) ;
 
 }
 
