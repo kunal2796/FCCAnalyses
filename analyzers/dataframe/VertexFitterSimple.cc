@@ -953,7 +953,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
     if (!isInPrimary.at(i)) np_tracks.push_back(tracks.at(i));
   }
 
-  if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in jet#"<<j+1<<std::endl;
+  if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in the event"<<std::endl;
 
   // V0 rejection (tight)
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
