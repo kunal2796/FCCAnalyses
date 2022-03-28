@@ -1012,6 +1012,9 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
   // primary - non-primary separation done externally
   
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
+
+  bool debug = true;
+  //bool debug = false;
   
   // V0 rejection (tight)
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
@@ -1547,6 +1550,9 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
   int nTr = np_tracks.size();
   if(nTr<2) return result;
   ROOT::VecOps::RVec<bool> isInV0(nTr, false);
+
+  bool debug = true;
+  //bool debug = false;
   
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
   
@@ -1590,6 +1596,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
 
       // Ks
       if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
+	if(debug) std::cout<<"Found a Ks"<<std::endl;
 	isInV0[i] = true;
 	isInV0[j] = true;
 	V0_obj.vtx = V0_vtx;
@@ -1601,6 +1608,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
       
       // Lambda0
       else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
+	if(debug) std::cout<<"Found a Lambda0"<<std::endl;
 	isInV0[i] = true;
 	isInV0[j] = true;
 	V0_obj.vtx = V0_vtx;
@@ -1610,6 +1618,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
 	break;
       }
       else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
+	if(debug) std::cout<<"Found a Lambda0"<<std::endl;
 	isInV0[i] = true;
 	isInV0[j] = true;
 	V0_obj.vtx = V0_vtx;
@@ -1621,6 +1630,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> VertexFitterSimple::get_V0(ROO
       
       // photon conversion
       else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
+	if(debug) std::cout<<"Found a Photon coversion"<<std::endl;
 	isInV0[i] = true;
 	isInV0[j] = true;
 	V0_obj.vtx = V0_vtx;
