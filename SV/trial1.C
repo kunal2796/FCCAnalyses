@@ -18,18 +18,20 @@
 // one to output a vector of psedo-vertices
 // one to get V0s (isV0 tells which tracks form a V0 & get_V0 reconstructs V0s as an FCCAnalysesV0 object)
 
-ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-										      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-										      VertexingUtils::FCCAnalysesVertex PV,
-										      ROOT::VecOps::RVec<bool> isInPrimary,
-										      std::vector<fastjet::PseudoJet> jets,
-										      std::vector<std::vector<int>> jet_consti,
-										      double chi2_cut, double invM_cut, double chi2Tr_cut) {
+VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+							      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+							      VertexingUtils::FCCAnalysesVertex PV,
+							      ROOT::VecOps::RVec<bool> isInPrimary,
+							      std::vector<fastjet::PseudoJet> jets,
+							      std::vector<std::vector<int>> jet_consti,
+							      double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
   // find SVs using LCFI+ (clustering first)
   // change to vec of vec to separate SV from diff jets, currently don't separate SVs by jet
   
+  VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
+  SV.sec_vtx = result;
 
   bool debug = true;
   //bool debug = false;
@@ -126,20 +128,24 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
   if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
 
   // currently don't know which SV is from which jet (FIX SOON)
-  return result;
+  SV.sec_vtx = result;
+  //
+  return SV;
 }
 
-ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-										       ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-										       VertexingUtils::FCCAnalysesVertex PV,
-										       ROOT::VecOps::RVec<bool> isInPrimary,
-										       double chi2_cut, double invM_cut, double chi2Tr_cut) {
+VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+							       ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+							       VertexingUtils::FCCAnalysesVertex PV,
+							       ROOT::VecOps::RVec<bool> isInPrimary,
+							       double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
   // find SVs using LCFI+ (w/o clustering)
   // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
-  
-  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
 
+  VertexingUtils::FCCAnalysesSV SV;
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
+  SV.sec_vtx = result;
+  
   bool debug = true;
   //bool debug = false;
   
@@ -203,19 +209,23 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
 
   if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
   
-  return result;
+  SV.sec_vtx = result;
+  //
+  return SV;
 }
 
-ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-										       VertexingUtils::FCCAnalysesVertex PV,
-										       double chi2_cut, double invM_cut, double chi2Tr_cut) {
-
+VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+							       VertexingUtils::FCCAnalysesVertex PV,
+							       double chi2_cut, double invM_cut, double chi2Tr_cut) {
+  
   // find SVs from non-primary tracks using LCFI+ (w/o clustering)
   // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
   // primary - non-primary separation done externally
-  
-  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
 
+  VertexingUtils::FCCAnalysesSV SV;
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
+  SV.sec_vtx = result;
+  
   bool debug = true;
   //bool debug = false;
   
@@ -264,7 +274,9 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
 
   if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
   
-  return result;
+  SV.sec_vtx = result;
+  //
+  return SV;
 }
 
 ROOT::VecOps::RVec<int> VertexFitterSimple::VertexSeed_best(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
@@ -848,6 +860,8 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s(ROOT::VecOps::RVec<edm
     }
   }
 
+  std::cout<<"Found "<<vtx.size()<<" V0s"<<std::endl;
+  
   result.vtx = vtx;
   result.pdgAbs = pdgAbs;
   result.invM = invM;
