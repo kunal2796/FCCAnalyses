@@ -1658,7 +1658,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s(ROOT::VecOps::RVec<edm
     }
   }
 
-  std::cout<<"Found "<<vtx.size()<<" V0s"<<std::endl;
+  //std::cout<<"Found "<<vtx.size()<<" V0s"<<std::endl;
   
   result.vtx = vtx;
   result.pdgAbs = pdgAbs;
