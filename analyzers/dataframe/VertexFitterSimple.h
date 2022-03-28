@@ -63,18 +63,6 @@ namespace VertexFitterSimple{
                                                                  ROOT::VecOps::RVec<edm4hep::TrackState> primaryTracks ) ;
 
 
-  
-  Double_t FastRv(TVectorD p1, TVectorD p2) ;
-  TMatrixDSym RegInv3(TMatrixDSym &Smat0) ;
-  TMatrixD Fill_A(TVectorD par, Double_t phi) ;
-  TVectorD Fill_a(TVectorD par, Double_t phi) ;
-  TVectorD Fill_x0(TVectorD par) ;
-  TVectorD Fill_x(TVectorD par, Double_t phi) ;
-
-  TVectorD XPtoPar(TVector3 x, TVector3 p, Double_t Q);
-  TVector3 ParToP(TVectorD Par);
-
-
   ///////////////////////////
   //** SV Finder (LCFI+) **//
   ///////////////////////////
@@ -87,7 +75,7 @@ namespace VertexFitterSimple{
 								     ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 								     VertexingUtils::FCCAnalysesVertex PV,
 								     ROOT::VecOps::RVec<bool> isInPrimary,
-								     std::vector<fastjet::PseudoJet> jets,
+								     ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
 								     std::vector<std::vector<int>> jet_consti,
 								     double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
 
@@ -184,6 +172,17 @@ namespace VertexFitterSimple{
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesV0> get_V0( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 							    VertexingUtils::FCCAnalysesVertex PV ) ;
 
+
+
+  Double_t FastRv(TVectorD p1, TVectorD p2) ;
+  TMatrixDSym RegInv3(TMatrixDSym &Smat0) ;
+  TMatrixD Fill_A(TVectorD par, Double_t phi) ;
+  TVectorD Fill_a(TVectorD par, Double_t phi) ;
+  TVectorD Fill_x0(TVectorD par) ;
+  TVectorD Fill_x(TVectorD par, Double_t phi) ;
+
+  TVectorD XPtoPar(TVector3 x, TVector3 p, Double_t Q);
+  TVector3 ParToP(TVectorD Par);
 }
 
 #endif

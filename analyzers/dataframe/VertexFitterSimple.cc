@@ -7,7 +7,7 @@
 
 using namespace VertexFitterSimple;
 
-
+bool debug = true;
 
 
 TVector3 VertexFitterSimple::ParToP(TVectorD Par){
@@ -333,6 +333,9 @@ VertexingUtils::FCCAnalysesVertex  VertexFitterSimple::VertexFitter_Tk( int Prim
   // Units for the beam-spot : mum
   // See https://github.com/HEP-FCC/FCCeePhysicsPerformance/tree/master/General#generating-events-under-realistic-fcc-ee-environment-conditions
 
+  if(debug) std::cout << "Starting VertexFitter_Tk!" << std::endl;
+
+
   // final results :
   VertexingUtils::FCCAnalysesVertex TheVertex;
   
@@ -356,9 +359,6 @@ VertexingUtils::FCCAnalysesVertex  VertexFitterSimple::VertexFitter_Tk( int Prim
   if ( Ntr <= 1) return TheVertex;   // can not reconstruct a vertex with only one track...
   
 
-  bool debug = false;
-  if (debug) std::cout << " enter in VertexFitter_Tk for the Bs decay vertex " << std::endl;
-  
   // if a beam-spot constraint is required :
   TMatrixDSym BeamSpotCovI(3);
   TVectorD BeamSpotPos(3);
@@ -717,6 +717,7 @@ VertexingUtils::FCCAnalysesVertex  VertexFitterSimple::VertexFitter_Tk( int Prim
   delete final_chi2;
   delete final_phases;
  
+  if(debug) std::cout << "Finished VertexFitter_Tk!" << std::endl;
   return TheVertex;
 }
 
@@ -738,8 +739,8 @@ ROOT::VecOps::RVec<edm4hep::TrackState>   VertexFitterSimple::get_PrimaryTracks(
 
 // tracks = the collection of tracks that was used in the first step
 
-//bool debug  = true ;
-  bool debug = false;
+
+if(debug) std::cout << "Startign get_PrimaryTracks!" << std::endl;
 float CHI2MAX = 25  ;
 
 if (debug) {
@@ -781,6 +782,7 @@ ipass ++;
                                                                          bsc_sigmax, bsc_sigmay, bsc_sigmaz,
                                                                          bsc_x, bsc_y, bsc_z )  ;
 
+ if(debug) std::cout << "Finished get_PrimaryTracks!" << std::endl;
  return VertexFitterSimple::get_PrimaryTracks( vtx, seltracks, BeamSpotConstraint, bsc_sigmax, bsc_sigmay, bsc_sigmaz,
                                                 bsc_x,  bsc_y, bsc_z, ipass ) ;
 
@@ -791,7 +793,7 @@ ipass ++;
 
 ROOT::VecOps::RVec<edm4hep::TrackState>   VertexFitterSimple::get_NonPrimaryTracks( ROOT::VecOps::RVec<edm4hep::TrackState> allTracks,
                                                                                     ROOT::VecOps::RVec<edm4hep::TrackState> primaryTracks ) {
-
+  if(debug) std::cout << "Starting get_NonPrimaryTracks!" << std::endl;
   ROOT::VecOps::RVec<edm4hep::TrackState> result;
   for (auto & track: allTracks) {
      bool isInPrimary = false;
@@ -803,7 +805,7 @@ ROOT::VecOps::RVec<edm4hep::TrackState>   VertexFitterSimple::get_NonPrimaryTrac
      }
      if ( !isInPrimary) result.push_back( track );
   }
-
+ if(debug) std::cout << "Finished get_NonPrimaryTracks!" << std::endl;
  return result;
 }
 
@@ -811,6 +813,7 @@ ROOT::VecOps::RVec<edm4hep::TrackState>   VertexFitterSimple::get_NonPrimaryTrac
 ROOT::VecOps::RVec<bool> VertexFitterSimple::IsPrimary_forTracks( ROOT::VecOps::RVec<edm4hep::TrackState> allTracks,
                                                                   ROOT::VecOps::RVec<edm4hep::TrackState> primaryTracks ) {
 
+  if(debug) std::cout << "Starting IsPrimary_forTracks!" << std::endl;
   ROOT::VecOps::RVec<bool> result;
   for (auto & track: allTracks) {
      bool isInPrimary = false;
@@ -822,6 +825,7 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::IsPrimary_forTracks( ROOT::VecOps::
      }
      result.push_back( isInPrimary );
   }
+ if(debug) std::cout << "Starting IsPrimary_forTracks!" << std::endl;
  return result;
 }
 
@@ -835,7 +839,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
 										      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 										      VertexingUtils::FCCAnalysesVertex PV,
 										      ROOT::VecOps::RVec<bool> isInPrimary,
-										      std::vector<fastjet::PseudoJet> jets,
+										      ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
 										      std::vector<std::vector<int>> jet_consti,
 										      double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
@@ -918,6 +922,9 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
 										       ROOT::VecOps::RVec<bool> isInPrimary,
 										       double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
+
+  if(debug) std::cout << "Starting SV finding!" << std::endl;
+
   // find SVs using LCFI+ (w/o clustering)
   // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
   
@@ -942,9 +949,17 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
     if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
   }
   
+
+  if(debug) std::cout << "tracks_fin.size() = " << tracks_fin.size() << std::endl;
   while(tracks_fin.size() > 1) {
     // find vertex seed
     ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
+    
+    if(debug){
+        std::cout << "tracks_fin.size(): " << tracks_fin.size() << std::endl;
+        for(int i=0; i<vtx_seed.size();i++)
+            std::cout << "vtx_seed: " << vtx_seed[i] << std::endl;
+    }
     if(vtx_seed.size() == 0) break;
     
     // add tracks to the seed
@@ -958,7 +973,10 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
     
     // fit tracks to SV and remove from tracks_fin
     ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
-    for(int i_tr : vtx_fin) tr_vtx_fin.push_back(tracks_fin[i_tr]);
+    for(int i_tr : vtx_fin){
+        tr_vtx_fin.push_back(tracks_fin[i_tr]);
+        if(debug) std::cout << "Pushing back tracks_fin[i_tr]" << std::endl;
+    }
     VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
     result.push_back(sec_vtx);
     //
@@ -970,12 +988,20 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
     // all this cause don't know how to remove multiple elements at once
   }
   
+  if(debug) std::cout << "Finished SV finding!" << std::endl;
+  if(debug){
+     for(int i=0;i<result.size();i++)
+        std::cout << "Results: " << result[i].reco_chi2 << std::endl;
+  }
   return result;
 }
 
 ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 										       VertexingUtils::FCCAnalysesVertex PV,
 										       double chi2_cut, double invM_cut, double chi2Tr_cut) {
+
+
+  if(debug) std::cout << "Starting SV finding!" << std::endl;
 
   // find SVs from non-primary tracks using LCFI+ (w/o clustering)
   // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
@@ -1018,7 +1044,12 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_SV
     }
     // all this cause don't know how to remove multiple elements at once
   }
-  
+ 
+  if(debug) std::cout << "Finished SV finding!" << std::endl;
+  if(debug){
+     for(int i=0;i<result.size();i++)
+        std::cout << "Results: " << result[i].reco_chi2 << std::endl;
+  }
   return result;
 }
 
@@ -1030,15 +1061,14 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::VertexSeed_best(ROOT::VecOps::RVec<e
   // maybe also update and write one to get first pair to pass constraints
 
   ROOT::VecOps::RVec<int> result;
-  int isel, jsel;
+  int isel = 0;
+  int jsel = 1;
   
   int nTr = tracks.size();
-  ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
   // push empty tracks to make a size=2 vector
-  edm4hep::TrackState tr_i;
-  edm4hep::TrackState tr_j;
-  tr_pair.push_back(tr_i);
-  tr_pair.push_back(tr_j);
+  ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
+  tr_pair.push_back(tracks[0]);
+  tr_pair.push_back(tracks[1]);
   VertexingUtils::FCCAnalysesVertex vtx_seed;
   double chi2_min = 99;
   
@@ -1160,12 +1190,13 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_best(ROOT::VecOps::RVec<edm
 
   // add tracks of the previously formed vtx to a vector
   for(int tr : vtx_tr) {
+    if(debug) std::cout << "Track integer: " << tr << std::endl;
+    if(debug) std::cout <<  "Track value: " << tracks[tr] << std::endl;
     tr_vtx.push_back(tracks[tr]);
   }
   int iTr = tr_vtx.size();
   // add an empty track to increase vector size by 1
-  edm4hep::TrackState tr_i;
-  tr_vtx.push_back(tr_i);
+  tr_vtx.push_back(tracks[0]);
 
   // find best track to add to the vtx
   for(unsigned int i=0; i<nTr; i++) {
