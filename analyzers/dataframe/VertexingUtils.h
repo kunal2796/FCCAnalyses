@@ -100,7 +100,7 @@ namespace VertexingUtils{
 
   /// SV Reconstruction
   /// Return the vertex position of all reconstructed SVs (in mm)
-  ROOT::VecOps::RVec<TVector3> get_position_SV( FCCAnalysesV0 SV );
+  ROOT::VecOps::RVec<TVector3> get_position_SV( FCCAnalysesSV SV );
 
   /// V0 Reconstruction
   /// Return the vertex position of all reconstructed V0s (in mm)
