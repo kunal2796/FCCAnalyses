@@ -242,7 +242,7 @@ TMatrixDSym VertexingUtils::CovToACTS(TMatrixDSym Cov, TVectorD Par){
 ////////////////////////////////////////////////////
 
 // vector of position of all reconstructed SV (in mm)
-ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_SV( VertexingUtils::FCCAnalysesSV SV ) {
+ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_SV( FCCAnalysesSV SV ) {
   ROOT::VecOps::RVec<TVector3> result;
   for(VertexingUtils::FCCAnalysesVertex ivtx : SV.sec_vtx) {
     TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
@@ -252,7 +252,7 @@ ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_SV( VertexingUtils::FC
 }
 
 // vector of position of all reconstructed V0 (in mm)
-ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_V0( VertexingUtils::FCCAnalysesV0 V0 ) {
+ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_V0( FCCAnalysesV0 V0 ) {
   ROOT::VecOps::RVec<TVector3> result;
   for(VertexingUtils::FCCAnalysesVertex ivtx : V0.vtx) {
     TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
@@ -262,13 +262,13 @@ ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_V0( VertexingUtils::FC
 }
 
 // vector of PDG IDs of all reconstructed V0
-ROOT::VecOps::RVec<int> VertexingUtils::get_pdg_V0( VertexingUtils::FCCAnalysesV0 V0 ) {
+ROOT::VecOps::RVec<int> VertexingUtils::get_pdg_V0( FCCAnalysesV0 V0 ) {
   ROOT::VecOps::RVec<int> result = V0.pdgAbs;
   return result;
 }
 
 // vector of invariant masses of all reconstructed V0
-ROOT::VecOps::RVec<double> VertexingUtils::get_invM_V0( VertexingUtils::FCCAnalysesV0 V0 ) {
+ROOT::VecOps::RVec<double> VertexingUtils::get_invM_V0( FCCAnalysesV0 V0 ) {
   ROOT::VecOps::RVec<double> result = V0.invM;
   return result;
 }
