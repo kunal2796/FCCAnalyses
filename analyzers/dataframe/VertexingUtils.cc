@@ -251,6 +251,119 @@ ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_SV( FCCAnalysesSV SV )
   return result;
 }
 
+// internal fns for SV finder
+
+// invariant mass of a two track vertex
+double VertexingUtils::get_invM_pairs( FCCAnalysesVertex vertex,
+				       double m1,
+				       double m2 ) {
+  // CAUTION: m1 -> first track; m2 -> second track
+  
+  double result;
+  
+  ROOT::VecOps::RVec<TVector3> p_tracks = vertex.updated_track_momentum_at_vertex;
+
+  TLorentzVector p4_vtx;
+  double m[2] = {m1, m2};
+  int nTr = p_tracks.size();
+
+  for(unsigned int i=0; i<nTr; i++) {
+    TLorentzVector p4_tr;
+    p4_tr.SetXYZM(p_tracks[i].X(), p_tracks[i].Y(), p_tracks[i].Z(), m[i]);
+    p4_vtx += p4_tr;
+  }
+
+  result = p4_vtx.M();
+  return result;
+}
+
+// invariant mass of a vertex (assuming all tracks to be pions)
+double VertexingUtils::get_invM( FCCAnalysesVertex vertex ) {
+
+  double result;
+  
+  ROOT::VecOps::RVec<TVector3> p_tracks = vertex.updated_track_momentum_at_vertex;
+
+  TLorentzVector p4_vtx;
+  const double m = 0.13957039; // pion mass
+
+  for(TVector3 p_tr : p_tracks) {
+    TLorentzVector p4_tr;
+    p4_tr.SetXYZM(p_tr.X(), p_tr.Y(), p_tr.Z(), m);
+    p4_vtx += p4_tr;
+  }
+
+  result = p4_vtx.M();
+  return result;
+}
+
+// cos(angle) b/n V0 candidate's (or any vtx) momentum & PV to V0 displacement vector
+double VertexingUtils::get_PV2V0angle( FCCAnalysesVertex V0,
+				       FCCAnalysesVertex PV ) {
+  double result;
+
+  ROOT::VecOps::RVec<TVector3> p_tracks = V0.updated_track_momentum_at_vertex;
+
+  TVector3 p_sum;
+  for(TVector3 p_tr : p_tracks) p_sum += p_tr;
+
+  edm4hep::Vector3f r_V0 = V0.vertex.position; // in mm
+  edm4hep::Vector3f r_PV = PV.vertex.position; // in mm
+
+  TVector3 r_V0_PV(r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
+  
+  double pDOTr = p_sum.Dot(r_V0_PV);
+  double p_mag = p_sum.Mag();
+  double r_mag = r_V0_PV.Mag();
+
+  result = pDOTr / (p_mag * r_mag);
+  return result;
+}
+
+// cos(angle) b/n track momentum sum & PV to vtx displacement vector
+double VertexingUtils::get_PV2vtx_angle( ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+					 FCCAnalysesVertex vtx,
+					 FCCAnalysesVertex PV ) {
+  double result;
+
+  TVector3 p_sum;
+  for(edm4hep::TrackState tr : tracks) {
+    TVectorD ipar = VertexingUtils::get_trackParam(tr);
+    TVector3 ip   = ParToP(ipar);
+    p_sum += ip;
+  }
+  
+  edm4hep::Vector3f r_vtx = vtx.vertex.position; // in mm
+  edm4hep::Vector3f r_PV  = PV.vertex.position;  // in mm
+
+  TVector3 r_vtx_PV(r_vtx[0] - r_PV[0], r_vtx[1] - r_PV[1], r_vtx[2] - r_PV[2]);
+  
+  double pDOTr = p_sum.Dot(r_vtx_PV);
+  double p_mag = p_sum.Mag();
+  double r_mag = r_vtx_PV.Mag();
+
+  result = pDOTr / (p_mag * r_mag);
+  return result;
+}
+
+// get track's energy assuming it to be a pion
+double VertexingUtils::get_trackE( edm4hep::TrackState track ) {
+
+  double result;
+
+  const double m_pi = 0.13957039;
+  
+  TVectorD par = VertexingUtils::get_trackParam(track);
+  TVector3 p   = ParToP(par);
+  TLorentzVector p4;
+  p4.SetXYZM(p[0], p[1], p[2], m_pi);
+
+  result = p4.E();
+  return result;
+}
+
+///////
+
 // vector of position of all reconstructed V0 (in mm)
 ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_V0( FCCAnalysesV0 V0 ) {
   ROOT::VecOps::RVec<TVector3> result;
