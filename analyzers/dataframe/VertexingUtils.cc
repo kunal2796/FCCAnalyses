@@ -329,7 +329,7 @@ double VertexingUtils::get_PV2vtx_angle( ROOT::VecOps::RVec<edm4hep::TrackState>
   TVector3 p_sum;
   for(edm4hep::TrackState tr : tracks) {
     TVectorD ipar = VertexingUtils::get_trackParam(tr);
-    TVector3 ip   = ParToP(ipar);
+    TVector3 ip   = VertexFitterSimple::ParToP(ipar);
     p_sum += ip;
   }
   
@@ -354,7 +354,7 @@ double VertexingUtils::get_trackE( edm4hep::TrackState track ) {
   const double m_pi = 0.13957039;
   
   TVectorD par = VertexingUtils::get_trackParam(track);
-  TVector3 p   = ParToP(par);
+  TVector3 p   = VertexFitterSimple::ParToP(par);
   TLorentzVector p4;
   p4.SetXYZM(p[0], p[1], p[2], m_pi);
 

@@ -12,6 +12,7 @@
 #include "edm4hep/VertexData.h"
 #include "edm4hep/Vertex.h"
 
+#include "TLorentzVector.h"
 #include "TVectorD.h"
 #include "TVector3.h"
 #include "TMatrixDSym.h"
