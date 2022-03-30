@@ -98,6 +98,21 @@ namespace VertexingUtils{
   int get_nTracks(ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
 
 
+  /// SV Reconstruction
+  /// Return the vertex position of all reconstructed SVs (in mm)
+  ROOT::VecOps::RVec<TVector3> get_position_SV( FCCAnalysesSV SV );
+
+  /// V0 Reconstruction
+  /// Return the vertex position of all reconstructed V0s (in mm)
+  ROOT::VecOps::RVec<TVector3> get_position_V0( FCCAnalysesV0 V0 );
+
+  /// Return the PDG IDs of all reconstructed V0s
+  ROOT::VecOps::RVec<int> get_pdg_V0( FCCAnalysesV0 V0 );
+
+  /// Return the invariant masses of all reconstructed V0s
+  ROOT::VecOps::RVec<double> get_invM_V0( FCCAnalysesV0 V0 );
+
+
  // --- Internal methods needed by the code of  Franco B :  
   TVectorD get_trackParam( edm4hep::TrackState & atrack) ;
   TMatrixDSym get_trackCov( edm4hep::TrackState &  atrack) ;
