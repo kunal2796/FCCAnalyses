@@ -917,6 +917,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
 	if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
       }
       // all this cause don't know how to remove multiple elements at once
+      tr_vtx_fin.clear();
 
       if(debug) std::cout<<result.size()<<" SV found"<<std::endl;
     }
@@ -924,7 +925,6 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
     // clean-up
     np_tracks.clear();
     tracks_fin.clear();
-    tr_vtx_fin.clear();
   }
 
   if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
