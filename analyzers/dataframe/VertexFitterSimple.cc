@@ -835,7 +835,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
 							      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 							      VertexingUtils::FCCAnalysesVertex PV,
 							      ROOT::VecOps::RVec<bool> isInPrimary,
-							      std::vector<fastjet::PseudoJet> jets,
+							      ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
 							      std::vector<std::vector<int>> jet_consti,
 							      double chi2_cut, double invM_cut, double chi2Tr_cut) {
 

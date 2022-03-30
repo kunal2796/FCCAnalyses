@@ -34,14 +34,16 @@ int main()
   TFile *histFile = new TFile(histfname,"RECREATE");
   
   // hists for Ks
-  TH1F* h_nKs_MC = new TH1F("h_nKs_MC","K_{S} Multiplicity from MC Truth",10,0,10);
-  TH1F* h_nKs_V0 = new TH1F("h_nKs_V0","K_{S} Multiplicity from V^{0} Reconstruction",10,0,10);
-  TH1F* h_nKs_diff = new TH1F("h_nKs_diff","K_{S} Multiplicity Difference (MC - V^{0})",13,-5,8);
-
+  //TH1F* h_nKs_MC    = new TH1F("h_nKs_MC",   "K_{S} Multiplicity from MC Truth",              10,0,10);
+  //TH1F* h_nKs_V0    = new TH1F("h_nKs_V0",   "K_{S} Multiplicity from V^{0} Reconstruction",  10,0,10);
+  TH1F* h_nKs_diff  = new TH1F("h_nKs_diff", "K_{S} Multiplicity Difference (MC - V^{0})",    13,-5,8);
+  TH1F* h_invMKs_V0 = new TH1F("h_invMKs_V0","K_{S} Invariant Mass from V^{0} Reconstruction",100,0.493,0.503);
+  
   // hists for Lambda0
-  TH1F* h_nLambda_MC = new TH1F("h_nLambda_MC","#Lambda^{0} Multiplicity from MC Truth",10,0,10);
-  TH1F* h_nLambda_V0 = new TH1F("h_nLambda_V0","#Lambda^{0} Multiplicity from V^{0} Reconstruction",10,0,10);
-  TH1F* h_nLambda_diff = new TH1F("h_nLambda_diff","#Lambda^{0} Multiplicity Difference (MC - V^{0})",10,-5,5);
+  //TH1F* h_nLambda_MC    = new TH1F("h_nLambda_MC",   "#Lambda^{0} Multiplicity from MC Truth",              10,0,10);
+  //TH1F* h_nLambda_V0    = new TH1F("h_nLambda_V0",   "#Lambda^{0} Multiplicity from V^{0} Reconstruction",  10,0,10);
+  TH1F* h_nLambda_diff  = new TH1F("h_nLambda_diff", "#Lambda^{0} Multiplicity Difference (MC - V^{0})",    10,-5,5);
+  TH1F* h_invMLambda_V0 = new TH1F("h_invMLambda_V0","#Lambda^{0} Invariant Mass from V^{0} Reconstruction",100,1.111,1.121);
   
   // MC particles                                                       
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpdg(tree, "MC_pdg");
@@ -86,12 +88,16 @@ int main()
 	    {
 	      nKs_V0++;
 	      nKs_V0_evt++;
+	      //
+	      h_invMKs_V0->Fill(V0invM->at(ctr));
 	    }
 	  // Lambda0 - V0
 	  if(V0pdg->at(ctr)==3122)
 	    {
 	      nLambda0_V0++;
 	      nLambda0_V0_evt++;
+	      //
+	      h_invMLambda_V0->Fill(V0invM->at(ctr));
 	    }
 	}
 
@@ -118,6 +124,8 @@ int main()
 
   h_nKs_diff->Write();
   h_nLambda_diff->Write();
+  h_invMKs_V0->Write();
+  h_invMLambda_V0->Write();
   histFile->Close();
   cout<<"Histograms written to file and file closed"<<endl;
 
