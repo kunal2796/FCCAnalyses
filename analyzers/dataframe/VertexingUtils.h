@@ -17,8 +17,6 @@
 #include "TVector3.h"
 #include "TMatrixDSym.h"
 
-#include "VertexFitterSimple.h"
-
 
 /** Vertexing utilities 
 */
