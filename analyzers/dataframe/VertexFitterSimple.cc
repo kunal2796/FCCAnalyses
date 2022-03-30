@@ -853,22 +853,24 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
   // find SV inside the jet loop (only from non-primary tracks)
   // first separate reco particles by jet then get the associated tracks
   int nJet = jets.size();
-  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> RP_j;
   ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks;
+
+  ROOT::VecOps::RVec<edm4hep::TrackState> tracks   = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
+  ROOT::VecOps::RVec<int> reco_ind_tracks     = ReconstructedParticle2Track::get_recoindTRK( recoparticles, thetracks );
+
+  if(debug) std::cout<<"tracks extracted from the reco particles"<<std::endl;
+
   //
   for (unsigned int j=0; j<nJet; j++) {
-    for (unsigned int ele : jet_consti.at(j)) RP_j.push_back(recoparticles.at(ele));
 
-    if(debug) std::cout<<"reco particles from jet#"<<j+1<<" isolated"<<std::endl;
-
-    ROOT::VecOps::RVec<edm4hep::TrackState> tracks_j = ReconstructedParticle2Track::getRP2TRK( RP_j, thetracks );
-
-    if(debug) std::cout<<"tracks extracted from the reco particles"<<std::endl;
-    
-    for (unsigned int i=0; i<isInPrimary.size(); i++) {
-      if (!isInPrimary.at(i)) np_tracks.push_back(tracks_j.at(i));
+    std::vector<int> i_jetconsti = jet_consti.at(j);
+    for (int ctr=0; ctr<tracks.size(); ctr++) {
+      if(isInPrimary.at(ctr)) continue;
+      if(std::find(i_jetconsti.begin(), i_jetconsti.end(), reco_ind_tracks.at(ctr)) == i_jetconsti.end()) {
+	np_tracks.push_back(tracks.at(ctr));
+      }
     }
-
+    
     if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in jet#"<<j+1<<std::endl;
 
     // V0 rejection (tight)
@@ -917,8 +919,6 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
     }
 
     // clean-up
-    tracks_j.clear();
-    RP_j.clear();
     np_tracks.clear();
     tracks_fin.clear();
   }
