@@ -106,6 +106,10 @@ namespace ReconstructedParticle2Track{
   ROOT::VecOps::RVec<edm4hep::TrackState> getRP2TRK( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,
 						     ROOT::VecOps::RVec<edm4hep::TrackState> tracks ) ;
 
+  /// Return the reco indices of particles that have tracks
+  ROOT::VecOps::RVec<int> get_recoindTRK( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, 
+					  ROOT::VecOps::RVec<edm4hep::TrackState> tracks ) ;
+  
   /// Return the size of a collection of TrackStates
   int getTK_n(ROOT::VecOps::RVec<edm4hep::TrackState> x) ;
 }

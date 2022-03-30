@@ -12,6 +12,7 @@
 #include "edm4hep/VertexData.h"
 #include "edm4hep/Vertex.h"
 
+#include "TLorentzVector.h"
 #include "TVectorD.h"
 #include "TVector3.h"
 #include "TMatrixDSym.h"
@@ -96,6 +97,34 @@ namespace VertexingUtils{
   
   /// Return the number of tracks in a given track collection
   int get_nTracks(ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
+
+  /// functions used for SV reconstruction
+  /** returns the invariant mass of a two-track vertex
+   *  CAUTION: m1 -> mass of first track, m2 -> mass of second track
+   *  by default both pions
+   */
+  double get_invM_pairs( FCCAnalysesVertex vertex,
+			 double m1 = 0.13957039,
+			 double m2 = 0.13957039) ;
+
+  /** returns the invariant mass of a vertex
+   *  assuming all tracks to be pions
+   */
+  double get_invM( FCCAnalysesVertex vertex ) ;
+
+  /** returns the cos of the angle b/n V0 candidate's (or any vtx's) momentum & PV to V0 (vtx) displacement vector */
+  double get_PV2V0angle( FCCAnalysesVertex V0,
+			 FCCAnalysesVertex PV) ;
+
+  /** returns cos of the angle b/n track (that form the vtx) momentum sum & PV to vtx displacement vector */
+  double get_PV2vtx_angle( ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+			   FCCAnalysesVertex vtx,
+			   FCCAnalysesVertex PV ) ;
+
+  /** returns a track's energy
+   *  assuming the track to be a pion
+   */
+  double get_trackE( edm4hep::TrackState track ) ;
 
 
   /// SV Reconstruction
