@@ -1,4 +1,5 @@
 ﻿#include "VertexingUtils.h"
+#include "VertexFitterSimple.h"
 
 using namespace VertexingUtils;
 
