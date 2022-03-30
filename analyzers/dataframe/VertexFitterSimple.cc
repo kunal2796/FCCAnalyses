@@ -740,7 +740,7 @@ ROOT::VecOps::RVec<edm4hep::TrackState>   VertexFitterSimple::get_PrimaryTracks(
 // tracks = the collection of tracks that was used in the first step
 
 
-if(debug) std::cout << "Startign get_PrimaryTracks!" << std::endl;
+if(debug) std::cout << "Starting get_PrimaryTracks!" << std::endl;
 float CHI2MAX = 25  ;
 
 if (debug) {
@@ -836,12 +836,12 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::IsPrimary_forTracks( ROOT::VecOps::
 ///////////////////////////
 
 VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-							      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-							      VertexingUtils::FCCAnalysesVertex PV,
-							      ROOT::VecOps::RVec<bool> isInPrimary,
-							      ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
-							      std::vector<std::vector<int>> jet_consti,
-							      double chi2_cut, double invM_cut, double chi2Tr_cut) {
+             ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+             VertexingUtils::FCCAnalysesVertex PV,
+             ROOT::VecOps::RVec<bool> isInPrimary,
+             ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
+             std::vector<std::vector<int>> jet_consti,
+             double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
   // find SVs using LCFI+ (clustering first)
   // change to vec of vec (RVec of RVec breaking) to separate SV from diff jets, currently don't separate SVs by jet
@@ -856,31 +856,24 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
   // find SV inside the jet loop (only from non-primary tracks)
   // first separate reco particles by jet then get the associated tracks
   int nJet = jets.size();
-  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> RP_j;
   ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks;
 
-  if(debug) std::cout << "isInPrimary.size(): " << isInPrimary.size() << std::endl;
+  ROOT::VecOps::RVec<edm4hep::TrackState> tracks   = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
+  ROOT::VecOps::RVec<int> reco_ind_tracks     = ReconstructedParticle2Track::get_recoindTRK( recoparticles, thetracks );
 
-  ROOT::VecOps::RVec<bool> isInPrimary_j;
+  if(debug) std::cout<<"tracks extracted from the reco particles"<<std::endl;
+
   //
   for (unsigned int j=0; j<nJet; j++) {
-    for (unsigned int ele : jet_consti.at(j)){
-        RP_j.push_back(recoparticles.at(ele));
-        isInPrimary_j.push_back(isInPrimary.at(ele));
+
+    std::vector<int> i_jetconsti = jet_consti.at(j);
+    for (int ctr=0; ctr<tracks.size(); ctr++) {
+      if(isInPrimary.at(ctr)) continue;
+      if(std::find(i_jetconsti.begin(), i_jetconsti.end(), reco_ind_tracks.at(ctr)) == i_jetconsti.end()) {
+ np_tracks.push_back(tracks.at(ctr));
+      }
     }
-
-    if(debug) std::cout<<"reco particles from jet#"<<j+1<<" isolated"<<std::endl;
-
-    ROOT::VecOps::RVec<edm4hep::TrackState> tracks_j = ReconstructedParticle2Track::getRP2TRK( RP_j, thetracks );
-
-    if(debug) std::cout<<"tracks extracted from the reco particles"<<std::endl;
-   
-    if(debug) std::cout << "isInPrimary_j.size(): " << isInPrimary_j.size() << "tracks_j.size(): " << tracks_j.size() << ", jets: " << jets.size() << std::endl;
-    for (unsigned int i=0; i<isInPrimary.size(); i++) {
-      if(debug) std::cout << "!isInPrimary.at(i): " << !isInPrimary.at(i) << ", tracks_j.at(i): " << tracks_j.at(i) << std::endl;
-      if (!isInPrimary_j.at(i)) np_tracks.push_back(tracks_j.at(i));
-    }
-
+    
     if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in jet#"<<j+1<<std::endl;
 
     // V0 rejection (tight)
@@ -907,8 +900,8 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
       ROOT::VecOps::RVec<int> vtx_fin = vtx_seed;
       int vtx_fin_size = 0; // to start the loop
       while(vtx_fin_size != vtx_fin.size()) {
-	vtx_fin_size = vtx_fin.size();
-	vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
+ vtx_fin_size = vtx_fin.size();
+ vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
       // constraint thresholds can be chosen by user, here using default cuts
       }
       
@@ -921,7 +914,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
       ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
       tracks_fin.clear();
       for(unsigned int t=0; t<temp.size(); t++) {
-	if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
+ if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
       }
       // all this cause don't know how to remove multiple elements at once
 
@@ -929,8 +922,6 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
     }
 
     // clean-up
-    tracks_j.clear();
-    RP_j.clear();
     np_tracks.clear();
     tracks_fin.clear();
   }
