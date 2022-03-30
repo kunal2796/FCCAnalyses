@@ -857,6 +857,9 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
 
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks   = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
   ROOT::VecOps::RVec<int> reco_ind_tracks     = ReconstructedParticle2Track::get_recoindTRK( recoparticles, thetracks );
+  if(tracks.size() != reco_ind_tracks.size()) std::cout<<"ERROR: reco index vector not the same size as no of tracks"<<std::endl;
+
+  if(tracks.size() != isInPrimary.size()) std::cout<<"ERROR: isInPrimary vector size not the same as no of tracks"<<std::endl;
 
   if(debug) std::cout<<"tracks extracted from the reco particles"<<std::endl;
 
@@ -865,9 +868,9 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
 
     std::vector<int> i_jetconsti = jet_consti.at(j);
     for (int ctr=0; ctr<tracks.size(); ctr++) {
-      if(isInPrimary.at(ctr)) continue;
+      if(isInPrimary.at(ctr)) continue; // remove primary tracks
       if(std::find(i_jetconsti.begin(), i_jetconsti.end(), reco_ind_tracks.at(ctr)) == i_jetconsti.end()) {
-	np_tracks.push_back(tracks.at(ctr));
+	np_tracks.push_back(tracks.at(ctr)); // separate tracks by jet
       }
     }
     
@@ -921,6 +924,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
     // clean-up
     np_tracks.clear();
     tracks_fin.clear();
+    tr_vtx_fin.clear();
   }
 
   if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
