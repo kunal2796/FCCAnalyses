@@ -37,7 +37,7 @@ namespace VertexingUtils{
 
   /// Structure to keep useful information that is related to the SV
   struct FCCAnalysesSV{
-    ROOT::VecOps::RVec<FCCAnalysesVertex> sec_vtx; // vertex object
+    ROOT::VecOps::RVec<FCCAnalysesVertex> vtx; // vertex object
   };
 
   /// Structure to keep useful information that is related to the V0
@@ -128,6 +128,12 @@ namespace VertexingUtils{
 
 
   /// SV Reconstruction
+  /// Return the number of reconstructed SVs
+  ROOT::VecOps::RVec<int> get_n_SV( FCCAnalysesSV SV );
+
+  /// Return the number of reconstructed V0s
+  ROOT::VecOps::RVec<int> get_n_V0( FCCAnalysesSV V0 );
+  
   /// Return the vertex position of all reconstructed SVs (in mm)
   ROOT::VecOps::RVec<TVector3> get_position_SV( FCCAnalysesSV SV );
 

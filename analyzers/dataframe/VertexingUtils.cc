@@ -1,4 +1,4 @@
-﻿#include "VertexingUtils.h"
+﻿/#include "VertexingUtils.h"
 #include "VertexFitterSimple.h"
 
 using namespace VertexingUtils;
@@ -242,10 +242,16 @@ TMatrixDSym VertexingUtils::CovToACTS(TMatrixDSym Cov, TVectorD Par){
 
 ////////////////////////////////////////////////////
 
+// no of reconstructed SVs (can also be used for V0s)
+ROOT::VecOps::RVec<int> VertexingUtils::get_n_SV( FCCAnalysesSV SV ) {
+  ROOT::VecOps::RVec<int> result = SV.vtx.size();
+  return result;
+}
+
 // vector of position of all reconstructed SV (in mm)
 ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_SV( FCCAnalysesSV SV ) {
   ROOT::VecOps::RVec<TVector3> result;
-  for(VertexingUtils::FCCAnalysesVertex ivtx : SV.sec_vtx) {
+  for(VertexingUtils::FCCAnalysesVertex ivtx : SV.vtx) {
     TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
     result.push_back(xyz);
   }
@@ -364,6 +370,12 @@ double VertexingUtils::get_trackE( edm4hep::TrackState track ) {
 }
 
 ///////
+
+// no of reconstructed V0s
+ROOT::VecOps::RVec<int> VertexingUtils::get_n_V0( FCCAnalysesSV V0 ) {
+  ROOT::VecOps::RVec<int> result = V0.vtx.size();
+  return result;
+}
 
 // vector of position of all reconstructed V0 (in mm)
 ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_V0( FCCAnalysesV0 V0 ) {

@@ -845,7 +845,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
   
   VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
-  SV.sec_vtx = result;
+  SV.vtx = result;
 
   bool debug = true;
   //bool debug = false;
@@ -930,7 +930,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
   if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
 
   // currently don't know which SV is from which jet (FIX SOON)
-  SV.sec_vtx = result;
+  SV.vtx = result;
   //
   return SV;
 }
@@ -946,7 +946,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   
   VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
-  SV.sec_vtx = result;
+  SV.vtx = result;
 
   bool debug = true;
   //bool debug = false;
@@ -1011,7 +1011,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
 
   if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
   
-  SV.sec_vtx = result;
+  SV.vtx = result;
   //
   return SV;
 }
@@ -1026,7 +1026,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   
   VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
-  SV.sec_vtx = result;
+  SV.vtx = result;
 
   bool debug = true;
   //bool debug = false;
@@ -1076,7 +1076,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
 
   if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
   
-  SV.sec_vtx = result;
+  SV.vtx = result;
   //
   return SV;
 }
