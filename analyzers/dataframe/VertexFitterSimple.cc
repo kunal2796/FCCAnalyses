@@ -8,7 +8,7 @@
 
 using namespace VertexFitterSimple;
 
-bool debug = true;
+bool debug = false;
 
 
 TVector3 VertexFitterSimple::ParToP(TVectorD Par){
@@ -755,14 +755,11 @@ if ( chi2max < CHI2MAX ) {
         if (debug) {
             std::cout << " --- DONE, all tracks have chi2 < CHI2MAX " << std::endl;
             std::cout  << "     number of primary tracks selected = " << seltracks.size() << std::endl;
-
         }
         return seltracks ;
 }
 
-        if (debug) {
-                std::cout << " remove a track that has chi2 = " << chi2max << std::endl;
-        }
+if (debug) std::cout << " remove a track that has chi2 = " << chi2max << std::endl;
 
 seltracks.erase( seltracks.begin() + maxElementIndex );
 ipass ++;
@@ -841,9 +838,6 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
   SV.vtx = result;
 
-  bool debug = true;
-  //bool debug = false;
-
   // find SV inside the jet loop (only from non-primary tracks)
   // first separate reco particles by jet then get the associated tracks
   int nJet = jets.size();
@@ -860,7 +854,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
   //
   for (unsigned int j=0; j<nJet; j++) {
 
-    std::vector<int> i_jetconsti = jet_consti.at(j);
+    std::vector<int> i_jetconsti = jet_consti[j];
     for (int ctr=0; ctr<tracks.size(); ctr++) {
       if(isInPrimary.at(ctr)) continue; // remove primary tracks
       if(std::find(i_jetconsti.begin(), i_jetconsti.end(), reco_ind_tracks.at(ctr)) == i_jetconsti.end()) {
@@ -949,9 +943,6 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
   SV.vtx = result;
 
-  bool debug = true;
-  //bool debug = false;
-  
   // retrieve the tracks associated to the recoparticles
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
 
@@ -1046,9 +1037,6 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
   SV.vtx = result;
 
-  bool debug = true;
-  //bool debug = false;
-  
   // V0 rejection (tight)
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
   bool tight = true;
@@ -1179,14 +1167,14 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::VertexSeed_best(ROOT::VecOps::RVec<e
   return result;
 }
 
-std::vector<std::vector<int>> VertexFitterSimple::VertexSeed_all(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> VertexFitterSimple::VertexSeed_all(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
 								 VertexingUtils::FCCAnalysesVertex PV,
 								 double chi2_cut, double invM_cut) {
 
   // gives indices of the all pairs of tracks which pass the constraints
 
-  std::vector<std::vector<int>> result;
-  std::vector<int> ij_sel;
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> result;
+  ROOT::VecOps::RVec<int> ij_sel;
   
   int nTr = tracks.size();
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
@@ -1523,9 +1511,6 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s(ROOT::VecOps::RVec<edm
   if(nTr<2) return result;
   ROOT::VecOps::RVec<bool> isInV0(nTr, false);
 
-  //bool debug = true;
-  bool debug = false;
-  
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
   
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;

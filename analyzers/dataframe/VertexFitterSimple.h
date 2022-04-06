@@ -114,7 +114,7 @@ namespace VertexFitterSimple{
   /** returns indices of the all pairs of tracks that pass a set of constraints from a vector of (non-primary) tracks
    *  default chi2 threshold is 9 and default invariant mass threshold is 10GeV
    */
-  std::vector<std::vector<int>> VertexSeed_all( ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> VertexSeed_all( ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
 						VertexingUtils::FCCAnalysesVertex PV,
 						double chi2_cut=9., double invM_cut=10.) ;
 
