@@ -308,17 +308,7 @@ VertexingUtils::FCCAnalysesVertex  VertexFitterSimple::VertexFitter( int Primary
 			       BeamSpotConstraint, bsc_sigmax, bsc_sigmay, bsc_sigmaz, bsc_x, bsc_y, bsc_z );
 
   //fill the indices of the tracks
-  ROOT::VecOps::RVec<int> reco_ind;
-  int Ntr = tracks.size();
-  for (auto & p: recoparticles) {
-    //std::cout << " in VertexFitter:  a recoparticle with charge = " << p.charge << std::endl;
-    if ( p.tracks_begin >=0 && p.tracks_begin<thetracks.size()) {
-      reco_ind.push_back( p.tracks_begin );
-    }
-  }
-  if ( reco_ind.size() != Ntr ) std::cout << " ... problem in Vertex, size of reco_ind != Ntr " << std::endl;
-  
-  thevertex.reco_ind = reco_ind;
+  thevertex.reco_ind = get_reco_ind(recoparticles,thetracks);
   
   return thevertex;
 }
@@ -913,6 +903,10 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
       ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
       for(int i_tr : vtx_fin) tr_vtx_fin.push_back(tracks_fin[i_tr]);
       VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
+
+      //fill the indices of the tracks
+      sec_vtx.reco_ind = get_reco_ind(recoparticles,thetracks);
+
       result.push_back(sec_vtx);
       //
       ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
@@ -1015,6 +1009,10 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
         if(debug) std::cout << "Pushing back tracks_fin[i_tr]" << std::endl;
     }
     VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
+
+    //fill the indices of the tracks
+    sec_vtx.reco_ind = get_reco_ind(recoparticles,thetracks);
+
     result.push_back(sec_vtx);
     //
     ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
@@ -1034,7 +1032,9 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   return SV;
 }
 
-VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+                                   ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+                                   ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 							       VertexingUtils::FCCAnalysesVertex PV,
 							       double chi2_cut, double invM_cut, double chi2Tr_cut) {
   
@@ -1080,7 +1080,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
     ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
     for(int i_tr : vtx_fin) tr_vtx_fin.push_back(tracks_fin[i_tr]);
     VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
-    result.push_back(sec_vtx);
+
     //
     ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
     tracks_fin.clear();
@@ -1088,6 +1088,11 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
 	if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
     }
     // all this cause don't know how to remove multiple elements at once
+
+    //fill the indices of the tracks
+    sec_vtx.reco_ind = get_reco_ind(recoparticles,thetracks);
+    
+    result.push_back(sec_vtx);    
 
     if(debug) std::cout<<result.size()<<" SV found"<<std::endl;
   }
@@ -1098,6 +1103,20 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   //
   return SV;
 }
+
+
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_all_vertices(VertexingUtils::FCCAnalysesVertex PV,
+                                   VertexingUtils::FCCAnalysesSV SV) {
+  // Returns a vector of all vertices (PV and SVs)
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
+  result.push_back(PV);
+  for (auto &p:SV.vtx){
+    result.push_back(p);
+  }
+  return result;  
+}
+
+
 
 ROOT::VecOps::RVec<int> VertexFitterSimple::VertexSeed_best(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
 							    VertexingUtils::FCCAnalysesVertex PV,
@@ -1457,6 +1476,24 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
   }
 
   return result;
+}
+
+
+
+ROOT::VecOps::RVec<int> VertexFitterSimple::get_reco_ind(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+                                  ROOT::VecOps::RVec<edm4hep::TrackState> tracks){
+
+ //fill the indices of the tracks
+  ROOT::VecOps::RVec<int> reco_ind;
+  int Ntr = tracks.size();
+  for (auto & p: recoparticles) {
+    //std::cout << " in VertexFitter:  a recoparticle with charge = " << p.charge << std::endl;
+    if ( p.tracks_begin >=0 && p.tracks_begin<tracks.size()) {
+      reco_ind.push_back( p.tracks_begin );
+    }
+  }
+  if ( reco_ind.size() != Ntr ) std::cout << " ... problem in VertexFitterSimple::get_reco_ind, size of reco_ind != Ntr " << std::endl;
+  return reco_ind;
 }
 
 ///////////////////////////
