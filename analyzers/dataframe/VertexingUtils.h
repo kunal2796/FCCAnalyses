@@ -26,7 +26,7 @@ namespace VertexingUtils{
   /// Structure to keep useful track information that is related to the vertex
   struct FCCAnalysesVertex{
     edm4hep::VertexData vertex;
-    int ntracks;
+    int ntracks = 0;
     int mc_ind; ///index in the MC vertex collection if any
     ROOT::VecOps::RVec<int> reco_ind;
     ROOT::VecOps::RVec<float> reco_chi2;
@@ -92,6 +92,8 @@ namespace VertexingUtils{
   /// Retrieve the number of tracks from FCCAnalysesVertex
   int get_VertexNtrk( FCCAnalysesVertex TheVertex ) ;
 
+  ROOT::VecOps::RVec<int> get_VertexNtrk( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) ;
+
    /// Retrieve the tracks indices from FCCAnalysesVertex
   ROOT::VecOps::RVec<int> get_VertexRecoInd( FCCAnalysesVertex TheVertex ) ;
   
@@ -107,10 +109,16 @@ namespace VertexingUtils{
 			 double m1 = 0.13957039,
 			 double m2 = 0.13957039) ;
 
+  ROOT::VecOps::RVec<double> get_invM_pairs( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+             double m1 = 0.13957039,
+             double m2 = 0.13957039) ;  
+
   /** returns the invariant mass of a vertex
    *  assuming all tracks to be pions
    */
   double get_invM( FCCAnalysesVertex vertex ) ;
+
+  ROOT::VecOps::RVec<double> get_invM( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) ;
 
   /** returns the cos of the angle b/n V0 candidate's (or any vtx's) momentum & PV to V0 (vtx) displacement vector */
   double get_PV2V0angle( FCCAnalysesVertex V0,

@@ -191,6 +191,14 @@ int VertexingUtils::get_VertexNtrk( FCCAnalysesVertex TheVertex ) {
   return TheVertex.ntracks;
 }
 
+ROOT::VecOps::RVec<int> VertexingUtils::get_VertexNtrk( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
+  ROOT::VecOps::RVec<int> result;
+  for(auto & TheVertex: vertices){
+    result.push_back(TheVertex.ntracks);
+  }
+  return result;
+}
+
 ROOT::VecOps::RVec<int> VertexingUtils::get_VertexRecoInd( FCCAnalysesVertex TheVertex ) {
   return TheVertex.reco_ind;
 }
@@ -262,8 +270,8 @@ ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_SV( FCCAnalysesSV SV )
 
 // invariant mass of a two track vertex
 double VertexingUtils::get_invM_pairs( FCCAnalysesVertex vertex,
-				       double m1,
-				       double m2 ) {
+           double m1,
+           double m2 ) {
   // CAUTION: m1 -> first track; m2 -> second track
   
   double result;
@@ -281,6 +289,33 @@ double VertexingUtils::get_invM_pairs( FCCAnalysesVertex vertex,
   }
 
   result = p4_vtx.M();
+  return result;
+}
+
+ROOT::VecOps::RVec<double> VertexingUtils::get_invM_pairs( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+				       double m1,
+				       double m2 ) {
+  // CAUTION: m1 -> first track; m2 -> second track
+
+  ROOT::VecOps::RVec<double> result;
+  for (auto & vertex: vertices) {
+
+    double result_i;  
+    ROOT::VecOps::RVec<TVector3> p_tracks = vertex.updated_track_momentum_at_vertex;
+  
+    TLorentzVector p4_vtx;
+    double m[2] = {m1, m2};
+    int nTr = p_tracks.size();
+  
+    for(unsigned int i=0; i<nTr; i++) {
+      TLorentzVector p4_tr;
+      p4_tr.SetXYZM(p_tracks[i].X(), p_tracks[i].Y(), p_tracks[i].Z(), m[i]);
+      p4_vtx += p4_tr;
+    }
+  
+    result_i = p4_vtx.M();
+    result.push_back(result_i);
+  }
   return result;
 }
 
@@ -303,6 +338,32 @@ double VertexingUtils::get_invM( FCCAnalysesVertex vertex ) {
   result = p4_vtx.M();
   return result;
 }
+
+ROOT::VecOps::RVec<double> VertexingUtils::get_invM( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ){
+
+  ROOT::VecOps::RVec<double> result;
+  for (auto & vertex: vertices) {
+
+    double result_i;
+    ROOT::VecOps::RVec<TVector3> p_tracks = vertex.updated_track_momentum_at_vertex;
+
+    TLorentzVector p4_vtx;
+    const double m = 0.13957039; // pion mass
+  
+    for(TVector3 p_tr : p_tracks) {
+      TLorentzVector p4_tr;
+      p4_tr.SetXYZM(p_tr.X(), p_tr.Y(), p_tr.Z(), m);
+      p4_vtx += p4_tr;
+    }
+
+    result_i = p4_vtx.M();
+    result.push_back(result_i);
+  }
+  return result;
+}
+
+
+
 
 // cos(angle) b/n V0 candidate's (or any vtx) momentum & PV to V0 displacement vector
 double VertexingUtils::get_PV2V0angle( FCCAnalysesVertex V0,
