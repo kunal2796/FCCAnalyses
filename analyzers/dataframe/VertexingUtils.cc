@@ -250,13 +250,13 @@ TMatrixDSym VertexingUtils::CovToACTS(TMatrixDSym Cov, TVectorD Par){
 
 ////////////////////////////////////////////////////
 
-// no of reconstructed SVs (can also be used for V0s)
+// no of reconstructed SVs
 int VertexingUtils::get_n_SV( FCCAnalysesSV SV ) {
   int result = SV.vtx.size();
   return result;
 }
 
-// vector of position of all reconstructed SV (in mm) (can also be used for V0s)
+// vector of position of all reconstructed SV (in mm)
 ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_SV( FCCAnalysesSV SV ) {
   ROOT::VecOps::RVec<TVector3> result;
   for(VertexingUtils::FCCAnalysesVertex ivtx : SV.vtx) {
@@ -431,6 +431,22 @@ double VertexingUtils::get_trackE( edm4hep::TrackState track ) {
 }
 
 ///////
+
+// no of reconstructed V0s
+int VertexingUtils::get_n_SV( FCCAnalysesV0 SV ) {
+  int result = SV.vtx.size();
+  return result;
+}
+
+// vector of position of all reconstructed V0 (in mm)
+ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_SV( FCCAnalysesV0 SV ) {
+  ROOT::VecOps::RVec<TVector3> result;
+  for(VertexingUtils::FCCAnalysesVertex ivtx : SV.vtx) {
+    TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+    result.push_back(xyz);
+  }
+  return result;
+}
 
 // vector of PDG IDs of all reconstructed V0
 ROOT::VecOps::RVec<int> VertexingUtils::get_pdg_V0( FCCAnalysesV0 V0 ) {

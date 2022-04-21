@@ -136,13 +136,19 @@ namespace VertexingUtils{
 
 
   /// SV Reconstruction
-  /// Return the number of reconstructed SVs (can also be used for V0s)
+  /// Return the number of reconstructed SVs
   int get_n_SV( FCCAnalysesSV SV );
 
-  /// Return the vertex position of all reconstructed SVs (in mm) (can also be used for V0s)
+  /// Return the vertex position of all reconstructed SVs (in mm)
   ROOT::VecOps::RVec<TVector3> get_position_SV( FCCAnalysesSV SV );
 
   /// V0 Reconstruction
+  /// Return the number of reconstructed V0s
+  int get_n_SV( FCCAnalysesV0 SV );
+
+  /// Return the vertex position of all reconstructed V0s (in mm)
+  ROOT::VecOps::RVec<TVector3> get_position_SV( FCCAnalysesV0 SV );
+
   /// Return the PDG IDs of all reconstructed V0s
   ROOT::VecOps::RVec<int> get_pdg_V0( FCCAnalysesV0 V0 );
 
