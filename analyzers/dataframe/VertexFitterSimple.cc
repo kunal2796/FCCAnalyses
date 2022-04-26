@@ -863,7 +863,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
     }
     
     if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in jet#"<<j+1<<std::endl;
-
+    
     // V0 rejection (tight)
     ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
     bool tight = true;
@@ -871,7 +871,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
     for(unsigned int i=0; i<isInV0.size(); i++) {
       if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
     }
-
+    
     if(debug) {
       std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
       std::cout<<"now starting to find secondary vertices..."<<std::endl;
@@ -888,9 +888,9 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
       ROOT::VecOps::RVec<int> vtx_fin = vtx_seed;
       int vtx_fin_size = 0; // to start the loop
       while(vtx_fin_size != vtx_fin.size()) {
- vtx_fin_size = vtx_fin.size();
- vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
-      // constraint thresholds can be chosen by user, here using default cuts
+	vtx_fin_size = vtx_fin.size();
+	vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
+	// constraint thresholds can be chosen by user, here using default cuts
       }
       
       // fit tracks to SV and remove from tracks_fin
@@ -906,21 +906,21 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
       ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
       tracks_fin.clear();
       for(unsigned int t=0; t<temp.size(); t++) {
- if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
+	if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
       }
       // all this cause don't know how to remove multiple elements at once
       tr_vtx_fin.clear();
-
+      
       if(debug) std::cout<<result.size()<<" SV found"<<std::endl;
     }
-
+    
     // clean-up
     np_tracks.clear();
     tracks_fin.clear();
   }
 
   if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
-
+  
   // currently don't know which SV is from which jet (FIX SOON)
   SV.vtx = result;
   //
@@ -980,7 +980,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
     if(debug){
         std::cout << "tracks_fin.size(): " << tracks_fin.size() << std::endl;
         for(int i=0; i<vtx_seed.size();i++)
-            std::cout << "vtx_seed: " << vtx_seed[i] << std::endl;
+	  std::cout << "vtx_seed: " << vtx_seed[i] << std::endl;
     }
     if(vtx_seed.size() == 0) break;
     
@@ -996,8 +996,8 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
     // fit tracks to SV and remove from tracks_fin
     ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
     for(int i_tr : vtx_fin){
-        tr_vtx_fin.push_back(tracks_fin[i_tr]);
-        if(debug) std::cout << "Pushing back tracks_fin[i_tr]" << std::endl;
+      tr_vtx_fin.push_back(tracks_fin[i_tr]);
+      if(debug) std::cout << "Pushing back tracks_fin[i_tr]" << std::endl;
     }
     VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
 
@@ -1009,7 +1009,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
     ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
     tracks_fin.clear();
     for(unsigned int t=0; t<temp.size(); t++) {
-	if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
+      if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
     }
     // all this cause don't know how to remove multiple elements at once
 
@@ -1024,8 +1024,8 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
 }
 
 VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-                                   ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-                                   ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+							       ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+							       ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 							       VertexingUtils::FCCAnalysesVertex PV,
 							       double chi2_cut, double invM_cut, double chi2Tr_cut) {
   
@@ -1073,7 +1073,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
     ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
     tracks_fin.clear();
     for(unsigned int t=0; t<temp.size(); t++) {
-	if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
+      if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
     }
     // all this cause don't know how to remove multiple elements at once
 
@@ -1094,7 +1094,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
 
 
 ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFitterSimple::get_all_vertices(VertexingUtils::FCCAnalysesVertex PV,
-                                   VertexingUtils::FCCAnalysesSV SV) {
+											   VertexingUtils::FCCAnalysesSV SV) {
   // Returns a vector of all vertices (PV and SVs)
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
   result.push_back(PV);
@@ -1469,7 +1469,7 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
 
 
 ROOT::VecOps::RVec<int> VertexFitterSimple::get_reco_ind(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-                                  ROOT::VecOps::RVec<edm4hep::TrackState> tracks){
+							 ROOT::VecOps::RVec<edm4hep::TrackState> tracks){
 
  //fill the indices of the tracks
   ROOT::VecOps::RVec<int> reco_ind;
@@ -1489,7 +1489,8 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::get_reco_ind(ROOT::VecOps::RVec<edm4
 ///////////////////////////
 
 VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-							  VertexingUtils::FCCAnalysesVertex PV) {
+							  VertexingUtils::FCCAnalysesVertex PV,
+							  double chi2_cut) {
   // V0 reconstruction
 
   // should there be an option for tight and loose constraints?
@@ -1533,6 +1534,10 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s(ROOT::VecOps::RVec<edm
       tr_pair[1] = np_tracks[j];
 
       V0_vtx = VertexFitter_Tk(0, tr_pair);
+
+      // constraint on chi2: chi2 < cut (9)
+      double chi2_V0 = V0_vtx.vertex.chi2; // normalised but DOF=1
+      if(chi2_V0 >= chi2_cut) continue;
 
       // invariant masses for V0 candidates
       double invM_Ks      = VertexingUtils::get_invM_pairs(V0_vtx, m_pi, m_pi);
