@@ -7,6 +7,7 @@
 #include "edm4hep/MCParticleData.h"
 #include "fastjet/JetDefinition.hh"
 #include "TRandom3.h"
+#include "TLorentzVector.h"
 
 /** Jet tagging utilities interface.
 This represents a set functions and utilities to perfom jet tagging from a list of jets.
