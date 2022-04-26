@@ -7,10 +7,17 @@ project(FCCAnalyses CXX)
 #needed for ACTS
 cmake_policy(SET CMP0057 NEW)
 
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-#--- Declare C++ Standard -----------------------------------------------------
+#--- enable unit testing capabilities ------------------------------------------
+include(CTest)
+option(USE_EXTERNAL_CATCH2 "Link against an external Catch2 v3 static library, otherwise build it locally" ON)
+
+
 
 option(WITH_DD4HEP "Build analyzers that need DD4hep" OFF)
+
+#--- Declare C++ Standard -----------------------------------------------------
 
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "")
 if(NOT CMAKE_CXX_STANDARD MATCHES "17")
@@ -31,7 +38,7 @@ find_package(podio)
 # Use GNU-style hierarchy for installing build products
 include(GNUInstallDirs)
 
-	
+
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 find_package(FastJet)
@@ -77,4 +84,8 @@ option(FCCANALYSES_DOCUMENTATION "Whether or not to create doxygen doc target." 
 
 if(FCCANALYSES_DOCUMENTATION)
   include(cmake/FCCANALYSESDoxygen.cmake)
+endif()
+
+if(BUILD_TESTING)
+  add_subdirectory(tests)
 endif()
