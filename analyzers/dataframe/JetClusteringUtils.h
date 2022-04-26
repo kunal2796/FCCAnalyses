@@ -47,9 +47,17 @@ namespace JetClusteringUtils{
   /** Add partons with scaled momenta to fastjet pseudoJet for later reconstruction
    *(ghostmatching trial)
   */
-  std::vector<fastjet::PseudoJet> addGhosts_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
-						       ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin);
+  std::vector<fastjet::PseudoJet> addGhosts_pseudoJets_old(std::vector<fastjet::PseudoJet> pseudoJ,
+							   ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin);
 
+  /** Add partons & hadrons with scaled momenta to fastjet pseudoJet for later reconstruction
+   *(ghostmatching trial)
+  */
+  std::vector<fastjet::PseudoJet> addGhosts_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
+						       ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin,
+						       int statCode);
+  /** statCode: 0->23, 1->71-79 (choice of parton status codes) */
+  
   /** Add partons with scaled momenta to fastjet pseudoJet for later reconstruction
    *(ghostmatching trial with status 71-79)
   */

@@ -26,15 +26,20 @@ int main()
 {
   gInterpreter->GenerateDictionary("vector<vector<int> >","vector");
 
-  TFile *file = TFile::Open("p8_ee_Zbb_ecm91_gm7x23_auto.root");
+  TFile *file = TFile::Open("p8_ee_Zuds_ecm91_gm7x23.root");
   TTreeReader tree("events", file);
   int nEvents = tree.GetEntries();
   cout<<"Number of Events: "<<nEvents<<endl;
   
   TString histfname;
-  histfname = "histZbb_partonMom.root";
+  histfname = "histZuds_partonMom.root";
   TFile *histFile = new TFile(histfname,"RECREATE");
-    
+
+  //
+  TH1F* h_jetFlavour7x    = new TH1F("h_jetFlavour7x","Jet Flavour - 71-79",   11,-5,6);
+  TH1F* h_jetFlavour23    = new TH1F("h_jetFlavour23","Jet Flavour - 23",      11,-5,6);
+  TH1F* h_jetFlavour_cone = new TH1F("h_jetFlavour_cone","Jet Flavour - cone", 11,-5,6);
+
   // hists for the particle loop
   TH2F* h_mom7x23      = new TH2F("h_mom7x23",     "Flavour Assigning Parton's Momentum",100,0,50,100,0,50);
   TH2F* h_mom7x23_non0 = new TH2F("h_mom7x23_non0","Flavour Assigning Parton's Momentum",100,0,50,100,0,50);
@@ -78,14 +83,15 @@ int main()
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> jetE23(tree,  "jets_ee_kt_e23");
   TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>>     jetFlavour23(tree,"jets_ee_kt_flavour23");
 
+  // Jet Flavour (cone definition)
+  TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>> jetFlavour_cone(tree,"jets_ee_kt_flavour_cone");
+  
   // event counter
   unsigned int evt = 0;
 
   // jet counter
   unsigned int bad_jet = 0;
-
-  // print event counter
-  unsigned int jet2GeV = 0;
+  unsigned int s_jets = 0, u_jets = 0, d_jets = 0;
   
   // event loop
   while(tree.Next())
@@ -124,8 +130,20 @@ int main()
 		{
 		  pdg_gm23.push_back(MCpdg->at(ip));
 		  p4_gm23.push_back(p4);
+		  //
+		  if(abs(MCpdg->at(ip)) == 3) s_jets++;
+		  if(abs(MCpdg->at(ip)) == 2) u_jets++;
+		  if(abs(MCpdg->at(ip)) == 1) d_jets++;
 		}
 	    }
+	}
+
+      // jet loop
+      for(unsigned int ij=0; ij<jetE23->size(); ij++)
+	{
+	  h_jetFlavour7x->Fill(jetFlavour7x->at(ij));
+	  h_jetFlavour23->Fill(jetFlavour23->at(ij));
+	  h_jetFlavour_cone->Fill(jetFlavour_cone->at(ij));
 	}
       
       // jet constituents
@@ -219,31 +237,6 @@ int main()
       if(j1result7x == -1) h_mom7xdbar->Fill(jet1P7x.P());
       if(j2result7x == -1) h_mom7xdbar->Fill(jet2P7x.P());
 
-      // print all ghosts' momenta for an event with |p|_q < 2GeV
-      if(jet1P7x.P() < 2 && jet2GeV<5 && j1result7x != 0)
-	{
-	  for(int ele : jet1Const7x) 
-	    {
-	      if(pdg_gm7x.at(ele) == 0) continue;
-	      cout<<p4_gm7x.at(ele).P()<<", ";
-	    }
-	  cout<<endl;
-	  
-	  jet2GeV++;
-	}
-      //
-      if(jet2P7x.P() < 2 && jet2GeV<5 && j2result7x != 0)
-	{
-	  for(int ele : jet2Const7x) 
-	    {
-	      if(pdg_gm7x.at(ele) == 0) continue;
-	      cout<<p4_gm7x.at(ele).P()<<", ";
-	    }
-	  cout<<endl;
-	  	  
-	  jet2GeV++;
-	}      
-      
       evt++;
 
       if(evt%100000==0)
@@ -254,10 +247,15 @@ int main()
     }
 
   cout<<"There are "<<bad_jet<<" inconsistent jets (p_7x > p_23 for deciding parton)"<<endl;
+  cout<<"There are "<<s_jets<<" s-jets, "<<u_jets<<" u-jets, & "<<d_jets<<" d-jets in "<<2*nEvents<<" jets"<<endl;
   
   file->Close();
   cout<<"Event file closed"<<endl;
 
+  h_jetFlavour7x->Write();
+  h_jetFlavour23->Write();
+  h_jetFlavour_cone->Write();
+  //
   h_mom7x23->Write();
   h_mom7x23_non0->Write();
   h_mom7xb->Write();

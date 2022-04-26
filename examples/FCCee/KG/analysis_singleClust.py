@@ -44,58 +44,31 @@ class analysis():
                .Define("RP_pz",  "ReconstructedParticle::get_pz(ReconstructedParticles)")
                .Define("RP_e",   "ReconstructedParticle::get_e(ReconstructedParticles)")
 
-               #EE-KT ALGORITHM [status 23]
+               #EE-KT ALGORITHM
                #build psedo-jets with the Reconstructed particles
                .Define("pseudo_jets", "JetClusteringUtils::set_pseudoJets(RP_px, RP_py, RP_pz, RP_e)")
                #add ghosts to pseudo-jets
-               #currently selecting status 23 [plan to make it more general soon]
-               .Define("pseudo_jets_gm23", "JetClusteringUtils::addGhosts_pseudoJets(pseudo_jets, Particle)")
+               #currently selecting status 71-79 [plan to make it more general soon]
+               .Define("pseudo_jets_gm", "JetClusteringUtils::addGhosts7x_pseudoJets(pseudo_jets, Particle)")
 
                #run jet clustering with all reco particles. ee_kt_algorithm, exclusive clustering, exactly 2 jets, E-scheme
-               .Define("FCCAnalysesJets_ee_kt23", "JetClustering::clustering_ee_kt(2, 2, 1, 0)(pseudo_jets_gm23)")
+               .Define("FCCAnalysesJets_ee_kt", "JetClustering::clustering_ee_kt(2, 2, 1, 0)(pseudo_jets_gm)")
 
                #get the jets out of the structure
-               .Define("jets_ee_kt23", "JetClusteringUtils::get_pseudoJets(FCCAnalysesJets_ee_kt23)")
+               .Define("jets_ee_kt", "JetClusteringUtils::get_pseudoJets(FCCAnalysesJets_ee_kt)")
 
                #get the jet constituents out of the structure
-               .Define("jetconstituents_ee_kt23", "JetClusteringUtils::get_constituents(FCCAnalysesJets_ee_kt23)")
+               .Define("jetconstituents_ee_kt", "JetClusteringUtils::get_constituents(FCCAnalysesJets_ee_kt)")
 
                #get some jet variables
-               .Define("jets_ee_kt_e23",  "JetClusteringUtils::get_e(jets_ee_kt23)")
-               .Define("jets_ee_kt_px23", "JetClusteringUtils::get_px(jets_ee_kt23)")
-               .Define("jets_ee_kt_py23", "JetClusteringUtils::get_py(jets_ee_kt23)")
-               .Define("jets_ee_kt_pz23", "JetClusteringUtils::get_pz(jets_ee_kt23)")
+               .Define("jets_ee_kt_e",  "JetClusteringUtils::get_e(jets_ee_kt)")
+               .Define("jets_ee_kt_px", "JetClusteringUtils::get_px(jets_ee_kt)")
+               .Define("jets_ee_kt_py", "JetClusteringUtils::get_py(jets_ee_kt)")
+               .Define("jets_ee_kt_pz", "JetClusteringUtils::get_pz(jets_ee_kt)")
 
                #get jet flavour
-               #last argument is the pseudojet vector before adding ghosts [selecting status 23]
-               .Define("jets_ee_kt_flavour23", "JetTaggingUtils::get_flavour_gm_auto(jets_ee_kt23, jetconstituents_ee_kt23, Particle, pseudo_jets)")
-               #get jet flavour (cone jet definition)
-               .Define("jets_ee_kt_flavour_cone","JetTaggingUtils::get_flavour_qqbar(jets_ee_kt23, Particle)")
-
-
-               #EE-KT ALGORITHM [status 71-79]
-               #add ghosts to pseudo-jets
-               #currently selecting status 71-79
-               .Define("pseudo_jets_gm7x", "JetClusteringUtils::addGhosts7x_pseudoJets(pseudo_jets, Particle)")
-
-               #run jet clustering with all reco particles. ee_kt_algorithm, exclusive clustering, exactly 2 jets, E-scheme
-               .Define("FCCAnalysesJets_ee_kt7x", "JetClustering::clustering_ee_kt(2, 2, 1, 0)(pseudo_jets_gm7x)")
-
-               #get the jets out of the structure
-               .Define("jets_ee_kt7x", "JetClusteringUtils::get_pseudoJets(FCCAnalysesJets_ee_kt7x)")
-
-               #get the jet constituents out of the structure
-               .Define("jetconstituents_ee_kt7x", "JetClusteringUtils::get_constituents(FCCAnalysesJets_ee_kt7x)")
-
-               #get some jet variables
-               .Define("jets_ee_kt_e7x",  "JetClusteringUtils::get_e(jets_ee_kt7x)")
-               .Define("jets_ee_kt_px7x", "JetClusteringUtils::get_px(jets_ee_kt7x)")
-               .Define("jets_ee_kt_py7x", "JetClusteringUtils::get_py(jets_ee_kt7x)")
-               .Define("jets_ee_kt_pz7x", "JetClusteringUtils::get_pz(jets_ee_kt7x)")
-
-               #get jet flavour
-               #last argument is the pseudojet vector before adding ghosts [selecting status 7x]
-               .Define("jets_ee_kt_flavour7x", "JetTaggingUtils::get_flavour_gm7x_auto(jets_ee_kt7x, jetconstituents_ee_kt7x, Particle, pseudo_jets)")
+               #last argument is the pseudojet vector before adding ghosts [selecting status 71-79]
+               .Define("jets_ee_kt_flavour", "JetTaggingUtils::get_flavour_gm_pcut(jets_ee_kt, jetconstituents_ee_kt, Particle, pseudo_jets, 2)")
                
         )
 
@@ -117,21 +90,12 @@ class analysis():
                 "RP_pz",
                 "RP_e",
 
-                "jets_ee_kt_e23",
-                "jets_ee_kt_px23",
-                "jets_ee_kt_py23",
-                "jets_ee_kt_pz23",
-                "jets_ee_kt_flavour23",
-                "jetconstituents_ee_kt23",
-
-                "jets_ee_kt_e7x",
-                "jets_ee_kt_px7x",
-                "jets_ee_kt_py7x",
-                "jets_ee_kt_pz7x",
-                "jets_ee_kt_flavour7x",
-                "jetconstituents_ee_kt7x",
-
-                "jets_ee_kt_flavour_cone",
+                "jets_ee_kt_e",
+                "jets_ee_kt_px",
+                "jets_ee_kt_py",
+                "jets_ee_kt_pz",
+                "jets_ee_kt_flavour",
+                "jetconstituents_ee_kt",
                 ]:
             branchList.push_back(branchName)
         df2.Snapshot("events", self.outname, branchList)

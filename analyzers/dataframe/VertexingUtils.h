@@ -12,6 +12,7 @@
 #include "edm4hep/VertexData.h"
 #include "edm4hep/Vertex.h"
 
+#include "TLorentzVector.h"
 #include "TVectorD.h"
 #include "TVector3.h"
 #include "TMatrixDSym.h"
@@ -25,7 +26,7 @@ namespace VertexingUtils{
   /// Structure to keep useful track information that is related to the vertex
   struct FCCAnalysesVertex{
     edm4hep::VertexData vertex;
-    int ntracks;
+    int ntracks = 0;
     int mc_ind; ///index in the MC vertex collection if any
     ROOT::VecOps::RVec<int> reco_ind;
     ROOT::VecOps::RVec<float> reco_chi2;
@@ -34,6 +35,18 @@ namespace VertexingUtils{
     ROOT::VecOps::RVec<float> final_track_phases;
   };
 
+  /// Structure to keep useful information that is related to the SV
+  struct FCCAnalysesSV{
+    ROOT::VecOps::RVec<FCCAnalysesVertex> vtx; // vertex object
+  };
+
+  /// Structure to keep useful information that is related to the V0
+  struct FCCAnalysesV0{
+    ROOT::VecOps::RVec<FCCAnalysesVertex> vtx; // vertex object
+    ROOT::VecOps::RVec<int> pdgAbs;            // pdg ID from reconstructions
+    ROOT::VecOps::RVec<double> invM;           // invariant mass
+  };
+  
   /// Structure to keep useful track information that is related to the vertex
   struct FCCAnalysesVertexMC{
     TVector3 vertex;
@@ -79,11 +92,68 @@ namespace VertexingUtils{
   /// Retrieve the number of tracks from FCCAnalysesVertex
   int get_VertexNtrk( FCCAnalysesVertex TheVertex ) ;
 
+  ROOT::VecOps::RVec<int> get_VertexNtrk( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) ;
+
    /// Retrieve the tracks indices from FCCAnalysesVertex
   ROOT::VecOps::RVec<int> get_VertexRecoInd( FCCAnalysesVertex TheVertex ) ;
   
   /// Return the number of tracks in a given track collection
   int get_nTracks(ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
+
+  /// functions used for SV reconstruction
+  /** returns the invariant mass of a two-track vertex
+   *  CAUTION: m1 -> mass of first track, m2 -> mass of second track
+   *  by default both pions
+   */
+  double get_invM_pairs( FCCAnalysesVertex vertex,
+			 double m1 = 0.13957039,
+			 double m2 = 0.13957039) ;
+
+  ROOT::VecOps::RVec<double> get_invM_pairs( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+             double m1 = 0.13957039,
+             double m2 = 0.13957039) ;  
+
+  /** returns the invariant mass of a vertex
+   *  assuming all tracks to be pions
+   */
+  double get_invM( FCCAnalysesVertex vertex ) ;
+
+  ROOT::VecOps::RVec<double> get_invM( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) ;
+
+  /** returns the cos of the angle b/n V0 candidate's (or any vtx's) momentum & PV to V0 (vtx) displacement vector */
+  double get_PV2V0angle( FCCAnalysesVertex V0,
+			 FCCAnalysesVertex PV) ;
+
+  /** returns cos of the angle b/n track (that form the vtx) momentum sum & PV to vtx displacement vector */
+  double get_PV2vtx_angle( ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+			   FCCAnalysesVertex vtx,
+			   FCCAnalysesVertex PV ) ;
+
+  /** returns a track's energy
+   *  assuming the track to be a pion
+   */
+  double get_trackE( edm4hep::TrackState track ) ;
+
+
+  /// SV Reconstruction
+  /// Return the number of reconstructed SVs
+  int get_n_SV( FCCAnalysesSV SV );
+
+  /// Return the vertex position of all reconstructed SVs (in mm)
+  ROOT::VecOps::RVec<TVector3> get_position_SV( FCCAnalysesSV SV );
+
+  /// V0 Reconstruction
+  /// Return the number of reconstructed V0s
+  int get_n_SV( FCCAnalysesV0 SV );
+
+  /// Return the vertex position of all reconstructed V0s (in mm)
+  ROOT::VecOps::RVec<TVector3> get_position_SV( FCCAnalysesV0 SV );
+
+  /// Return the PDG IDs of all reconstructed V0s
+  ROOT::VecOps::RVec<int> get_pdg_V0( FCCAnalysesV0 V0 );
+
+  /// Return the invariant masses of all reconstructed V0s
+  ROOT::VecOps::RVec<double> get_invM_V0( FCCAnalysesV0 V0 );
 
 
  // --- Internal methods needed by the code of  Franco B :  

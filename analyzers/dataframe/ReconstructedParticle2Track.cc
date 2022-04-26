@@ -283,6 +283,23 @@ ReconstructedParticle2Track::getRP2TRK( ROOT::VecOps::RVec<edm4hep::Reconstructe
  return result ;
 }
 
+//
+// returns reco indices of tracks
+ROOT::VecOps::RVec<int> 
+ReconstructedParticle2Track::get_recoindTRK( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, 
+					     ROOT::VecOps::RVec<edm4hep::TrackState> tracks )
+{
+
+  ROOT::VecOps::RVec<int> result ;
+  
+  for (unsigned int ctr=0; ctr<in.size(); ctr++) {
+    edm4hep::ReconstructedParticleData p = in.at(ctr);
+    if (p.tracks_begin >= 0 && p.tracks_begin<tracks.size()) result.push_back(ctr) ;
+  }
+ return result ;
+}
+//
+
 int ReconstructedParticle2Track::getTK_n(ROOT::VecOps::RVec<edm4hep::TrackState> x) {
   int result =  x.size();
   return result;
