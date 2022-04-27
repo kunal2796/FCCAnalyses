@@ -38,8 +38,21 @@ class analysis():
         print (" done")
     #__________________________________________________________
     def run(self):
-        df2 = (self.df.Range(0,1000)
+        df2 = (self.df.Range(0,10000)
         #df2 = (self.df
+
+               .Alias("Particle1", "Particle#1.index")
+
+               # get all the MC particles to check for Ks
+               .Define("MC_pdg", "MCParticle::get_pdg(Particle)")
+               # get momenta & mass of all particles
+               .Define("MC_p4", "MCParticle::get_tlv(Particle)")
+               .Define("MC_mass", "MCParticle::get_mass(Particle)")
+
+               # Ks -> pi+pi-
+               .Define("K0spipi_indices", "MCParticle::get_indices_ExclusiveDecay(310, {211, -211}, true, true) (Particle, Particle1)")
+               # Lambda0 -> p+pi-
+               .Define("Lambda0ppi_indices", "MCParticle::get_indices_ExclusiveDecay(3122, {2212, -211}, true, true) (Particle, Particle1)")
 
                # determime the primary (and secondary) tracks without using the MC-matching:
 
@@ -60,8 +73,13 @@ class analysis():
                .Define("IsPrimary_based_on_reco",  "VertexFitterSimple::IsPrimary_forTracks( EFlowTrack_1,  RecoedPrimaryTracks )")
 
                # find V0s
-               .Define("V0", "VertexFitterSimple::get_V0(SecondaryTracks, PrimaryVertexObject)")
-
+               .Define("V0", "VertexFitterSimple::get_V0s(SecondaryTracks, PrimaryVertexObject)")
+               # get pdg vector out
+               .Define("V0_pdg", "VertexingUtils::get_pdg_V0(V0)")
+               # get invariant mass vector out
+               .Define("V0_invM", "VertexingUtils::get_invM_V0(V0)")
+               # get the position
+               .Define("V0_pos", "VertexingUtils::get_position_SV(V0)")
 
         )
 
@@ -70,9 +88,24 @@ class analysis():
         branchList = ROOT.vector('string')()
         for branchName in [
 
+                # MC particles
+                "MC_pdg",
+                "MC_p4",
+                "MC_mass",
+
+                # Ks -> pi+pi- & Lambda0->p+pi-
+                "K0spipi_indices",
+                "Lambda0ppi_indices",
+
 		#  primary vertex and primary tracks w/o any MC-matching :
 		"IsPrimary_based_on_reco",
 		"PrimaryVertex",
+
+                # V0 object
+                "V0",
+                "V0_pdg",
+                "V0_invM",
+                "V0_pos",
 
                 ]:
             branchList.push_back(branchName)

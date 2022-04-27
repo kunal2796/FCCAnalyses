@@ -38,7 +38,7 @@ class analysis():
         print (" done")
     #__________________________________________________________
     def run(self):
-        df2 = (self.df.Range(0,1000)
+        df2 = (self.df.Range(0,10000)
         #df2 = (self.df
 
                # MC event primary vertex
@@ -108,10 +108,17 @@ class analysis():
 
                # finding SVs in jets
                .Define("SV_jet", "VertexFitterSimple::get_SV_jets(ReconstructedParticles, EFlowTrack_1, PrimaryVertexObject, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents_ee_kt)")
-
                # finding SVs in the event
-               .Define("SV_evt1", "VertexFitterSimple::get_SV_event(ReconstructedParticles, EFlowTrack_1, PrimaryVertexObject, IsPrimary_based_on_reco")
-               .Define("SV_evt2", "VertexFitterSimple::get_SV_event(SecondaryTracks, PrimaryVertexObject")
+               .Define("SV_evt1", "VertexFitterSimple::get_SV_event(ReconstructedParticles, EFlowTrack_1, PrimaryVertexObject, IsPrimary_based_on_reco)")
+               .Define("SV_evt2", "VertexFitterSimple::get_SV_event(SecondaryTracks, PrimaryVertexObject)")
+               # multiplicity
+               .Define("SV_evt2_n","VertexingUtils::get_n_SV(SV_evt2)")
+               .Define("SV_evt1_n","VertexingUtils::get_n_SV(SV_evt1)")
+               .Define("SV_jet_n", "VertexingUtils::get_n_SV(SV_jet)")
+               # vertex position
+               .Define("SV_jet_position",  "VertexingUtils::get_position_SV( SV_jet )")
+               .Define("SV_evt1_position", "VertexingUtils::get_position_SV( SV_evt1 )")
+               .Define("SV_evt2_position", "VertexingUtils::get_position_SV( SV_evt2 )")
 
         )
 
@@ -128,6 +135,15 @@ class analysis():
                 "SV_jet",
                 "SV_evt1",
                 "SV_evt2",
+
+                # SV multiplicity
+                "SV_evt1_n",
+                "SV_evt2_n",
+                "SV_jet_n",
+                # SV position
+                "SV_jet_position",
+                "SV_evt1_position",
+                "SV_evt2_position",
 
                 ]:
             branchList.push_back(branchName)
