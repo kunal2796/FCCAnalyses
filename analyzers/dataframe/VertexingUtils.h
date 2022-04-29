@@ -118,6 +118,9 @@ namespace VertexingUtils{
    */
   double get_invM( FCCAnalysesVertex vertex ) ;
 
+  /** returns the invariant mass of a vector of vertices
+   *  assuming all tracks to be pions
+   */
   ROOT::VecOps::RVec<double> get_invM( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) ;
 
   /** returns the cos of the angle b/n V0 candidate's (or any vtx's) momentum & PV to V0 (vtx) displacement vector */
@@ -155,6 +158,8 @@ namespace VertexingUtils{
   /// Return the invariant masses of all reconstructed V0s
   ROOT::VecOps::RVec<double> get_invM_V0( FCCAnalysesV0 V0 );
 
+  /// Return the momentum of all reconstructed V0s
+  ROOT::VecOps::RVec<TVector3> get_p_V0( FCCAnalysesV0 V0 );
 
  // --- Internal methods needed by the code of  Franco B :  
   TVectorD get_trackParam( edm4hep::TrackState & atrack) ;
