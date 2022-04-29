@@ -362,9 +362,6 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_invM( ROOT::VecOps::RVec<FCCAnaly
   return result;
 }
 
-
-
-
 // cos(angle) b/n V0 candidate's (or any vtx) momentum & PV to V0 displacement vector
 double VertexingUtils::get_PV2V0angle( FCCAnalysesVertex V0,
 				       FCCAnalysesVertex PV ) {
@@ -457,5 +454,20 @@ ROOT::VecOps::RVec<int> VertexingUtils::get_pdg_V0( FCCAnalysesV0 V0 ) {
 // vector of invariant masses of all reconstructed V0
 ROOT::VecOps::RVec<double> VertexingUtils::get_invM_V0( FCCAnalysesV0 V0 ) {
   ROOT::VecOps::RVec<double> result = V0.invM;
+  return result;
+}
+
+// vector of momenta of all reconstructed V0
+ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_V0( FCCAnalysesV0 V0 ) {
+  ROOT::VecOps::RVec<TVector3> result;
+  
+  for(VertexingUtils::FCCAnalysesVertex ivtx : V0.vtx) {
+    ROOT::VecOps::RVec<TVector3> p_tracks = ivtx.updated_track_momentum_at_vertex;
+    
+    TVector3 p_sum;
+    for(TVector3 p_tr : p_tracks) p_sum += p_tr;
+
+    result.push_back(p_sum);
+  }
   return result;
 }

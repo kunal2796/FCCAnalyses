@@ -687,10 +687,16 @@ namespace FCCAnalyses{
 	//if ( pdg != m_pdg_mother ) continue;
 
 	ROOT::VecOps::RVec<int> a = get_indices_ExclusiveDecay_MotherByIndex( imother, m_pdg_daughters, m_stableDaughters, in, ind );
-	if ( a.size() != 0 ) {
-	  result = a;
-	  break;    // return the first decay found
-	}
+
+	for(unsigned int ai = 0; ai<a.size(); ai++)
+	  {
+	    result.push_back(a[ai]);
+	  }
+
+	//if ( a.size() != 0 ) {
+	//  result = a;
+	//  break;    // return the first decay found
+	//}
 
       }
       return result;
