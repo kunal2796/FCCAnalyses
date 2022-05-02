@@ -145,6 +145,9 @@ namespace VertexingUtils{
   /// Return the vertex position of all reconstructed SVs (in mm)
   ROOT::VecOps::RVec<TVector3> get_position_SV( FCCAnalysesSV SV );
 
+  /// Return chi2 of all reconstructed SVs
+  ROOT::VecOps::RVec<double> get_chi2_SV( FCCAnalysesSV SV );
+
   /// V0 Reconstruction
   /// Return the number of reconstructed V0s
   int get_n_SV( FCCAnalysesV0 SV );
@@ -160,6 +163,9 @@ namespace VertexingUtils{
 
   /// Return the momentum of all reconstructed V0s
   ROOT::VecOps::RVec<TVector3> get_p_V0( FCCAnalysesV0 V0 );
+
+  /// Return chi2 of all reconstructed V0s
+  ROOT::VecOps::RVec<double> get_chi2_SV( FCCAnalysesV0 SV );
 
  // --- Internal methods needed by the code of  Franco B :  
   TVectorD get_trackParam( edm4hep::TrackState & atrack) ;
