@@ -866,17 +866,15 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
     if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in jet#"<<j+1<<std::endl;
     
     // V0 rejection (tight)
+    ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
     if(V0_rej) {
-      ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
       bool tight = true;
       ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
       for(unsigned int i=0; i<isInV0.size(); i++) {
 	if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
       }
     }
-    else {
-      ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = np_tracks;
-    }
+    else tracks_fin = np_tracks;
     
     if(debug) {
       std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
@@ -966,17 +964,15 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in the event"<<std::endl;
 
   // V0 rejection (tight)
+  ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
   if(V0_rej) {
-    ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
     bool tight = true;
     ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
     for(unsigned int i=0; i<isInV0.size(); i++) {
       if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
     }
   }
-  else {
-    ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = np_tracks;
-  }
+  else tracks_fin = np_tracks;
 
   if(debug) {
     std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
@@ -1051,17 +1047,15 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   SV.vtx = result;
 
   // V0 rejection (tight)
+  ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
   if(V0_rej) {
-    ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
     bool tight = true;
     ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
     for(unsigned int i=0; i<isInV0.size(); i++) {
       if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
     }
   }
-  else {
-    ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = np_tracks;
-  }
+  else tracks_fin = np_tracks;
 
   if(debug) {
     std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;

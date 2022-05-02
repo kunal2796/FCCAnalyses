@@ -271,7 +271,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( FCCAnalysesSV SV ) {
   ROOT::VecOps::RVec<double> result;
 
   for(VertexingUtils::FCCAnalysesVertex ivtx : SV.vtx) {
-    int n_tracks = ivtx.vertex.updated_track_momentum_at_vertex.size();
+    int n_tracks = ivtx.reco_chi2.size();
     int nDOF = 2*n_tracks - 3;
     result.push_back(nDOF*ivtx.vertex.chi2);
   }
@@ -489,7 +489,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( FCCAnalysesV0 SV ) {
   ROOT::VecOps::RVec<double> result;
 
   for(VertexingUtils::FCCAnalysesVertex ivtx : SV.vtx) {
-    int n_tracks = ivtx.vertex.updated_track_momentum_at_vertex.size();
+    int n_tracks = ivtx.reco_chi2.size();
     int nDOF = 2*n_tracks - 3;
     result.push_back(nDOF*ivtx.vertex.chi2);
   }
