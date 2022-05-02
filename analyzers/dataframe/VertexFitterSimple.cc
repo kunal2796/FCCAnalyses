@@ -857,9 +857,9 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
 
     std::vector<int> i_jetconsti = jet_consti[j];
     for (int ctr=0; ctr<tracks.size(); ctr++) {
-      if(isInPrimary.at(ctr)) continue; // remove primary tracks
-      if(std::find(i_jetconsti.begin(), i_jetconsti.end(), reco_ind_tracks.at(ctr)) == i_jetconsti.end()) {
-	np_tracks.push_back(tracks.at(ctr)); // separate tracks by jet
+      if(isInPrimary[ctr]) continue; // remove primary tracks
+      if(std::find(i_jetconsti.begin(), i_jetconsti.end(), reco_ind_tracks[ctr]) == i_jetconsti.end()) {
+	np_tracks.push_back(tracks[ctr]); // separate tracks by jet
       }
     }
     
@@ -960,7 +960,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   // find SV from non-primary tracks
   ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks;
   for(unsigned int i=0; i<tracks.size(); i++) {
-    if (!isInPrimary.at(i)) np_tracks.push_back(tracks.at(i));
+    if (!isInPrimary[i]) np_tracks.push_back(tracks[i]);
   }
 
   if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in the event"<<std::endl;
