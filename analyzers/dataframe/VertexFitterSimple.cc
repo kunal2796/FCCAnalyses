@@ -829,6 +829,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
 							      ROOT::VecOps::RVec<bool> isInPrimary,
 							      ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
 							      std::vector<std::vector<int>> jet_consti,
+							      bool V0_rej,
 							      double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
   // find SVs using LCFI+ (clustering first)
@@ -856,9 +857,9 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
 
     std::vector<int> i_jetconsti = jet_consti[j];
     for (int ctr=0; ctr<tracks.size(); ctr++) {
-      if(isInPrimary.at(ctr)) continue; // remove primary tracks
-      if(std::find(i_jetconsti.begin(), i_jetconsti.end(), reco_ind_tracks.at(ctr)) == i_jetconsti.end()) {
-	np_tracks.push_back(tracks.at(ctr)); // separate tracks by jet
+      if(isInPrimary[ctr]) continue; // remove primary tracks
+      if(std::find(i_jetconsti.begin(), i_jetconsti.end(), reco_ind_tracks[ctr]) == i_jetconsti.end()) {
+	np_tracks.push_back(tracks[ctr]); // separate tracks by jet
       }
     }
     
@@ -866,11 +867,14 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
     
     // V0 rejection (tight)
     ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
-    bool tight = true;
-    ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
-    for(unsigned int i=0; i<isInV0.size(); i++) {
-      if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
+    if(V0_rej) {
+      bool tight = true;
+      ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
+      for(unsigned int i=0; i<isInV0.size(); i++) {
+	if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
+      }
     }
+    else tracks_fin = np_tracks;
     
     if(debug) {
       std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
@@ -931,6 +935,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
 							       ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 							       VertexingUtils::FCCAnalysesVertex PV,
 							       ROOT::VecOps::RVec<bool> isInPrimary,
+							       bool V0_rej,
 							       double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
 
@@ -953,18 +958,21 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   // find SV from non-primary tracks
   ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks;
   for(unsigned int i=0; i<tracks.size(); i++) {
-    if (!isInPrimary.at(i)) np_tracks.push_back(tracks.at(i));
+    if (!isInPrimary[i]) np_tracks.push_back(tracks[i]);
   }
 
   if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in the event"<<std::endl;
 
   // V0 rejection (tight)
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
-  bool tight = true;
-  ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
-  for(unsigned int i=0; i<isInV0.size(); i++) {
-    if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
+  if(V0_rej) {
+    bool tight = true;
+    ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
+    for(unsigned int i=0; i<isInV0.size(); i++) {
+      if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
+    }
   }
+  else tracks_fin = np_tracks;
 
   if(debug) {
     std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
@@ -1027,6 +1035,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
 							       ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 							       ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 							       VertexingUtils::FCCAnalysesVertex PV,
+							       bool V0_rej,
 							       double chi2_cut, double invM_cut, double chi2Tr_cut) {
   
   // find SVs from non-primary tracks using LCFI+ (w/o clustering)
@@ -1039,11 +1048,14 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
 
   // V0 rejection (tight)
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
-  bool tight = true;
-  ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
-  for(unsigned int i=0; i<isInV0.size(); i++) {
-    if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
+  if(V0_rej) {
+    bool tight = true;
+    ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
+    for(unsigned int i=0; i<isInV0.size(); i++) {
+      if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
+    }
   }
+  else tracks_fin = np_tracks;
 
   if(debug) {
     std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
@@ -1490,10 +1502,12 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::get_reco_ind(ROOT::VecOps::RVec<edm4
 
 VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 							  VertexingUtils::FCCAnalysesVertex PV,
+							  bool tight,
 							  double chi2_cut) {
   // V0 reconstruction
+  // if(tight)  -> tight constraints
+  // if(!tight) -> loose constraints
 
-  // should there be an option for tight and loose constraints?
   // also look into how to reconstruct pi0 soon
 
   // make it stand-alone (removing primary tracks etc)
@@ -1554,47 +1568,93 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s(ROOT::VecOps::RVec<edm
       // angle b/n V0 candidate momentum & PV-V0 displacement vector
       double p_r = VertexingUtils::get_PV2V0angle(V0_vtx, PV);
 
-      // Ks
-      if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
-	if(debug) std::cout<<"Found a Ks"<<std::endl;
-	isInV0[i] = true;
-	isInV0[j] = true;
-	vtx.push_back(V0_vtx);
-	pdgAbs.push_back(310);
-	invM.push_back(invM_Ks);
-	break;
-      }
+      if(tight) {
+	// Ks
+	if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
+	  if(debug) std::cout<<"Found a Ks"<<std::endl;
+	  isInV0[i] = true;
+	  isInV0[j] = true;
+	  vtx.push_back(V0_vtx);
+	  pdgAbs.push_back(310);
+	  invM.push_back(invM_Ks);
+	  break;
+	}
       
-      // Lambda0
-      else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
-	if(debug) std::cout<<"Found a Lambda0"<<std::endl;
-	isInV0[i] = true;
-	isInV0[j] = true;
-	vtx.push_back(V0_vtx);
-	pdgAbs.push_back(3122);
-	invM.push_back(invM_Lambda1);
-	break;
+	// Lambda0
+	else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
+	  if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	  isInV0[i] = true;
+	  isInV0[j] = true;
+	  vtx.push_back(V0_vtx);
+	  pdgAbs.push_back(3122);
+	  invM.push_back(invM_Lambda1);
+	  break;
+	}
+	else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
+	  if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	  isInV0[i] = true;
+	  isInV0[j] = true;
+	  vtx.push_back(V0_vtx);
+	  pdgAbs.push_back(3122);
+	  invM.push_back(invM_Lambda2);
+	  break;
+	}
+	
+	// photon conversion
+	else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
+	  if(debug) std::cout<<"Found a Photon coversion"<<std::endl;
+	  isInV0[i] = true;
+	  isInV0[j] = true;
+	  vtx.push_back(V0_vtx);
+	  pdgAbs.push_back(22);
+	  invM.push_back(invM_Gamma);
+	  break;
+	}
       }
-      else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
-	if(debug) std::cout<<"Found a Lambda0"<<std::endl;
-	isInV0[i] = true;
-	isInV0[j] = true;
-	vtx.push_back(V0_vtx);
-	pdgAbs.push_back(3122);
-	invM.push_back(invM_Lambda2);
-	break;
-      }
+
+      else {
+	// Ks
+	if(invM_Ks>0.488 && invM_Ks<0.508 && r>0.3 && p_r>0.999) {
+	  if(debug) std::cout<<"Found a Ks"<<std::endl;
+	  isInV0[i] = true;
+	  isInV0[j] = true;
+	  vtx.push_back(V0_vtx);
+	  pdgAbs.push_back(310);
+	  invM.push_back(invM_Ks);
+	  break;
+	}
       
-      // photon conversion
-      else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
-	if(debug) std::cout<<"Found a Photon coversion"<<std::endl;
-	isInV0[i] = true;
-	isInV0[j] = true;
-	vtx.push_back(V0_vtx);
-	pdgAbs.push_back(22);
-	invM.push_back(invM_Gamma);
-	break;
-      }	
+	// Lambda0
+	else if(invM_Lambda1>1.106 && invM_Lambda1<1.126 && r>0.3 && p_r>0.999) {
+	  if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	  isInV0[i] = true;
+	  isInV0[j] = true;
+	  vtx.push_back(V0_vtx);
+	  pdgAbs.push_back(3122);
+	  invM.push_back(invM_Lambda1);
+	  break;
+	}
+	else if(invM_Lambda2>1.106 && invM_Lambda2<1.126 && r>0.3 && p_r>0.999) {
+	  if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	  isInV0[i] = true;
+	  isInV0[j] = true;
+	  vtx.push_back(V0_vtx);
+	  pdgAbs.push_back(3122);
+	  invM.push_back(invM_Lambda2);
+	  break;
+	}
+	
+	// photon conversion
+	else if(invM_Gamma<0.01 && r>9 && p_r>0.999) {
+	  if(debug) std::cout<<"Found a Photon coversion"<<std::endl;
+	  isInV0[i] = true;
+	  isInV0[j] = true;
+	  vtx.push_back(V0_vtx);
+	  pdgAbs.push_back(22);
+	  invM.push_back(invM_Gamma);
+	  break;
+	}
+      }
       
     }
   }

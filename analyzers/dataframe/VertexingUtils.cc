@@ -266,12 +266,24 @@ ROOT::VecOps::RVec<TVector3> VertexingUtils::get_position_SV( FCCAnalysesSV SV )
   return result;
 }
 
+// vector of chi2 of all reconstructed SVs
+ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( FCCAnalysesSV SV ) {
+  ROOT::VecOps::RVec<double> result;
+
+  for(VertexingUtils::FCCAnalysesVertex ivtx : SV.vtx) {
+    int n_tracks = ivtx.reco_chi2.size();
+    int nDOF = 2*n_tracks - 3;
+    result.push_back(nDOF*ivtx.vertex.chi2);
+  }
+  return result;
+}
+
 // internal fns for SV finder
 
 // invariant mass of a two track vertex
 double VertexingUtils::get_invM_pairs( FCCAnalysesVertex vertex,
-           double m1,
-           double m2 ) {
+				       double m1,
+				       double m2 ) {
   // CAUTION: m1 -> first track; m2 -> second track
   
   double result;
@@ -293,8 +305,8 @@ double VertexingUtils::get_invM_pairs( FCCAnalysesVertex vertex,
 }
 
 ROOT::VecOps::RVec<double> VertexingUtils::get_invM_pairs( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
-				       double m1,
-				       double m2 ) {
+							   double m1,
+							   double m2 ) {
   // CAUTION: m1 -> first track; m2 -> second track
 
   ROOT::VecOps::RVec<double> result;
@@ -468,6 +480,18 @@ ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_V0( FCCAnalysesV0 V0 ) {
     for(TVector3 p_tr : p_tracks) p_sum += p_tr;
 
     result.push_back(p_sum);
+  }
+  return result;
+}
+
+// vector of chi2 of all reconstructed V0s
+ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( FCCAnalysesV0 SV ) {
+  ROOT::VecOps::RVec<double> result;
+
+  for(VertexingUtils::FCCAnalysesVertex ivtx : SV.vtx) {
+    int n_tracks = ivtx.reco_chi2.size();
+    int nDOF = 2*n_tracks - 3;
+    result.push_back(nDOF*ivtx.vertex.chi2);
   }
   return result;
 }

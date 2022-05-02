@@ -78,6 +78,7 @@ namespace VertexFitterSimple{
 					     ROOT::VecOps::RVec<bool> isInPrimary,
 					     ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
 					     std::vector<std::vector<int>> jet_consti,
+					     bool V0_rej=true,
 					     double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
   
   /** returns SVs reconstructed from non-primary tracks of the event
@@ -88,6 +89,7 @@ namespace VertexFitterSimple{
 					      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 					      VertexingUtils::FCCAnalysesVertex PV,
 					      ROOT::VecOps::RVec<bool> isInPrimary,
+					      bool V0_rej=true,
 					      double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
 
   /** returns SVs reconstructed from non-primary tracks of the event
@@ -97,6 +99,7 @@ namespace VertexFitterSimple{
 					      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 					      ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 					      VertexingUtils::FCCAnalysesVertex PV,
+					      bool V0_rej=true,
 					      double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
 
   /** returns a vector of all vertices (PV and SVs), e.g to use in myUtils::get_Vertex_d2PV
@@ -158,6 +161,7 @@ namespace VertexFitterSimple{
    */
   VertexingUtils::FCCAnalysesV0 get_V0s( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 					 VertexingUtils::FCCAnalysesVertex PV,
+					 bool tight = true,
 					 double chi2_cut=9.) ;
 
 
