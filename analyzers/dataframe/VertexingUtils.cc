@@ -271,8 +271,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( FCCAnalysesSV SV ) {
   ROOT::VecOps::RVec<double> result;
 
   for(VertexingUtils::FCCAnalysesVertex ivtx : SV.vtx) {
-    int n_tracks = ivtx.reco_chi2.size();
-    int nDOF = 2*n_tracks - 3;
+    int nDOF = 2*ivtx.ntracks - 3;
     result.push_back(nDOF*ivtx.vertex.chi2);
   }
   return result;
@@ -499,6 +498,19 @@ ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_SV( FCCAnalysesV0 SV ) {
   return result;
 }
 
+// vector of chi2 of all reconstructed V0s
+ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( FCCAnalysesV0 SV ) {
+  ROOT::VecOps::RVec<double> result;
+
+  for(VertexingUtils::FCCAnalysesVertex ivtx : SV.vtx) {
+    int nDOF = 2*ivtx.ntracks - 3;
+    result.push_back(nDOF*ivtx.vertex.chi2);
+  }
+  return result;
+}
+
+// passing a vector of FCCAnalysesVertex instead of new structs
+
 // vector of momenta of all reconstructed vertices (SV.vtx or V0.vtx)
 ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices) {
   ROOT::VecOps::RVec<TVector3> result;
@@ -514,14 +526,29 @@ ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_SV( ROOT::VecOps::RVec<FCCAna
   return result;
 }
 
-// vector of chi2 of all reconstructed V0s
-ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( FCCAnalysesV0 SV ) {
+// vector of chi2 of all reconstructed vertices (SV.vtx or V0.vtx)
+ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<double> result;
 
-  for(VertexingUtils::FCCAnalysesVertex ivtx : SV.vtx) {
-    int n_tracks = ivtx.reco_chi2.size();
-    int nDOF = 2*n_tracks - 3;
+  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+    int nDOF = 2*ivtx.ntracks - 3;
     result.push_back(nDOF*ivtx.vertex.chi2);
   }
+  return result;
+}
+
+// vector of chi2 (normalised) of all reconstructed vertices (SV.vtx or V0.vtx)
+ROOT::VecOps::RVec<double> VertexingUtils::get_norm_chi2_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
+  ROOT::VecOps::RVec<double> result;
+
+  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) result.push_back(ivtx.vertex.chi2);
+  return result;
+}
+
+// vector of nDOF of all reconstructed vertices (SV.vtx or V0.vtx)
+ROOT::VecOps::RVec<int> VertexingUtils::get_nDOF_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
+  ROOT::VecOps::RVec<int> result;
+
+  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) result.push_back(2*ivtx.ntracks - 3);
   return result;
 }

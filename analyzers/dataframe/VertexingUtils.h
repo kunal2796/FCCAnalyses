@@ -167,11 +167,21 @@ namespace VertexingUtils{
   /// Return the momentum of all reconstructed V0s
   ROOT::VecOps::RVec<TVector3> get_p_SV( FCCAnalysesV0 SV );
 
+  /// Return chi2 of all reconstructed V0s
+  ROOT::VecOps::RVec<double> get_chi2_SV( FCCAnalysesV0 SV );
+
+  /// Passing a vector of FCCAnalysesVertex instead of FCCAnalysesSV or FCCAnalysesV0
   /// Return the momentum of all reconstructed vertices (SV.vtx or V0.vtx)
   ROOT::VecOps::RVec<TVector3> get_p_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
-  /// Return chi2 of all reconstructed V0s
-  ROOT::VecOps::RVec<double> get_chi2_SV( FCCAnalysesV0 SV );
+  /// Return chi2 of all reconstructed vertices (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_chi2_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
+
+  /// Return normalised chi2 of all reconstructed vertices (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_norm_chi2_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
+
+  /// Return no of DOF of all reconstructed vertices (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<int> get_nDOF_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
  // --- Internal methods needed by the code of  Franco B :  
   TVectorD get_trackParam( edm4hep::TrackState & atrack) ;
