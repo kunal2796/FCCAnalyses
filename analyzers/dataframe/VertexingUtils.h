@@ -183,6 +183,12 @@ namespace VertexingUtils{
   /// Return no of DOF of all reconstructed vertices (SV.vtx or V0.vtx)
   ROOT::VecOps::RVec<int> get_nDOF_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
+  /// Return polar angle (theta) of all reconstructed vertices (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_theta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
+
+  /// Return azimuthal angle (phi) of all reconstructed vertices (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_phi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
+
  // --- Internal methods needed by the code of  Franco B :  
   TVectorD get_trackParam( edm4hep::TrackState & atrack) ;
   TMatrixDSym get_trackCov( edm4hep::TrackState &  atrack) ;

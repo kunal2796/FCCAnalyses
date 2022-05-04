@@ -552,3 +552,25 @@ ROOT::VecOps::RVec<int> VertexingUtils::get_nDOF_SV( ROOT::VecOps::RVec<FCCAnaly
   for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) result.push_back(2*ivtx.ntracks - 3);
   return result;
 }
+
+// vector of polar angle (theta) of all reconstructed vertices (SV.vtx or V0.vtx)
+ROOT::VecOps::RVec<double> VertexingUtils::get_theta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
+  ROOT::VecOps::RVec<double> result;
+
+  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+    TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+    result.push_back(xyz.Theta());
+  }
+  return result;
+}
+
+// vector of azimuth angle (phi) of all reconstructed vertices (SV.vtx or V0.vtx)
+ROOT::VecOps::RVec<double> VertexingUtils::get_phi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
+  ROOT::VecOps::RVec<double> result;
+
+  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+    TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+    result.push_back(xyz.Phi());
+  }
+  return result;
+}
