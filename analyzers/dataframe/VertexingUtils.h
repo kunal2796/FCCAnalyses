@@ -145,6 +145,9 @@ namespace VertexingUtils{
   /// Return the vertex position of all reconstructed SVs (in mm)
   ROOT::VecOps::RVec<TVector3> get_position_SV( FCCAnalysesSV SV );
 
+  /// Return the momentum of all reconstructed V0s
+  ROOT::VecOps::RVec<TVector3> get_p_SV( FCCAnalysesSV SV );
+
   /// Return chi2 of all reconstructed SVs
   ROOT::VecOps::RVec<double> get_chi2_SV( FCCAnalysesSV SV );
 
@@ -162,7 +165,10 @@ namespace VertexingUtils{
   ROOT::VecOps::RVec<double> get_invM_V0( FCCAnalysesV0 V0 );
 
   /// Return the momentum of all reconstructed V0s
-  ROOT::VecOps::RVec<TVector3> get_p_V0( FCCAnalysesV0 V0 );
+  ROOT::VecOps::RVec<TVector3> get_p_SV( FCCAnalysesV0 SV );
+
+  /// Return the momentum of all reconstructed vertices (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<TVector3> get_p_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
   /// Return chi2 of all reconstructed V0s
   ROOT::VecOps::RVec<double> get_chi2_SV( FCCAnalysesV0 SV );
