@@ -17,6 +17,7 @@
 #include "TVector3.h"
 #include "TMatrixDSym.h"
 
+#include "fastjet/JetDefinition.hh"
 
 /** Vertexing utilities 
 */
