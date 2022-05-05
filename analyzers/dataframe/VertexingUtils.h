@@ -38,6 +38,7 @@ namespace VertexingUtils{
   /// Structure to keep useful information that is related to the SV
   struct FCCAnalysesSV{
     ROOT::VecOps::RVec<FCCAnalysesVertex> vtx; // vertex object
+    ROOT::VecOps::RVec<int> nSV_jet;           // no of SVs per jet
   };
 
   /// Structure to keep useful information that is related to the V0
@@ -192,6 +193,16 @@ namespace VertexingUtils{
   /// Return azimuthal angle (phi) of all reconstructed vertices (SV.vtx or V0.vtx)
   ROOT::VecOps::RVec<double> get_phi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
+  /// Return polar angle (theta) of all reconstructed vertices wrt jets (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> VertexingUtils::get_relTheta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+							      ROOT::VecOps::RVec<int> nSV_jet,
+							      ROOT::VecOps::RVec<fastjet::PseudoJet> jets );
+
+  /// Return azimuthal angle (phi) of all reconstructed vertices wrt jets (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> VertexingUtils::get_relPhi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+							    ROOT::VecOps::RVec<int> nSV_jet,
+							    ROOT::VecOps::RVec<fastjet::PseudoJet> jets );
+  
   /// Return the pointing angle of all reconstructed vertices (SV.vtx or V0.vtx)
   ROOT::VecOps::RVec<double> get_pointingangle_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
 						   FCCAnalysesVertex PV );

@@ -834,10 +834,13 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
 
   // find SVs using LCFI+ (clustering first)
   // change to vec of vec (RVec of RVec breaking) to separate SV from diff jets, currently don't separate SVs by jet
+  // added a vector containing number of SVs per jet
   
   VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
+  ROOT::VecOps::RVec<int> nSV_jet;
   SV.vtx = result;
+  SV.nSV_jet = nSV_jet;
 
   // find SV inside the jet loop (only from non-primary tracks)
   // first separate reco particles by jet then get the associated tracks
@@ -854,6 +857,8 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
 
   //
   for (unsigned int j=0; j<nJet; j++) {
+
+    int i_nSV = 0;
 
     std::vector<int> i_jetconsti = jet_consti[j];
     for (int ctr=0; ctr<tracks.size(); ctr++) {
@@ -906,6 +911,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
       sec_vtx.reco_ind = get_reco_ind(recoparticles,thetracks);
 
       result.push_back(sec_vtx);
+      i_nSV++;
       //
       ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
       tracks_fin.clear();
@@ -917,6 +923,8 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
       
       if(debug) std::cout<<result.size()<<" SV found"<<std::endl;
     }
+
+    nSV_jet.push_back(i_nSV);
     
     // clean-up
     np_tracks.clear();
@@ -927,6 +935,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
   
   // currently don't know which SV is from which jet (FIX SOON)
   SV.vtx = result;
+  SV.nSV_jet = nSV_jet;
   //
   return SV;
 }

@@ -644,3 +644,51 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_d3d_SV( ROOT::VecOps::RVec<FCCAna
   }
   return result;
 }
+
+// vector of polar angle (theta) of all reconstructed vertices wrt jet axis (SV.vtx or V0.vtx)
+ROOT::VecOps::RVec<double> VertexingUtils::get_relTheta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+							    ROOT::VecOps::RVec<int> nSV_jet,
+							    ROOT::VecOps::RVec<fastjet::PseudoJet> jets ) {
+  ROOT::VecOps::RVec<double> result;
+
+  unsigned int j = 0;
+  int nSV = nSV_jet[0];
+  for(unsigned int i=0; i<vertices.size(); i++) {
+    auto & ivtx = vertices[i];
+    TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+
+    if(i >= nSV) {
+      j++;
+      nSV += nSV_jet[j];
+    }
+    auto & ijet = jets[j];
+    double jetTheta = ijet.theta();
+      
+    result.push_back(xyz.Theta() - jetTheta);
+  }
+  return result;
+}
+
+// vector of azimuthal angle (phi) of all reconstructed vertices wrt jet axis (SV.vtx or V0.vtx)
+ROOT::VecOps::RVec<double> VertexingUtils::get_relPhi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+							  ROOT::VecOps::RVec<int> nSV_jet,
+							  ROOT::VecOps::RVec<fastjet::PseudoJet> jets ) {
+  ROOT::VecOps::RVec<double> result;
+
+  unsigned int j = 0;
+  int nSV = nSV_jet[0];
+  for(unsigned int i=0; i<vertices.size(); i++) {
+    auto & ivtx = vertices[i];
+    TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+
+    if(i >= nSV) {
+      j++;
+      nSV += nSV_jet[j];
+    }
+    auto & ijet = jets[j];
+    TVector3 jetP(ijet.px(), ijet.py(), ijet.pz());
+      
+    result.push_back(xyz.DeltaPhi(jetP));
+  }
+  return result;
+}
