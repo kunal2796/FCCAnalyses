@@ -512,10 +512,10 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( FCCAnalysesV0 SV ) {
 // passing a vector of FCCAnalysesVertex instead of new structs
 
 // vector of momenta of all reconstructed vertices (SV.vtx or V0.vtx)
-ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices) {
+ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<TVector3> result;
   
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+  for(auto & ivtx : vertices) {
     ROOT::VecOps::RVec<TVector3> p_tracks = ivtx.updated_track_momentum_at_vertex;
     
     TVector3 p_sum;
@@ -526,11 +526,26 @@ ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_SV( ROOT::VecOps::RVec<FCCAna
   return result;
 }
 
+// vector of momentum magnitude of all reconstructed vertices (SV.vtx or V0.vtx)
+ROOT::VecOps::RVec<double> VertexingUtils::get_pMag_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
+  ROOT::VecOps::RVec<double> result;
+  
+  for(auto & ivtx : vertices) {
+    ROOT::VecOps::RVec<TVector3> p_tracks = ivtx.updated_track_momentum_at_vertex;
+    
+    TVector3 p_sum;
+    for(TVector3 p_tr : p_tracks) p_sum += p_tr;
+
+    result.push_back(p_sum.Mag());
+  }
+  return result;
+}
+
 // vector of chi2 of all reconstructed vertices (SV.vtx or V0.vtx)
 ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<double> result;
 
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+  for(auto & ivtx : vertices) {
     int nDOF = 2*ivtx.ntracks - 3;
     result.push_back(nDOF*ivtx.vertex.chi2);
   }
@@ -541,7 +556,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( ROOT::VecOps::RVec<FCCAn
 ROOT::VecOps::RVec<double> VertexingUtils::get_norm_chi2_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<double> result;
 
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) result.push_back(ivtx.vertex.chi2);
+  for(auto & ivtx : vertices) result.push_back(ivtx.vertex.chi2);
   return result;
 }
 
@@ -549,7 +564,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_norm_chi2_SV( ROOT::VecOps::RVec<
 ROOT::VecOps::RVec<int> VertexingUtils::get_nDOF_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<int> result;
 
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) result.push_back(2*ivtx.ntracks - 3);
+  for(auto & ivtx : vertices) result.push_back(2*ivtx.ntracks - 3);
   return result;
 }
 
@@ -557,7 +572,7 @@ ROOT::VecOps::RVec<int> VertexingUtils::get_nDOF_SV( ROOT::VecOps::RVec<FCCAnaly
 ROOT::VecOps::RVec<double> VertexingUtils::get_theta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<double> result;
 
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+  for(auto & ivtx : vertices) {
     TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
     result.push_back(xyz.Theta());
   }
@@ -568,9 +583,112 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_theta_SV( ROOT::VecOps::RVec<FCCA
 ROOT::VecOps::RVec<double> VertexingUtils::get_phi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<double> result;
 
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+  for(auto & ivtx : vertices) {
     TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
     result.push_back(xyz.Phi());
+  }
+  return result;
+}
+
+// vector of (cos of) angles b/n vtx momenta & PV to vtx displacement vectors
+ROOT::VecOps::RVec<double> VertexingUtils::get_pointingangle_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+								 FCCAnalysesVertex PV ) {
+  ROOT::VecOps::RVec<double> result;
+
+  for(auto & ivtx : vertices) {
+    double iresult = 0.;
+    
+    ROOT::VecOps::RVec<TVector3> p_tracks = ivtx.updated_track_momentum_at_vertex;
+    TVector3 p_sum;
+    for(TVector3 p_tr : p_tracks) p_sum += p_tr;
+    
+    edm4hep::Vector3f r_vtx = ivtx.vertex.position; // in mm
+    edm4hep::Vector3f r_PV  = PV.vertex.position;   // in mm
+    
+    TVector3 r_vtx_PV(r_vtx[0] - r_vtx[0], r_vtx[1] - r_PV[1], r_vtx[2] - r_PV[2]);
+    
+    double pDOTr = p_sum.Dot(r_vtx_PV);
+    double p_mag = p_sum.Mag();
+    double r_mag = r_vtx_PV.Mag();
+
+    iresult = pDOTr / (p_mag * r_mag);    
+    result.push_back(iresult);
+  }
+  return result;
+}
+
+// vector of distances of all reconstructed SV from PV (in mm in xy plane)
+ROOT::VecOps::RVec<double> VertexingUtils::get_dxy_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+						       FCCAnalysesVertex PV) {
+  ROOT::VecOps::RVec<double> result;
+  TVector3 x_PV(PV.vertex.position[0], PV.vertex.position[1], PV.vertex.position[2]);
+  for(auto & ivtx : vertices) {
+    TVector3 x_vtx(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+    TVector3 x_vtx_PV = x_vtx - x_PV;
+
+    result.push_back(x_vtx_PV.Perp());
+  }
+  return result;
+}
+
+// vector of distances of all reconstructed SV from PV (in mm in 3D)
+ROOT::VecOps::RVec<double> VertexingUtils::get_d3d_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+						       FCCAnalysesVertex PV) {
+  ROOT::VecOps::RVec<double> result;
+  TVector3 x_PV(PV.vertex.position[0], PV.vertex.position[1], PV.vertex.position[2]);
+  for(auto & ivtx : vertices) {
+    TVector3 x_vtx(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+    TVector3 x_vtx_PV = x_vtx - x_PV;
+
+    result.push_back(x_vtx_PV.Mag());
+  }
+  return result;
+}
+
+// vector of polar angle (theta) of all reconstructed vertices wrt jet axis (SV.vtx or V0.vtx)
+ROOT::VecOps::RVec<double> VertexingUtils::get_relTheta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+							    ROOT::VecOps::RVec<int> nSV_jet,
+							    ROOT::VecOps::RVec<fastjet::PseudoJet> jets ) {
+  ROOT::VecOps::RVec<double> result;
+
+  unsigned int j = 0;
+  int nSV = nSV_jet[0];
+  for(unsigned int i=0; i<vertices.size(); i++) {
+    auto & ivtx = vertices[i];
+    TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+
+    if(i >= nSV) {
+      j++;
+      nSV += nSV_jet[j];
+    }
+    auto & ijet = jets[j];
+    double jetTheta = ijet.theta();
+      
+    result.push_back(xyz.Theta() - jetTheta);
+  }
+  return result;
+}
+
+// vector of azimuthal angle (phi) of all reconstructed vertices wrt jet axis (SV.vtx or V0.vtx)
+ROOT::VecOps::RVec<double> VertexingUtils::get_relPhi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+							  ROOT::VecOps::RVec<int> nSV_jet,
+							  ROOT::VecOps::RVec<fastjet::PseudoJet> jets ) {
+  ROOT::VecOps::RVec<double> result;
+
+  unsigned int j = 0;
+  int nSV = nSV_jet[0];
+  for(unsigned int i=0; i<vertices.size(); i++) {
+    auto & ivtx = vertices[i];
+    TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+
+    if(i >= nSV) {
+      j++;
+      nSV += nSV_jet[j];
+    }
+    auto & ijet = jets[j];
+    TVector3 jetP(ijet.px(), ijet.py(), ijet.pz());
+      
+    result.push_back(xyz.DeltaPhi(jetP));
   }
   return result;
 }
