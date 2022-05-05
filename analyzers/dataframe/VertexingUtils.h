@@ -17,6 +17,7 @@
 #include "TVector3.h"
 #include "TMatrixDSym.h"
 
+#include "fastjet/JetDefinition.hh"
 
 /** Vertexing utilities 
 */
@@ -38,6 +39,7 @@ namespace VertexingUtils{
   /// Structure to keep useful information that is related to the SV
   struct FCCAnalysesSV{
     ROOT::VecOps::RVec<FCCAnalysesVertex> vtx; // vertex object
+    ROOT::VecOps::RVec<int> nSV_jet;           // no of SVs per jet
   };
 
   /// Structure to keep useful information that is related to the V0
@@ -174,6 +176,9 @@ namespace VertexingUtils{
   /// Return the momentum of all reconstructed vertices (SV.vtx or V0.vtx)
   ROOT::VecOps::RVec<TVector3> get_p_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
+  /// Return the momentum magnitude of all reconstructed vertices (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_pMag_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
+
   /// Return chi2 of all reconstructed vertices (SV.vtx or V0.vtx)
   ROOT::VecOps::RVec<double> get_chi2_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
@@ -189,7 +194,29 @@ namespace VertexingUtils{
   /// Return azimuthal angle (phi) of all reconstructed vertices (SV.vtx or V0.vtx)
   ROOT::VecOps::RVec<double> get_phi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
- // --- Internal methods needed by the code of  Franco B :  
+  /// Return polar angle (theta) of all reconstructed vertices wrt jets (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_relTheta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+							      ROOT::VecOps::RVec<int> nSV_jet,
+							      ROOT::VecOps::RVec<fastjet::PseudoJet> jets );
+
+  /// Return azimuthal angle (phi) of all reconstructed vertices wrt jets (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_relPhi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+							    ROOT::VecOps::RVec<int> nSV_jet,
+							    ROOT::VecOps::RVec<fastjet::PseudoJet> jets );
+  
+  /// Return the pointing angle of all reconstructed vertices (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_pointingangle_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+						   FCCAnalysesVertex PV );
+
+  /// Return the distances of all reconstructed vertices from PV in xy plane [mm] (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_dxy_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+					 FCCAnalysesVertex PV );
+
+  /// Return the distances of all reconstructed vertices from PV in 3D [mm] (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_d3d_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+					 FCCAnalysesVertex PV );
+
+  // --- Internal methods needed by the code of  Franco B :  
   TVectorD get_trackParam( edm4hep::TrackState & atrack) ;
   TMatrixDSym get_trackCov( edm4hep::TrackState &  atrack) ;
  
