@@ -174,6 +174,9 @@ namespace VertexingUtils{
   /// Return the momentum of all reconstructed vertices (SV.vtx or V0.vtx)
   ROOT::VecOps::RVec<TVector3> get_p_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
+  /// Return the momentum magnitude of all reconstructed vertices (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_pMag_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
+
   /// Return chi2 of all reconstructed vertices (SV.vtx or V0.vtx)
   ROOT::VecOps::RVec<double> get_chi2_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
@@ -189,7 +192,18 @@ namespace VertexingUtils{
   /// Return azimuthal angle (phi) of all reconstructed vertices (SV.vtx or V0.vtx)
   ROOT::VecOps::RVec<double> get_phi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
- // --- Internal methods needed by the code of  Franco B :  
+  /// Return the pointing angle of all reconstructed vertices (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_pointingangle_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
+
+  /// Return the distances of all reconstructed vertices from PV in xy plane [mm] (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_dxy_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+					 FCCAnalysesVertex PV );
+
+  /// Return the distances of all reconstructed vertices from PV in 3D [mm] (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_d3d_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+					 FCCAnalysesVertex PV );
+
+  // --- Internal methods needed by the code of  Franco B :  
   TVectorD get_trackParam( edm4hep::TrackState & atrack) ;
   TMatrixDSym get_trackCov( edm4hep::TrackState &  atrack) ;
  
