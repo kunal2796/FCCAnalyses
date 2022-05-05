@@ -193,7 +193,8 @@ namespace VertexingUtils{
   ROOT::VecOps::RVec<double> get_phi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
   /// Return the pointing angle of all reconstructed vertices (SV.vtx or V0.vtx)
-  ROOT::VecOps::RVec<double> get_pointingangle_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
+  ROOT::VecOps::RVec<double> get_pointingangle_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+						   FCCAnalysesVertex PV );
 
   /// Return the distances of all reconstructed vertices from PV in xy plane [mm] (SV.vtx or V0.vtx)
   ROOT::VecOps::RVec<double> get_dxy_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,

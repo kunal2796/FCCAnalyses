@@ -512,10 +512,10 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( FCCAnalysesV0 SV ) {
 // passing a vector of FCCAnalysesVertex instead of new structs
 
 // vector of momenta of all reconstructed vertices (SV.vtx or V0.vtx)
-ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices) {
+ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<TVector3> result;
   
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+  for(auto & ivtx : vertices) {
     ROOT::VecOps::RVec<TVector3> p_tracks = ivtx.updated_track_momentum_at_vertex;
     
     TVector3 p_sum;
@@ -527,10 +527,10 @@ ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_SV( ROOT::VecOps::RVec<FCCAna
 }
 
 // vector of momentum magnitude of all reconstructed vertices (SV.vtx or V0.vtx)
-ROOT::VecOps::RVec<double> VertexingUtils::get_pMag_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices) {
+ROOT::VecOps::RVec<double> VertexingUtils::get_pMag_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<double> result;
   
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+  for(auto & ivtx : vertices) {
     ROOT::VecOps::RVec<TVector3> p_tracks = ivtx.updated_track_momentum_at_vertex;
     
     TVector3 p_sum;
@@ -545,7 +545,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_pMag_SV( ROOT::VecOps::RVec<FCCAn
 ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<double> result;
 
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+  for(auto & ivtx : vertices) {
     int nDOF = 2*ivtx.ntracks - 3;
     result.push_back(nDOF*ivtx.vertex.chi2);
   }
@@ -556,7 +556,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_chi2_SV( ROOT::VecOps::RVec<FCCAn
 ROOT::VecOps::RVec<double> VertexingUtils::get_norm_chi2_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<double> result;
 
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) result.push_back(ivtx.vertex.chi2);
+  for(auto & ivtx : vertices) result.push_back(ivtx.vertex.chi2);
   return result;
 }
 
@@ -564,7 +564,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_norm_chi2_SV( ROOT::VecOps::RVec<
 ROOT::VecOps::RVec<int> VertexingUtils::get_nDOF_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<int> result;
 
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) result.push_back(2*ivtx.ntracks - 3);
+  for(auto & ivtx : vertices) result.push_back(2*ivtx.ntracks - 3);
   return result;
 }
 
@@ -572,7 +572,7 @@ ROOT::VecOps::RVec<int> VertexingUtils::get_nDOF_SV( ROOT::VecOps::RVec<FCCAnaly
 ROOT::VecOps::RVec<double> VertexingUtils::get_theta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<double> result;
 
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+  for(auto & ivtx : vertices) {
     TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
     result.push_back(xyz.Theta());
   }
@@ -583,7 +583,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_theta_SV( ROOT::VecOps::RVec<FCCA
 ROOT::VecOps::RVec<double> VertexingUtils::get_phi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<double> result;
 
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+  for(auto & ivtx : vertices) {
     TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
     result.push_back(xyz.Phi());
   }
@@ -595,7 +595,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_pointingangle_SV( ROOT::VecOps::R
 								 FCCAnalysesVertex PV ) {
   ROOT::VecOps::RVec<double> result;
 
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+  for(auto & ivtx : vertices) {
     double iresult = 0.;
     
     ROOT::VecOps::RVec<TVector3> p_tracks = ivtx.updated_track_momentum_at_vertex;
@@ -622,7 +622,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_dxy_SV( ROOT::VecOps::RVec<FCCAna
 						       FCCAnalysesVertex PV) {
   ROOT::VecOps::RVec<double> result;
   TVector3 x_PV(PV.vertex.position[0], PV.vertex.position[1], PV.vertex.position[2]);
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+  for(auto & ivtx : vertices) {
     TVector3 x_vtx(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
     TVector3 x_vtx_PV = x_vtx - x_PV;
 
@@ -636,7 +636,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_d3d_SV( ROOT::VecOps::RVec<FCCAna
 						       FCCAnalysesVertex PV) {
   ROOT::VecOps::RVec<double> result;
   TVector3 x_PV(PV.vertex.position[0], PV.vertex.position[1], PV.vertex.position[2]);
-  for(VertexingUtils::FCCAnalysesVertex ivtx : vertices) {
+  for(auto & ivtx : vertices) {
     TVector3 x_vtx(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
     TVector3 x_vtx_PV = x_vtx - x_PV;
 
