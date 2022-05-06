@@ -33,7 +33,7 @@ namespace VertexFitterSimple{
   /// Vertex (code from Franco Bedeschi): passing the recoparticles. Units for the beamspot constraint: mum
   VertexingUtils::FCCAnalysesVertex  VertexFitter( int Primary, 
 						   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-						   ROOT::VecOps::RVec<edm4hep::TrackState> alltracks,
+						   ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 						   bool BeamSpotConstraint = false,
 						   double sigmax=0., double sigmay=0., double sigmaz=0.,
                                                    double bsc_x=0., double bsc_y=0., double bsc_z=0. )  ;

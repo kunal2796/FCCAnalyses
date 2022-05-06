@@ -286,7 +286,7 @@ TVectorD VertexFitterSimple::Fill_x(TVectorD par, Double_t phi){
 
 VertexingUtils::FCCAnalysesVertex  VertexFitterSimple::VertexFitter( int Primary, 
 								     ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-.								     ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+								     ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 								     bool BeamSpotConstraint,
 								     double bsc_sigmax, double bsc_sigmay, double bsc_sigmaz, 
                                                                      double bsc_x, double bsc_y, double bsc_z )  {
