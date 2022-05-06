@@ -101,7 +101,7 @@ VertexingUtils::get_trackParam( edm4hep::TrackState & atrack) {
     return res;
 }
 
-float VertexingUtils::get_trackMom( edm::TrackState & atrack ) {
+float VertexingUtils::get_trackMom( edm4hep::TrackState & atrack ) {
   TVectorD par = VertexingUtils::get_trackParam(atrack);
   TVector3 p = VertexFitterSimple::ParToP(par);
   float result = p.Mag();
