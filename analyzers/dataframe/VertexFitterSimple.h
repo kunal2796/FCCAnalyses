@@ -33,7 +33,7 @@ namespace VertexFitterSimple{
   /// Vertex (code from Franco Bedeschi): passing the recoparticles. Units for the beamspot constraint: mum
   VertexingUtils::FCCAnalysesVertex  VertexFitter( int Primary, 
 						   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-						   ROOT::VecOps::RVec<edm4hep::TrackState> alltracks,
+						   ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 						   bool BeamSpotConstraint = false,
 						   double sigmax=0., double sigmay=0., double sigmaz=0.,
                                                    double bsc_x=0., double bsc_y=0., double bsc_z=0. )  ;
@@ -162,9 +162,17 @@ namespace VertexFitterSimple{
   VertexingUtils::FCCAnalysesV0 get_V0s( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 					 VertexingUtils::FCCAnalysesVertex PV,
 					 bool tight = true,
-					 double chi2_cut=9.) ;
+					 double chi2_cut=9. ) ;
 
-
+  VertexingUtils::FCCAnalysesV0 get_V0s_jet( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+					     ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+					     ROOT::VecOps::RVec<bool> isInPrimary,
+					     ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
+					     std::vector<std::vector<int>> jet_consti,
+					     VertexingUtils::FCCAnalysesVertex PV,
+					     bool tight = true,
+					     double chi2_cut=9. );
+  
 
   Double_t FastRv(TVectorD p1, TVectorD p2) ;
   TMatrixDSym RegInv3(TMatrixDSym &Smat0) ;
