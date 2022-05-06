@@ -181,6 +181,15 @@ ROOT::VecOps::RVec<float> JetClusteringUtils::get_e(ROOT::VecOps::RVec<fastjet::
   return result;
 }
 
+ROOT::VecOps::RVec<float> JetClusteringUtils::get_p(ROOT::VecOps::RVec<fastjet::PseudoJet> in){
+  ROOT::VecOps::RVec<float> result;
+  for (auto & p: in) {
+    float mom = sqrt(p.px*p.px + p.py*p.py + p.pz*p.pz);
+    result.push_back(mom);
+  }
+  return result;
+}
+
 ROOT::VecOps::RVec<float> JetClusteringUtils::get_pt(ROOT::VecOps::RVec<fastjet::PseudoJet> in){
   ROOT::VecOps::RVec<float> result;
   for (auto & p: in) {
