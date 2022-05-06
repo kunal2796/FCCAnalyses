@@ -217,6 +217,7 @@ namespace VertexingUtils{
 					 FCCAnalysesVertex PV );
 
   // --- Internal methods needed by the code of  Franco B :  
+  float get_trackMom( edm4hep::TrackState & atrack );
   TVectorD get_trackParam( edm4hep::TrackState & atrack) ;
   TMatrixDSym get_trackCov( edm4hep::TrackState &  atrack) ;
  
