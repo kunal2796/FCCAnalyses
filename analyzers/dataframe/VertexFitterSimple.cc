@@ -286,7 +286,7 @@ TVectorD VertexFitterSimple::Fill_x(TVectorD par, Double_t phi){
 
 VertexingUtils::FCCAnalysesVertex  VertexFitterSimple::VertexFitter( int Primary, 
 								     ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-								     ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+.								     ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 								     bool BeamSpotConstraint,
 								     double bsc_sigmax, double bsc_sigmay, double bsc_sigmaz, 
                                                                      double bsc_x, double bsc_y, double bsc_z )  {
@@ -1667,6 +1667,212 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s(ROOT::VecOps::RVec<edm
       
     }
   }
+
+  //std::cout<<"Found "<<vtx.size()<<" V0s"<<std::endl;
+  
+  result.vtx = vtx;
+  result.pdgAbs = pdgAbs;
+  result.invM = invM;
+  //
+  return result;
+}
+
+VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+							      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+							      ROOT::VecOps::RVec<bool> isInPrimary,
+							      ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
+							      std::vector<std::vector<int>> jet_consti,
+							      VertexingUtils::FCCAnalysesVertex PV,
+							      bool tight,
+							      double chi2_cut) {
+  // V0 reconstruction after jet clustering
+  // if(tight)  -> tight constraints
+  // if(!tight) -> loose constraints
+
+  // write a separate fn to get non-primary tracks separated by jet so as not to replicate the calculation
+
+  VertexingUtils::FCCAnalysesV0 result;
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> vtx; // FCCAnalyses vertex object
+  ROOT::VecOps::RVec<int> pdgAbs;                            // absolute PDG ID
+  ROOT::VecOps::RVec<double> invM;                           // invariant mass
+  result.vtx = vtx;
+  result.pdgAbs = pdgAbs;
+  result.invM = invM;
+
+  VertexingUtils::FCCAnalysesVertex V0_vtx;
+
+  int n_par = recoparticles.size();
+  if(n_par<2) return result;
+  
+  edm4hep::Vector3f r_PV = PV.vertex.position; // in mm
+
+  const double m_pi = 0.13957039; // pi+- mass [GeV]
+  const double m_p  = 0.93827208; // p+- mass
+  const double m_e  = 0.00051099; // e+- mass
+
+  ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
+  // push empty tracks to make a size=2 vector
+  edm4hep::TrackState tr_i;
+  edm4hep::TrackState tr_j;
+  tr_pair.push_back(tr_i);
+  tr_pair.push_back(tr_j);
+
+  // find V0s inside the jet loop (only from non-primary tracks)
+  // first separate reco particles by jet then get the associated tracks
+  int nJet = jets.size();
+  ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks;
+  
+  ROOT::VecOps::RVec<edm4hep::TrackState> tracks   = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
+  ROOT::VecOps::RVec<int> reco_ind_tracks     = ReconstructedParticle2Track::get_recoindTRK( recoparticles, thetracks );
+  if(tracks.size() != reco_ind_tracks.size()) std::cout<<"ERROR: reco index vector not the same size as no of tracks"<<std::endl;
+
+  if(tracks.size() != isInPrimary.size()) std::cout<<"ERROR: isInPrimary vector size not the same as no of tracks"<<std::endl;
+  
+  if(debug) std::cout<<"tracks extracted from the reco particles"<<std::endl;
+  
+  //
+  for (unsigned int j=0; j<nJet; j++) {
+
+    //int i_nSV = 0;
+    
+    std::vector<int> i_jetconsti = jet_consti[j];
+    for (int ctr=0; ctr<tracks.size(); ctr++) {
+      if(isInPrimary[ctr]) continue; // remove primary tracks
+      if(std::find(i_jetconsti.begin(), i_jetconsti.end(), reco_ind_tracks[ctr]) == i_jetconsti.end()) {
+	np_tracks.push_back(tracks[ctr]); // separate tracks by jet
+      }
+    }
+    
+    if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in jet#"<<j+1<<std::endl;
+
+    int nTr = np_tracks.size();
+    if(nTr<2) continue;    
+    ROOT::VecOps::RVec<bool> isInV0(nTr, false);
+    
+    //
+    for(unsigned int i=0; i<nTr-1; i++) {
+      if(isInV0[i] == true) continue; // don't pair a track if it already forms a V0
+      tr_pair[0] = np_tracks[i];
+      
+      for(unsigned int j=i+1; j<nTr; j++) {
+	if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
+	tr_pair[1] = np_tracks[j];
+	
+	V0_vtx = VertexFitter_Tk(0, tr_pair);
+	
+	// constraint on chi2: chi2 < cut (9)
+	double chi2_V0 = V0_vtx.vertex.chi2; // normalised but DOF=1
+	if(chi2_V0 >= chi2_cut) continue;
+	
+	// invariant masses for V0 candidates
+	double invM_Ks      = VertexingUtils::get_invM_pairs(V0_vtx, m_pi, m_pi);
+	double invM_Lambda1 = VertexingUtils::get_invM_pairs(V0_vtx, m_pi, m_p);
+	double invM_Lambda2 = VertexingUtils::get_invM_pairs(V0_vtx, m_p, m_pi);
+	double invM_Gamma   = VertexingUtils::get_invM_pairs(V0_vtx, m_e, m_e);
+	
+	// V0 candidate distance from PV
+	edm4hep::Vector3f r_V0 = V0_vtx.vertex.position; // in mm
+	// does Vector3f class has similar functions as root vectors?
+	TVector3 r_V0_PV(r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
+	double r = r_V0_PV.Mag(); // in mm
+	
+	// angle b/n V0 candidate momentum & PV-V0 displacement vector
+	double p_r = VertexingUtils::get_PV2V0angle(V0_vtx, PV);
+	
+	if(tight) {
+	  // Ks
+	  if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
+	    if(debug) std::cout<<"Found a Ks"<<std::endl;
+	    isInV0[i] = true;
+	    isInV0[j] = true;
+	    vtx.push_back(V0_vtx);
+	    pdgAbs.push_back(310);
+	    invM.push_back(invM_Ks);
+	    break;
+	  }
+	  
+	  // Lambda0
+	  else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
+	    if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	    isInV0[i] = true;
+	    isInV0[j] = true;
+	    vtx.push_back(V0_vtx);
+	    pdgAbs.push_back(3122);
+	    invM.push_back(invM_Lambda1);
+	    break;
+	  }
+	  else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
+	    if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	    isInV0[i] = true;
+	    isInV0[j] = true;
+	    vtx.push_back(V0_vtx);
+	    pdgAbs.push_back(3122);
+	    invM.push_back(invM_Lambda2);
+	    break;
+	  }
+	
+	  // photon conversion
+	  else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
+	    if(debug) std::cout<<"Found a Photon coversion"<<std::endl;
+	    isInV0[i] = true;
+	    isInV0[j] = true;
+	    vtx.push_back(V0_vtx);
+	    pdgAbs.push_back(22);
+	    invM.push_back(invM_Gamma);
+	    break;
+	  }
+	}
+
+	else {
+	  // Ks
+	  if(invM_Ks>0.488 && invM_Ks<0.508 && r>0.3 && p_r>0.999) {
+	    if(debug) std::cout<<"Found a Ks"<<std::endl;
+	    isInV0[i] = true;
+	    isInV0[j] = true;
+	    vtx.push_back(V0_vtx);
+	    pdgAbs.push_back(310);
+	    invM.push_back(invM_Ks);
+	    break;
+	  }
+      
+	  // Lambda0
+	  else if(invM_Lambda1>1.106 && invM_Lambda1<1.126 && r>0.3 && p_r>0.999) {
+	    if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	    isInV0[i] = true;
+	    isInV0[j] = true;
+	    vtx.push_back(V0_vtx);
+	    pdgAbs.push_back(3122);
+	    invM.push_back(invM_Lambda1);
+	    break;
+	  }
+	  else if(invM_Lambda2>1.106 && invM_Lambda2<1.126 && r>0.3 && p_r>0.999) {
+	    if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	    isInV0[i] = true;
+	    isInV0[j] = true;
+	    vtx.push_back(V0_vtx);
+	    pdgAbs.push_back(3122);
+	    invM.push_back(invM_Lambda2);
+	    break;
+	  }
+	
+	  // photon conversion
+	  else if(invM_Gamma<0.01 && r>9 && p_r>0.999) {
+	    if(debug) std::cout<<"Found a Photon coversion"<<std::endl;
+	    isInV0[i] = true;
+	    isInV0[j] = true;
+	    vtx.push_back(V0_vtx);
+	    pdgAbs.push_back(22);
+	    invM.push_back(invM_Gamma);
+	    break;
+	  }
+	}
+      
+      }
+    }
+
+    // clean-up
+    np_tracks.clear();
+  } // jet loop ends
 
   //std::cout<<"Found "<<vtx.size()<<" V0s"<<std::endl;
   
