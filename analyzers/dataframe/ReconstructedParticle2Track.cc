@@ -155,6 +155,7 @@ ReconstructedParticle2Track::getRP2TRK_theta(ROOT::VecOps::RVec<edm4hep::Reconst
   for (auto & p: in) {
     if (p.tracks_begin<tracks.size()) {
       float theta = atan(1/tracks[p.tracks_begin].tanLambda);
+      if(theta<0) theta += M_PI;
       result.push_back(theta);
     }
     else result.push_back(std::nan(""));

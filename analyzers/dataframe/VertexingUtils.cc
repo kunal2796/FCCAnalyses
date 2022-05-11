@@ -102,8 +102,14 @@ VertexingUtils::get_trackParam( edm4hep::TrackState & atrack) {
 }
 
 float VertexingUtils::get_trackMom( edm4hep::TrackState & atrack ) {
-  TVectorD par = VertexingUtils::get_trackParam(atrack);
-  TVector3 p = VertexFitterSimple::ParToP(par);
+  double fB = 2;  // 2 Tesla
+  
+  float C    = -0.5*1e3 * atrack.omega;
+  float phi0 = atrack.phi;
+  float ct   = atrack.tanLambda;
+  //
+  float pt = fB*0.2998 / TMath::Abs(2 * C);
+  TVector3 p(pt*TMath::Cos(phi0), pt*TMath::Sin(phi0), pt*ct);
   float result = p.Mag();
   return result;
 }
@@ -696,6 +702,31 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_relPhi_SV( ROOT::VecOps::RVec<FCC
     TVector3 jetP(ijet.px(), ijet.py(), ijet.pz());
       
     result.push_back(xyz.DeltaPhi(jetP));
+  }
+  return result;
+}
+
+
+// separate tracks by jet
+ROOT::VecOps::RVec<ROOT::VecOps::RVec<edm4hep::TrackState>> VertexingUtils::get_tracksInJets( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+											      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+											      ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
+											      std::vector<std::vector<int>> jet_consti ) {
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<edm4hep::TrackState>> result;
+  ROOT::VecOps::RVec<edm4hep::TrackState> iJet_tracks;
+
+  int nJet = jets.size();
+  //
+  for (unsigned int j=0; j<nJet; j++) {
+
+    std::vector<int> i_jetconsti = jet_consti[j];
+
+    for(unsigned int ip : i_jetconsti) {
+      auto & p = recoparticles[ip];
+      if(p.tracks_begin >= 0 && p.tracks_begin<thetracks.size()) iJet_tracks.push_back(thetracks.at(p.tracks_begin));
+    }
+
+    result.push_back(iJet_tracks);
   }
   return result;
 }
