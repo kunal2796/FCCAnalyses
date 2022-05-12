@@ -222,6 +222,16 @@ namespace VertexingUtils{
 										ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
 										std::vector<std::vector<int>> jet_consti );
 
+  /// Return the SVs or V0s separated by jets
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> get_svInJets( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+									  ROOT::VecOps::RVec<int> nSV_jet );
+
+  // --- for personal use
+  /// Return angles for reconstructed vertices from a jet wrt that jet
+  ROOT::VecOps::RVec<double> get_relTheta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices, fastjet::PseudoJet jet ); // theta
+  ROOT::VecOps::RVec<double> get_relPhi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices, fastjet::PseudoJet jet ); // phi
+  
+  
   // --- Internal methods needed by the code of  Franco B :  
   float get_trackMom( edm4hep::TrackState & atrack );
   TVectorD get_trackParam( edm4hep::TrackState & atrack) ;
