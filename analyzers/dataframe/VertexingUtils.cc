@@ -199,7 +199,6 @@ edm4hep::VertexData VertexingUtils::get_VertexData( ROOT::VecOps::RVec<FCCAnalys
   return result;
 }
 
-/
 int VertexingUtils::get_VertexNtrk( FCCAnalysesVertex TheVertex ) {
   return TheVertex.ntracks;
 }
