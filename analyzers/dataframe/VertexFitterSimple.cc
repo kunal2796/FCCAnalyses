@@ -1184,7 +1184,10 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::VertexSeed_best(ROOT::VecOps::RVec<e
     }
   }
 
-  result.push_back(isel); result.push_back(jsel);
+  if(chi2_min != 99){
+      result.push_back(isel); 
+      result.push_back(jsel);
+  }
   return result;
 }
 
