@@ -12,6 +12,10 @@
 
 namespace ReconstructedParticle2Track{
 
+  /// Return the momentum of a track to a reconstructed particle
+  ROOT::VecOps::RVec<float> getRP2TRK_mom (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, 
+					   ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
+
   /// Return the D0 of a track to a reconstructed particle
   ROOT::VecOps::RVec<float> getRP2TRK_D0 (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, 
 					  ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
@@ -31,7 +35,11 @@ namespace ReconstructedParticle2Track{
   /// Return the tanLambda of a track to a reconstructed particle
   ROOT::VecOps::RVec<float> getRP2TRK_tanLambda (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, 
 						 ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
-  
+
+  /// Return the theta of a track to a reconstructed particle
+  ROOT::VecOps::RVec<float> getRP2TRK_theta (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, 
+					     ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
+
   /// Return the D0 significance of a track to a reconstructed particle
   ROOT::VecOps::RVec<float> getRP2TRK_D0_sig (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, 
 					      ROOT::VecOps::RVec<edm4hep::TrackState> tracks);

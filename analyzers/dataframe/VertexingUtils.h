@@ -216,7 +216,14 @@ namespace VertexingUtils{
   ROOT::VecOps::RVec<double> get_d3d_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
 					 FCCAnalysesVertex PV );
 
+  /// Return the tracks separated by jets
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<edm4hep::TrackState>> get_tracksInJets( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+										ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+										ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
+										std::vector<std::vector<int>> jet_consti );
+
   // --- Internal methods needed by the code of  Franco B :  
+  float get_trackMom( edm4hep::TrackState & atrack );
   TVectorD get_trackParam( edm4hep::TrackState & atrack) ;
   TMatrixDSym get_trackCov( edm4hep::TrackState &  atrack) ;
  
