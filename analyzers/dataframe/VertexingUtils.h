@@ -167,6 +167,14 @@ namespace VertexingUtils{
   /// Return the invariant masses of all reconstructed V0s
   ROOT::VecOps::RVec<double> get_invM_V0( FCCAnalysesV0 V0 );
 
+  // -------- temporary -------- //
+  /// Return the PDG IDs of reconstructed V0s from the 1st jet
+  ROOT::VecOps::RVec<int> get_pdg_V0jet1( FCCAnalysesV0 V0 );
+
+  /// Return the invariant masses of reconstructed V0s from the 1st jet
+  ROOT::VecOps::RVec<double> get_invM_V0jet1( FCCAnalysesV0 V0 );
+  // -------- temporary -------- //
+  
   /// Return the momentum of all reconstructed V0s
   ROOT::VecOps::RVec<TVector3> get_p_SV( FCCAnalysesV0 SV );
 

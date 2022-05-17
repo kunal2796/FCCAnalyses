@@ -214,7 +214,7 @@ ROOT::VecOps::RVec<int> VertexingUtils::get_VertexNtrk( ROOT::VecOps::RVec<FCCAn
 ROOT::VecOps::RVec<int> VertexingUtils::get_VertexRecoInd( FCCAnalysesVertex TheVertex ) {
   return TheVertex.reco_ind;
 }
-
+.
 TVectorD VertexingUtils::ParToACTS(TVectorD Par){
 
   TVectorD pACTS(6);	// Return vector
@@ -494,6 +494,26 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_invM_V0( FCCAnalysesV0 V0 ) {
   ROOT::VecOps::RVec<double> result = V0.invM;
   return result;
 }
+
+// -------- temporary ---------//
+// vector of PDG IDs of all reconstructed V0
+ROOT::VecOps::RVec<int> VertexingUtils::get_pdg_V0jet1( FCCAnalysesV0 V0 ) {
+  ROOT::VecOps::RVec<int> result;
+  for(unsigned int i=0; i<V0.nSV_jet[0]; i++) {
+    result.push_back(V0.pdgAbs[i]);
+  }
+  return result;
+}
+
+// vector of invariant masses of all reconstructed V0
+ROOT::VecOps::RVec<double> VertexingUtils::get_invM_V0jet1( FCCAnalysesV0 V0 ) {
+  ROOT::VecOps::RVec<double> result;
+  for(unsigned int i=0; i<V0.nSV_jet[0]; i++) {
+    result.push_back(V0.invM[i]);
+  }
+  return result;
+}
+// -------- temporary ---------//
 
 // vector of momenta of all reconstructed V0
 ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_SV( FCCAnalysesV0 SV ) {
