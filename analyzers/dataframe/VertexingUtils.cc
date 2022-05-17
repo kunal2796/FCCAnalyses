@@ -214,7 +214,7 @@ ROOT::VecOps::RVec<int> VertexingUtils::get_VertexNtrk( ROOT::VecOps::RVec<FCCAn
 ROOT::VecOps::RVec<int> VertexingUtils::get_VertexRecoInd( FCCAnalysesVertex TheVertex ) {
   return TheVertex.reco_ind;
 }
-.
+
 TVectorD VertexingUtils::ParToACTS(TVectorD Par){
 
   TVectorD pACTS(6);	// Return vector
