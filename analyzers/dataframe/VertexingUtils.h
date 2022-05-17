@@ -47,6 +47,7 @@ namespace VertexingUtils{
     ROOT::VecOps::RVec<FCCAnalysesVertex> vtx; // vertex object
     ROOT::VecOps::RVec<int> pdgAbs;            // pdg ID from reconstructions
     ROOT::VecOps::RVec<double> invM;           // invariant mass
+    ROOT::VecOps::RVec<int> nSV_jet;           // no of V0s per jet
   };
   
   /// Structure to keep useful track information that is related to the vertex
