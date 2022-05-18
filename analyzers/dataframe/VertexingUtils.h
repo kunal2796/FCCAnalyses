@@ -247,7 +247,7 @@ namespace VertexingUtils{
   std::vector<std::vector<int>> get_VertexNtrk( std::vector<std::vector<FCCAnalysesVertex>> vertices );
   std::vector<std::vector<double>> get_chi2_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
   std::vector<std::vector<double>> get_norm_chi2_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
-  std::vector<std::vector<double>> get_nDOF_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
+  std::vector<std::vector<int>> get_nDOF_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
   std::vector<std::vector<double>> get_theta_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
   std::vector<std::vector<double>> get_phi_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
   std::vector<std::vector<double>> get_relTheta_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices, ROOT::VecOps::RVec<fastjet::PseudoJet> jets );
