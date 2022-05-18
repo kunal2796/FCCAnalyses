@@ -199,7 +199,6 @@ edm4hep::VertexData VertexingUtils::get_VertexData( ROOT::VecOps::RVec<FCCAnalys
   return result;
 }
 
-
 int VertexingUtils::get_VertexNtrk( FCCAnalysesVertex TheVertex ) {
   return TheVertex.ntracks;
 }
@@ -496,6 +495,26 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_invM_V0( FCCAnalysesV0 V0 ) {
   return result;
 }
 
+// -------- temporary ---------//
+// vector of PDG IDs of all reconstructed V0
+ROOT::VecOps::RVec<int> VertexingUtils::get_pdg_V0jet1( FCCAnalysesV0 V0 ) {
+  ROOT::VecOps::RVec<int> result;
+  for(unsigned int i=0; i<V0.nSV_jet[0]; i++) {
+    result.push_back(V0.pdgAbs[i]);
+  }
+  return result;
+}
+
+// vector of invariant masses of all reconstructed V0
+ROOT::VecOps::RVec<double> VertexingUtils::get_invM_V0jet1( FCCAnalysesV0 V0 ) {
+  ROOT::VecOps::RVec<double> result;
+  for(unsigned int i=0; i<V0.nSV_jet[0]; i++) {
+    result.push_back(V0.invM[i]);
+  }
+  return result;
+}
+// -------- temporary ---------//
+
 // vector of momenta of all reconstructed V0
 ROOT::VecOps::RVec<TVector3> VertexingUtils::get_p_SV( FCCAnalysesV0 SV ) {
   ROOT::VecOps::RVec<TVector3> result;
@@ -727,6 +746,52 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<edm4hep::TrackState>> VertexingUtils::get_
     }
 
     result.push_back(iJet_tracks);
+    iJet_tracks.clear();
   }
+  return result;
+}
+
+ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> VertexingUtils::get_svInJets( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+											ROOT::VecOps::RVec<int> nSV_jet ) {
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> result;
+  ROOT::VecOps::RVec<FCCAnalysesVertex> i_result;
+
+  int index=0;
+  for(unsigned int i : nSV_jet) {
+    for(unsigned int j=0; j<i; j++) {
+      i_result.push_back(vertices[j+index]);
+    }
+
+    result.push_back(i_result);
+    i_result.clear();
+    index += i;
+  }
+  return result;
+}
+
+// vector of polar angle (theta) of reconstructed vertices od a jet wrt that jet axis
+ROOT::VecOps::RVec<double> VertexingUtils::get_relTheta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices, fastjet::PseudoJet jet ) {
+  ROOT::VecOps::RVec<double> result;
+
+  for(auto & ivtx : vertices) {
+    TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+    //
+    result.push_back(xyz.Theta() - jet.theta());
+  }
+  //
+  return result;
+}
+
+// vector of azimuthal angle (phi) of all reconstructed vertices wrt jet axis (SV.vtx or V0.vtx)
+ROOT::VecOps::RVec<double> VertexingUtils::get_relPhi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices, fastjet::PseudoJet jet ) {
+  ROOT::VecOps::RVec<double> result;
+
+  for(auto & ivtx : vertices) {
+    TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+    TVector3 jetP(jet.px(), jet.py(), jet.pz());
+    //
+    result.push_back(xyz.DeltaPhi(jetP));
+  }
+  //
   return result;
 }

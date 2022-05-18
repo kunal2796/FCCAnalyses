@@ -1698,9 +1698,11 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> vtx; // FCCAnalyses vertex object
   ROOT::VecOps::RVec<int> pdgAbs;                            // absolute PDG ID
   ROOT::VecOps::RVec<double> invM;                           // invariant mass
+  ROOT::VecOps::RVec<int> nSV_jet;
   result.vtx = vtx;
   result.pdgAbs = pdgAbs;
   result.invM = invM;
+  result.nSV_jet = nSV_jet;
 
   VertexingUtils::FCCAnalysesVertex V0_vtx;
 
@@ -1736,7 +1738,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
   //
   for (unsigned int j=0; j<nJet; j++) {
 
-    //int i_nSV = 0;
+    int i_nSV = 0;
     
     std::vector<int> i_jetconsti = jet_consti[j];
     for (int ctr=0; ctr<tracks.size(); ctr++) {
@@ -1791,6 +1793,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(310);
 	    invM.push_back(invM_Ks);
+	    i_nSV++;
 	    break;
 	  }
 	  
@@ -1802,6 +1805,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(3122);
 	    invM.push_back(invM_Lambda1);
+	    i_nSV++;
 	    break;
 	  }
 	  else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
@@ -1811,6 +1815,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(3122);
 	    invM.push_back(invM_Lambda2);
+	    i_nSV++;
 	    break;
 	  }
 	
@@ -1822,6 +1827,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(22);
 	    invM.push_back(invM_Gamma);
+	    i_nSV++;
 	    break;
 	  }
 	}
@@ -1835,6 +1841,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(310);
 	    invM.push_back(invM_Ks);
+	    i_nSV++;
 	    break;
 	  }
       
@@ -1846,6 +1853,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(3122);
 	    invM.push_back(invM_Lambda1);
+	    i_nSV++;
 	    break;
 	  }
 	  else if(invM_Lambda2>1.106 && invM_Lambda2<1.126 && r>0.3 && p_r>0.999) {
@@ -1855,6 +1863,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(3122);
 	    invM.push_back(invM_Lambda2);
+	    i_nSV++;
 	    break;
 	  }
 	
@@ -1866,6 +1875,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(22);
 	    invM.push_back(invM_Gamma);
+	    i_nSV++;
 	    break;
 	  }
 	}
@@ -1873,6 +1883,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
       }
     }
 
+    nSV_jet.push_back(i_nSV);
     // clean-up
     np_tracks.clear();
   } // jet loop ends
@@ -1882,6 +1893,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
   result.vtx = vtx;
   result.pdgAbs = pdgAbs;
   result.invM = invM;
+  result.nSV_jet = nSV_jet;
   //
   return result;
 }

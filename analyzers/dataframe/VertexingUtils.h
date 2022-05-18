@@ -47,6 +47,7 @@ namespace VertexingUtils{
     ROOT::VecOps::RVec<FCCAnalysesVertex> vtx; // vertex object
     ROOT::VecOps::RVec<int> pdgAbs;            // pdg ID from reconstructions
     ROOT::VecOps::RVec<double> invM;           // invariant mass
+    ROOT::VecOps::RVec<int> nSV_jet;           // no of V0s per jet
   };
   
   /// Structure to keep useful track information that is related to the vertex
@@ -166,6 +167,14 @@ namespace VertexingUtils{
   /// Return the invariant masses of all reconstructed V0s
   ROOT::VecOps::RVec<double> get_invM_V0( FCCAnalysesV0 V0 );
 
+  // -------- temporary -------- //
+  /// Return the PDG IDs of reconstructed V0s from the 1st jet
+  ROOT::VecOps::RVec<int> get_pdg_V0jet1( FCCAnalysesV0 V0 );
+
+  /// Return the invariant masses of reconstructed V0s from the 1st jet
+  ROOT::VecOps::RVec<double> get_invM_V0jet1( FCCAnalysesV0 V0 );
+  // -------- temporary -------- //
+  
   /// Return the momentum of all reconstructed V0s
   ROOT::VecOps::RVec<TVector3> get_p_SV( FCCAnalysesV0 SV );
 
@@ -222,6 +231,16 @@ namespace VertexingUtils{
 										ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
 										std::vector<std::vector<int>> jet_consti );
 
+  /// Return the SVs or V0s separated by jets
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> get_svInJets( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+									  ROOT::VecOps::RVec<int> nSV_jet );
+
+  // --- for personal use
+  /// Return angles for reconstructed vertices from a jet wrt that jet
+  ROOT::VecOps::RVec<double> get_relTheta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices, fastjet::PseudoJet jet ); // theta
+  ROOT::VecOps::RVec<double> get_relPhi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices, fastjet::PseudoJet jet ); // phi
+  
+  
   // --- Internal methods needed by the code of  Franco B :  
   float get_trackMom( edm4hep::TrackState & atrack );
   TVectorD get_trackParam( edm4hep::TrackState & atrack) ;
