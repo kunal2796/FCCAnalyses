@@ -800,7 +800,7 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_relPhi_SV( ROOT::VecOps::RVec<FCC
 /////// vec of vec functions (for ntuples) /////////
 
 // SV invariant mass
-std::vector<std::vector<double>> VertexingUtils::get_invM( std::vector<std::vector<<FCCAnalysesVertex>> vertices ){
+std::vector<std::vector<double>> VertexingUtils::get_invM( std::vector<std::vector<FCCAnalysesVertex>> vertices ){
 
   std::vector<std::vector<double>> result;
 
@@ -947,7 +947,7 @@ std::vector<std::vector<double>> VertexingUtils::get_theta_SV( std::vector<std::
 
 // SV phi
 std::vector<std::vector<double>> VertexingUtils::get_phi_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices ) {
-  ROOT::VecOps::RVec<double> result;
+  std::vector<std::vector<double>> result;
 
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<double> i_result;
