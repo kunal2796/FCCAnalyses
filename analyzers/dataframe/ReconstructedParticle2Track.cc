@@ -345,3 +345,18 @@ int ReconstructedParticle2Track::getTK_n(ROOT::VecOps::RVec<edm4hep::TrackState>
   return result;
 }
 
+
+/// for ntupler
+ROOT::VecOps::RVec<bool> 
+ReconstructedParticle2Track::hasTRK( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in ) {
+
+  ROOT::VecOps::RVec<bool> result ;
+  result.reserve( in.size() );
+  
+  for (auto & p: in) {
+    if (p.tracks_begin >= 0 && p.tracks_begin<tracks.size()) result.push_back(true) ;
+    else result.push_back(false);
+    }
+  }
+ return result ;
+}

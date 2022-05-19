@@ -124,5 +124,9 @@ namespace ReconstructedParticle2Track{
   
   /// Return the size of a collection of TrackStates
   int getTK_n(ROOT::VecOps::RVec<edm4hep::TrackState> x) ;
+
+  /// for ntupler
+  ROOT::VecOps::RVec<bool> hasTRK( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in ) ;
+  
 }
 #endif
