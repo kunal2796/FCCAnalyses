@@ -1077,3 +1077,41 @@ std::vector<std::vector<double>> VertexingUtils::get_d3d_SV( std::vector<std::ve
   }
   return result;
 }
+
+// V0 pdg
+std::vector<std::vector<int>> VertexingUtils::get_pdg_V0( ROOT::VecOps::RVec<int> pdg,
+							  ROOT::VecOps::RVec<int> nSV_jet ) {
+  std::vector<std::vector<int>> result;
+  std::vector<int> i_result;
+
+  int index=0;
+  for(unsigned int i : nSV_jet) {
+    for(unsigned int j=0; j<i; j++) {
+      i_result.push_back(pdg[j+index]);
+    }
+
+    result.push_back(i_result);
+    i_result.clear();
+    index += i;
+  }
+  return result;
+}
+
+// V0 invariant mass
+std::vector<std::vector<double>> VertexingUtils::get_invM_V0( ROOT::VecOps::RVec<double> invM,
+							      ROOT::VecOps::RVec<int> nSV_jet ) {
+  std::vector<std::vector<double>> result;
+  std::vector<double> i_result;
+
+  int index=0;
+  for(unsigned int i : nSV_jet) {
+    for(unsigned int j=0; j<i; j++) {
+      i_result.push_back(invM[j+index]);
+    }
+
+    result.push_back(i_result);
+    i_result.clear();
+    index += i;
+  }
+  return result;
+}
