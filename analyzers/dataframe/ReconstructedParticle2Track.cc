@@ -354,7 +354,7 @@ ReconstructedParticle2Track::hasTRK( ROOT::VecOps::RVec<edm4hep::ReconstructedPa
   result.reserve( in.size() );
   
   for (auto & p: in) {
-    if (p.tracks_begin >= 0 && p.tracks_begin<tracks.size()) result.push_back(true) ;
+    if (p.tracks_begin >= 0) result.push_back(true) ;
     else result.push_back(false);
     }
   }
