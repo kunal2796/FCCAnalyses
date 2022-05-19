@@ -356,7 +356,6 @@ ReconstructedParticle2Track::hasTRK( ROOT::VecOps::RVec<edm4hep::ReconstructedPa
   for (auto & p: in) {
     if (p.tracks_begin >= 0) result.push_back(true) ;
     else result.push_back(false);
-    }
   }
  return result ;
 }
