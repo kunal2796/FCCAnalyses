@@ -1098,7 +1098,7 @@ std::vector<std::vector<int>> VertexingUtils::get_pdg_V0( ROOT::VecOps::RVec<int
 }
 
 // V0 invariant mass
-std::vector<std::vector<double>> VertexingUtils::get_invM_V0( ROOT::VecOps::RVec<int> invM,
+std::vector<std::vector<double>> VertexingUtils::get_invM_V0( ROOT::VecOps::RVec<double> invM,
 							      ROOT::VecOps::RVec<int> nSV_jet ) {
   std::vector<std::vector<double>> result;
   std::vector<double> i_result;
