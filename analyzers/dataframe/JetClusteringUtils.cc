@@ -231,6 +231,94 @@ ROOT::VecOps::RVec<float> JetClusteringUtils::get_theta(ROOT::VecOps::RVec<fastj
 }
 
 
+/// ------ ///
+// From Edi //
+
+ROOT::VecOps::RVec<float> JetClusteringUtils::get_nConstituents(std::vector<std::vector<int>> constituents){
+  ROOT::VecOps::RVec<float> result;
+  for (auto& constis : constituents){
+    result.push_back(constis.size());
+  }
+  return result;
+}
+
+//Note that the below doesn't make sense atm, there is no consti vec of pseudojets (to my knowledge, maybe this refers to an old implementation)...
+///ROOT::VecOps::RVec<float> JetClusteringUtils::get_dTheta(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<fastjet::PseudoJet> constituents, std::vector<std::vector<int>> indices){
+///  ROOT::VecOps::RVec<float> result(constituents.size(), 0);
+///  //for (auto& ind : indices){
+///  for (int j=0; j<indices.size(); j++){
+///    for (auto& i : indices[j]){
+///    //for (int i=0; i<contituents.size())
+///      result[i] = in[j].theta()-constituents[i].theta();
+///    }
+///  }
+///  return result;
+///}
+
+std::vector<std::vector<float>> JetClusteringUtils::get_dTheta(ROOT::VecOps::RVec<float> jet_theta, std::vector<std::vector<float>> constituents_theta){
+  std::vector<std::vector<float>> result;
+  //for (auto& ind : indices){
+  for (int j=0; j<jet_theta.size(); j++){
+    std::vector<float> tmp_res;
+    for (auto& consti_theta : constituents_theta[j]){
+      tmp_res.push_back(jet_theta[j]-consti_theta);
+    }
+    result.push_back(tmp_res);
+  }
+  return result;
+}
+
+std::vector<std::vector<float>> JetClusteringUtils::get_dPhi(ROOT::VecOps::RVec<float> jet_phi, std::vector<std::vector<float>> constituents_phi){
+  //const float  PI = 3.14159265358979f;
+  float dphi; 
+  std::vector<std::vector<float>> result;
+  for (int j=0; j<jet_phi.size(); j++){
+    std::vector<float> tmp_res;
+    for (auto& consti_phi : constituents_phi[j]){
+      dphi = jet_phi[j]-consti_phi;
+      if(std::abs(dphi)<=(fastjet::pi)){
+        tmp_res.push_back(dphi);
+      }
+      else if(dphi>fastjet::pi){
+        tmp_res.push_back(dphi-2*fastjet::pi);
+      }
+      else if(dphi<-fastjet::pi){
+        tmp_res.push_back(dphi+2*fastjet::pi);
+      }
+    }
+    result.push_back(tmp_res);
+  }
+  return result;
+}
+
+std::vector<std::vector<float>> JetClusteringUtils::get_pRel(ROOT::VecOps::RVec<float> jet_p, std::vector<std::vector<float>> constituents_p){
+  std::vector<std::vector<float>> result;
+  //for (auto& ind : indices){
+  for (int j=0; j<jet_p.size(); j++){
+    std::vector<float> tmp_res;
+    for (auto& consti_p : constituents_p[j]){
+      tmp_res.push_back(consti_p/jet_p[j]);
+    }
+    result.push_back(tmp_res);
+  }
+  return result;
+}
+
+std::vector<std::vector<float>> JetClusteringUtils::reshape2jet(ROOT::VecOps::RVec<float> var, std::vector<std::vector<int>> constituents){
+  std::vector<std::vector<float>> result;
+  for (auto& ind : constituents){
+    //ROOT::VecOps::RVec<float> tmp_res(ind.size(), 0);
+    std::vector<float> tmp_res;
+    for (auto& i : ind){
+      tmp_res.push_back(var.at(i));
+    }
+    result.push_back(tmp_res);
+  }
+  return result;
+}
+
+/// ------ ///
+
 
 FCCAnalysesJet JetClusteringUtils::initialise_FCCAnalysesJet(){
   

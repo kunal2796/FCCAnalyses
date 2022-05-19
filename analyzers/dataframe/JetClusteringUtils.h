@@ -120,6 +120,26 @@ namespace JetClusteringUtils{
   /** Get jet theta. Details. */
   ROOT::VecOps::RVec<float> get_theta(ROOT::VecOps::RVec<fastjet::PseudoJet> in);
 
+  /// ------ ///
+  // From Edi //
+
+  /** Get number of constituents per jet. */
+  ROOT::VecOps::RVec<float> get_nConstituents(std::vector<std::vector<int>> in);
+
+  //The below fncs take already the reshaped values as arguments... Different from above...  
+  /** Get difference of jet theta and jet constituent theta. */
+  std::vector<std::vector<float>> get_dTheta(ROOT::VecOps::RVec<float> jet_theta, std::vector<std::vector<float>> constituents_theta);
+
+  /** Get difference of jet phi and jet constituent phi in [-pi, pi]. */
+  std::vector<std::vector<float>> get_dPhi(ROOT::VecOps::RVec<float> jet_phi, std::vector<std::vector<float>> constituents_phi);
+  
+  /** Get ratio of jet constituent |p| and jet |p|. */
+  std::vector<std::vector<float>> get_pRel(ROOT::VecOps::RVec<float> jet_p, std::vector<std::vector<float>> constituents_p);
+
+  /** Reshape the given variable (given as a flat vector for the event) into 2d vector per jet. */
+  std::vector<std::vector<float>> reshape2jet(ROOT::VecOps::RVec<float> var, std::vector<std::vector<int>> constituents);
+
+  /// ------ ///
 
   ///Internal methods
   FCCAnalysesJet initialise_FCCAnalysesJet();
