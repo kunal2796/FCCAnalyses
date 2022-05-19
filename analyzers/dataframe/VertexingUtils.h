@@ -255,8 +255,10 @@ namespace VertexingUtils{
   std::vector<std::vector<double>> get_pointingangle_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices, FCCAnalysesVertex PV );
   std::vector<std::vector<double>> get_dxy_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices, FCCAnalysesVertex PV );
   std::vector<std::vector<double>> get_d3d_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices, FCCAnalysesVertex PV );
+  std::vector<std::vector<int>> get_pdg_V0( ROOT::VecOps::RVec<int> pdg, ROOT::VecOps::RVec<int> nSV_jet );
+  std::vector<std::vector<double>> get_invM_V0( ROOT::VecOps::RVec<double> invM, ROOT::VecOps::RVec<int> nSV_jet );
   
-  // --- (for ntuples) --- //
+  // --- (for ntuples) --- //m
   
   // --- Internal methods needed by the code of  Franco B :  
   float get_trackMom( edm4hep::TrackState & atrack );

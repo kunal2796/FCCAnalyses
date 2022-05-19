@@ -15,7 +15,7 @@ ReconstructedParticle2Track::getRP2TRK_mom(ROOT::VecOps::RVec<edm4hep::Reconstru
   return result;
 }
 
-ROOT::VecOps::RVec<int> 
+ROOT::VecOps::RVec<float> 
 ReconstructedParticle2Track::getRP2TRK_charge(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,  
 					      ROOT::VecOps::RVec<edm4hep::TrackState> tracks) {
   ROOT::VecOps::RVec<int> result;
