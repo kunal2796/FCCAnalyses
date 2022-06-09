@@ -95,9 +95,7 @@ namespace VertexFitterSimple{
   /** returns SVs reconstructed from non-primary tracks of the event
    *  SV finding done before jet clustering
    */
-  VertexingUtils::FCCAnalysesSV get_SV_event( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-					      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-					      ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+  VertexingUtils::FCCAnalysesSV get_SV_event( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 					      VertexingUtils::FCCAnalysesVertex PV,
 					      bool V0_rej=true,
 					      double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
