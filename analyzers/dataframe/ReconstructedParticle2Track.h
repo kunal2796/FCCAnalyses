@@ -16,6 +16,10 @@ namespace ReconstructedParticle2Track{
   ROOT::VecOps::RVec<float> getRP2TRK_mom (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, 
 					   ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
 
+  /// Return the charge of a track to a reconstructed particle
+  ROOT::VecOps::RVec<float> getRP2TRK_charge(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,  
+					   ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
+
   /// Return the D0 of a track to a reconstructed particle
   ROOT::VecOps::RVec<float> getRP2TRK_D0 (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, 
 					  ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
@@ -120,5 +124,9 @@ namespace ReconstructedParticle2Track{
   
   /// Return the size of a collection of TrackStates
   int getTK_n(ROOT::VecOps::RVec<edm4hep::TrackState> x) ;
+
+  /// for ntupler
+  ROOT::VecOps::RVec<bool> hasTRK( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in ) ;
+  
 }
 #endif

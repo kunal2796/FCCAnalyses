@@ -842,11 +842,10 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
   SV.vtx = result;
   SV.nSV_jet = nSV_jet;
 
-  // find SV inside the jet loop (only from non-primary tracks)
-  // first separate reco particles by jet then get the associated tracks
   int nJet = jets.size();
   ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks;
 
+  // retrieve tracks from reco particles & get a vector with their indices in the reco collection
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks   = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
   ROOT::VecOps::RVec<int> reco_ind_tracks     = ReconstructedParticle2Track::get_recoindTRK( recoparticles, thetracks );
   if(tracks.size() != reco_ind_tracks.size()) std::cout<<"ERROR: reco index vector not the same size as no of tracks"<<std::endl;
@@ -855,11 +854,14 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
 
   if(debug) std::cout<<"tracks extracted from the reco particles"<<std::endl;
 
+  // find SVs inside jet loop
   //
   for (unsigned int j=0; j<nJet; j++) {
 
     int i_nSV = 0;
 
+    // remove primary tracks
+    // separate non-primary tracks by jet
     std::vector<int> i_jetconsti = jet_consti[j];
     for (int ctr=0; ctr<tracks.size(); ctr++) {
       if(isInPrimary[ctr]) continue; // remove primary tracks
@@ -871,6 +873,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
     if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in jet#"<<j+1<<std::endl;
     
     // V0 rejection (tight)
+    // perform V0 rejection with tight constraints if user chooses
     ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
     if(V0_rej) {
       bool tight = true;
@@ -886,6 +889,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
       std::cout<<"now starting to find secondary vertices..."<<std::endl;
     }
     
+    // start finding SVs
     while(tracks_fin.size() > 1) {
       // find vertex seed
       ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
@@ -907,8 +911,8 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
       for(int i_tr : vtx_fin) tr_vtx_fin.push_back(tracks_fin[i_tr]);
       VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
 
-      //fill the indices of the tracks
-      sec_vtx.reco_ind = get_reco_ind(recoparticles,thetracks);
+      // see if we can also get indices in the reco collection (for tracks forming an SV)
+      //sec_vtx.reco_ind = get_reco_ind(recoparticles,thetracks); // incorrect
 
       result.push_back(sec_vtx);
       i_nSV++;
@@ -933,7 +937,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
 
   if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
   
-  // currently don't know which SV is from which jet (FIX SOON)
+  // nSV_jet gives a handle on deciding which SVs are in which jet
   SV.vtx = result;
   SV.nSV_jet = nSV_jet;
   //
@@ -964,7 +968,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
 
   if(tracks.size() != isInPrimary.size()) std::cout<<"ISSUE: track vector and primary-nonprimary vector of diff sizes"<<std::endl;
 
-  // find SV from non-primary tracks
+  // remove primary tracks
   ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks;
   for(unsigned int i=0; i<tracks.size(); i++) {
     if (!isInPrimary[i]) np_tracks.push_back(tracks[i]);
@@ -973,6 +977,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in the event"<<std::endl;
 
   // V0 rejection (tight)
+  // perform V0 rejection with tight constraints if user chooses
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
   if(V0_rej) {
     bool tight = true;
@@ -990,6 +995,8 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   
 
   if(debug) std::cout << "tracks_fin.size() = " << tracks_fin.size() << std::endl;
+
+  // start finding SVs (only if there are 2 or more tracks)
   while(tracks_fin.size() > 1) {
     // find vertex seed
     ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
@@ -1018,8 +1025,8 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
     }
     VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
 
-    //fill the indices of the tracks
-    sec_vtx.reco_ind = get_reco_ind(recoparticles,thetracks);
+    // see if we can also get indices in the reco collection (for tracks forming an SV)
+    //sec_vtx.reco_ind = get_reco_ind(recoparticles,thetracks); // incorrect
 
     result.push_back(sec_vtx);
     //
@@ -1040,9 +1047,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   return SV;
 }
 
-VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-							       ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-							       ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 							       VertexingUtils::FCCAnalysesVertex PV,
 							       bool V0_rej,
 							       double chi2_cut, double invM_cut, double chi2Tr_cut) {
@@ -1056,6 +1061,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
   SV.vtx = result;
 
   // V0 rejection (tight)
+  // perform V0 rejection with tight constraints if user chooses
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
   if(V0_rej) {
     bool tight = true;
@@ -1070,7 +1076,8 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
     std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
     std::cout<<"now starting to find secondary vertices..."<<std::endl;
   }
-  
+
+  // start finding SVs (only if there are 2 or more tracks)
   while(tracks_fin.size() > 1) {
     // find vertex seed
     ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
@@ -1098,8 +1105,8 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
     }
     // all this cause don't know how to remove multiple elements at once
 
-    //fill the indices of the tracks
-    sec_vtx.reco_ind = get_reco_ind(recoparticles,thetracks);
+    // see if we can also get indices in the reco collection (for tracks forming an SV)
+    //sec_vtx.reco_ind = get_reco_ind(recoparticles,thetracks); // incorrect
     
     result.push_back(sec_vtx);    
 
@@ -1381,8 +1388,7 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
 						  VertexingUtils::FCCAnalysesVertex PV,
 						  bool tight) {
   // V0 rejection
-  // fn can be updated to reconstruct V0 and output its momentum, PID, etc instead
-
+  //
   // take all non-primary tracks & assign "true" to pairs that form V0
   // if(tight)  -> tight constraints
   // if(!tight) -> loose constraints
@@ -1522,7 +1528,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s(ROOT::VecOps::RVec<edm
 
   // also look into how to reconstruct pi0 soon
 
-  // make it stand-alone (removing primary tracks etc)
+  // can make it stand-alone (removing primary tracks etc)
 
   VertexingUtils::FCCAnalysesV0 result;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> vtx; // FCCAnalyses vertex object
@@ -1698,9 +1704,11 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> vtx; // FCCAnalyses vertex object
   ROOT::VecOps::RVec<int> pdgAbs;                            // absolute PDG ID
   ROOT::VecOps::RVec<double> invM;                           // invariant mass
+  ROOT::VecOps::RVec<int> nSV_jet;
   result.vtx = vtx;
   result.pdgAbs = pdgAbs;
   result.invM = invM;
+  result.nSV_jet = nSV_jet;
 
   VertexingUtils::FCCAnalysesVertex V0_vtx;
 
@@ -1736,7 +1744,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
   //
   for (unsigned int j=0; j<nJet; j++) {
 
-    //int i_nSV = 0;
+    int i_nSV = 0;
     
     std::vector<int> i_jetconsti = jet_consti[j];
     for (int ctr=0; ctr<tracks.size(); ctr++) {
@@ -1791,6 +1799,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(310);
 	    invM.push_back(invM_Ks);
+	    i_nSV++;
 	    break;
 	  }
 	  
@@ -1802,6 +1811,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(3122);
 	    invM.push_back(invM_Lambda1);
+	    i_nSV++;
 	    break;
 	  }
 	  else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
@@ -1811,6 +1821,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(3122);
 	    invM.push_back(invM_Lambda2);
+	    i_nSV++;
 	    break;
 	  }
 	
@@ -1822,6 +1833,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(22);
 	    invM.push_back(invM_Gamma);
+	    i_nSV++;
 	    break;
 	  }
 	}
@@ -1835,6 +1847,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(310);
 	    invM.push_back(invM_Ks);
+	    i_nSV++;
 	    break;
 	  }
       
@@ -1846,6 +1859,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(3122);
 	    invM.push_back(invM_Lambda1);
+	    i_nSV++;
 	    break;
 	  }
 	  else if(invM_Lambda2>1.106 && invM_Lambda2<1.126 && r>0.3 && p_r>0.999) {
@@ -1855,6 +1869,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(3122);
 	    invM.push_back(invM_Lambda2);
+	    i_nSV++;
 	    break;
 	  }
 	
@@ -1866,6 +1881,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	    vtx.push_back(V0_vtx);
 	    pdgAbs.push_back(22);
 	    invM.push_back(invM_Gamma);
+	    i_nSV++;
 	    break;
 	  }
 	}
@@ -1873,6 +1889,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
       }
     }
 
+    nSV_jet.push_back(i_nSV);
     // clean-up
     np_tracks.clear();
   } // jet loop ends
@@ -1882,6 +1899,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
   result.vtx = vtx;
   result.pdgAbs = pdgAbs;
   result.invM = invM;
+  result.nSV_jet = nSV_jet;
   //
   return result;
 }

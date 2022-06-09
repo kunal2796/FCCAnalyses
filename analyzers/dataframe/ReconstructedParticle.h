@@ -141,5 +141,32 @@ namespace ReconstructedParticle{
 
   /// get number of b-jets
   int getJet_ntags(ROOT::VecOps::RVec<bool> in);
+
+
+  /// ------ ///
+  // From Edi //
+  //template<class G>
+  struct sel_template{
+    sel_template(float arg_pass);
+    float m_pass;
+    template<class G>
+    ROOT::VecOps::RVec<G> operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in); 
+    std::vector<std::vector<int>> operator()(std::vector<std::vector<float>> tag_vector, std::vector<std::vector<int>> in); 
+    std::vector<std::vector<float>> operator()(std::vector<std::vector<float>> tag_vector, std::vector<std::vector<float>> in); 
+    //ROOT::VecOps::RVec<G> operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in); 
+    //ROOT::VecOps::RVec<int> operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<int> in); 
+  };
+
+  ROOT::VecOps::RVec<int> index_splitter(ROOT::VecOps::RVec<int> ind); 
+  //ROOT::VecOps::RVec<int> index_splitter(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, ROOT::VecOps::RVec<int> ind); 
+  
+  std::vector<std::vector<int>> index_converter(std::vector<std::vector<int>> RP_ind, ROOT::VecOps::RVec<int> split_ind); 
+  
+  ROOT::VecOps::RVec<float> is_particle(ROOT::VecOps::RVec<int> index, const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> & in); 
+  
+  std::vector<std::vector<float>> one_hot_encode(ROOT::VecOps::RVec<float> flavour);
+
+  /// ------ ///
+  
 }
 #endif
