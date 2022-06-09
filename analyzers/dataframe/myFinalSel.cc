@@ -125,3 +125,20 @@ float myFinalSel::get_ave(ROOT::VecOps::RVec<float> in,
   return -999999.;
 }
 
+float myFinalSel::get_abs_min(ROOT::VecOps::RVec<float> in){
+
+  float min=std::numeric_limits<float>::max();
+  for (auto &p:in){
+    if (TMath::Abs(p)<min)min=p;
+  }
+  return min;
+}
+
+float myFinalSel::get_abs_max(ROOT::VecOps::RVec<float> in){
+
+  float max=std::numeric_limits<float>::min();
+  for (auto &p:in){
+    if (TMath::Abs(p)>max)max=p;
+  }
+  return max;
+}

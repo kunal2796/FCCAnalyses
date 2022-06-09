@@ -658,6 +658,56 @@ ROOT::VecOps::RVec<double> VertexingUtils::get_d3d_SV( ROOT::VecOps::RVec<FCCAna
   return result;
 }
 
+// vector of distances of all reconstructed SV from given TVector3d (in mm in 3D)
+ROOT::VecOps::RVec<double> VertexingUtils::get_d3d_SV_obj( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+                              TVector3 object) {
+  ROOT::VecOps::RVec<double> result;
+  for(auto & ivtx : vertices) {
+    TVector3 x_vtx(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+    x_vtx = x_vtx - object;
+
+    result.push_back(x_vtx.Mag());
+  }
+  return result;
+}
+
+// vector of distances of all reconstructed SV from given edm4hep::Vector3d (in mm in 3D)
+ROOT::VecOps::RVec<double> VertexingUtils::get_d3d_SV_obj( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+                              edm4hep::Vector3d object) {
+  ROOT::VecOps::RVec<double> result;
+  for(auto & ivtx : vertices) {
+    double dx = ivtx.vertex.position[0] - object.x;
+    double dy = ivtx.vertex.position[1] - object.y;
+    double dz = ivtx.vertex.position[2] - object.z;
+ 
+    TVector3 d3d(dx, dy, dz);
+
+    result.push_back(d3d.Mag());
+  }
+  return result;
+}
+
+// vector of decay position distances of all reconstructed SV from given TVector3d (in mm in 3D)
+ROOT::VecOps::RVec<double> VertexingUtils::get_dR_SV_obj( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+                              TVector3 object) {
+  ROOT::VecOps::RVec<double> result;
+  for(auto & ivtx : vertices) {
+    TVector3 x_vtx(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+    result.push_back(1e3*TMath::Sqrt( pow(ivtx.vertex.position[0],2) + pow(ivtx.vertex.position[1],2) + pow(ivtx.vertex.position[2],2) ) - 1e3*TMath::Sqrt( pow(object.x(),2) + pow(object.y(),2) + pow(object.z(),2) ));
+  }
+  return result;
+}
+
+// vector of decay position distances of all reconstructed SV from given edm4hep::Vector3d (in mm in 3D)
+ROOT::VecOps::RVec<double> VertexingUtils::get_dR_SV_obj( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+                              edm4hep::Vector3d object) {
+  ROOT::VecOps::RVec<double> result;
+  for(auto & ivtx : vertices) {
+    result.push_back(1e3*TMath::Sqrt( pow(ivtx.vertex.position[0],2) + pow(ivtx.vertex.position[1],2) + pow(ivtx.vertex.position[2],2) ) - 1e3*TMath::Sqrt( pow(object.x,2) + pow(object.y,2) + pow(object.z,2) ));
+  }
+  return result;
+}
+
 // vector of polar angle (theta) of all reconstructed vertices wrt jet axis (SV.vtx or V0.vtx)
 ROOT::VecOps::RVec<double> VertexingUtils::get_relTheta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
 							    ROOT::VecOps::RVec<int> nSV_jet,
