@@ -58,7 +58,7 @@ class analysis():
 
 
                # MC event primary vertex
-               .Define("MC_PrimaryVertex",  "MCParticle::get_EventPrimaryVertex(21)( Particle )" )
+               .Define("MC_PrimaryVertex",  "FCCAnalyses::MCParticle::get_EventPrimaryVertex(21)( Particle )" )
 
                # the recoParticles corresponding  to the tracks that are primaries, according to MC-matching :
                .Define("MC_PrimaryTracks_RP",  "VertexingUtils::SelPrimaryTracks(MCRecoAssociations0,MCRecoAssociations1,ReconstructedParticles,Particle, MC_PrimaryVertex)" )
@@ -120,10 +120,14 @@ class analysis():
                .Define("SV_mass", "myUtils::get_Vertex_mass( SV.vtx, ReconstructedParticles )")
                .Define("SV_mass_twoPions", "VertexingUtils::get_invM_pairs(SV.vtx)")
                .Define("SV_mass_allPions", "VertexingUtils::get_invM(SV.vtx)")
+               .Define("SV_chi2", "VertexingUtils::get_chi2_SV(SV)")
                .Define("d2PV", "myUtils::get_Vertex_d2PV(VertexFitterSimple::get_all_vertices(PrimaryVertexObject, SV), 0)")
                .Define("d2PV_min", "myUtils::get_dPV2DV_min(d2PV)")
                .Define("d2PV_max", "myUtils::get_dPV2DV_max(d2PV)")
                .Define("d2PV_ave", "myUtils::get_dPV2DV_ave(d2PV)")               
+
+               .Define("reco_chi2", "PrimaryVertexObject.reco_chi2")
+               .Define("chi2_2", "PrimaryVertexObject.vertex.chi2")
 
 #               .Filter(Filter)
 
@@ -135,6 +139,7 @@ class analysis():
         for branchName in [
                 "MC_PrimaryVertex",
                 "PrimaryVertex",
+                "PrimaryVertexObject",
 #                "n_RecoedPrimaryTracks",
 
                   #  primary vertex and primary tracks w/o any MC-matching :
@@ -147,12 +152,15 @@ class analysis():
                 "SV_mass",
                 "SV_mass_twoPions",
                 "SV_mass_allPions",
+                "SV_chi2",
                 "n_SV",
                 "ntracks_SV",
                 "d2PV",
                 "d2PV_min",
                 "d2PV_max",
                 "d2PV_ave",
+                "reco_chi2",
+                "chi2_2",
                 "ntracks",
                 ]:
             branchList.push_back(branchName)
