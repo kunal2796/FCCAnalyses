@@ -909,7 +909,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_jets(ROOT::VecOps::RVec
       // fit tracks to SV and remove from tracks_fin
       ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
       for(int i_tr : vtx_fin) tr_vtx_fin.push_back(tracks_fin[i_tr]);
-      VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
+      VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(2, tr_vtx_fin); // flag 2 for SVs
 
       // see if we can also get indices in the reco collection (for tracks forming an SV)
       //sec_vtx.reco_ind = get_reco_ind(recoparticles,thetracks); // incorrect
@@ -1023,7 +1023,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
       tr_vtx_fin.push_back(tracks_fin[i_tr]);
       if(debug) std::cout << "Pushing back tracks_fin[i_tr]" << std::endl;
     }
-    VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
+    VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(2, tr_vtx_fin); // flag 2 for SVs
 
     // see if we can also get indices in the reco collection (for tracks forming an SV)
     //sec_vtx.reco_ind = get_reco_ind(recoparticles,thetracks); // incorrect
@@ -1095,7 +1095,7 @@ VertexingUtils::FCCAnalysesSV VertexFitterSimple::get_SV_event(ROOT::VecOps::RVe
     // fit tracks to SV and remove from tracks_fin
     ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
     for(int i_tr : vtx_fin) tr_vtx_fin.push_back(tracks_fin[i_tr]);
-    VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(0, tr_vtx_fin);
+    VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitter_Tk(2, tr_vtx_fin); // flag 2 for SVs
 
     //
     ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
@@ -1163,7 +1163,7 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::VertexSeed_best(ROOT::VecOps::RVec<e
       ROOT::VecOps::RVec<bool> isInV0 = isV0(tr_pair, PV, false);
       if(isInV0[0] && isInV0[1]) continue;
       
-      vtx_seed = VertexFitter_Tk(0, tr_pair);
+      vtx_seed = VertexFitter_Tk(2, tr_pair);
       
       // Constraints
       // chi2 < cut (9)
@@ -1226,7 +1226,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> VertexFitterSimple::VertexSeed_all(R
       ROOT::VecOps::RVec<bool> isInV0 = isV0(tr_pair, PV, false);
       if(isInV0[0] && isInV0[1]) continue;
       
-      vtx_seed = VertexFitter_Tk(0, tr_pair);
+      vtx_seed = VertexFitter_Tk(2, tr_pair);
 
       // Constraints
       // chi2 < cut (9)
@@ -1287,7 +1287,7 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_best(ROOT::VecOps::RVec<edm
     if(std::find(vtx_tr.begin(), vtx_tr.end(), i) != vtx_tr.end()) continue;
     tr_vtx[iTr] = tracks[i];
     
-    vtx = VertexFitter_Tk(0, tr_vtx);
+    vtx = VertexFitter_Tk(2, tr_vtx);
 
     // Constraints
     // chi2_contribution(track) < threshold
@@ -1350,7 +1350,7 @@ ROOT::VecOps::RVec<int> VertexFitterSimple::addTrack_multi(ROOT::VecOps::RVec<ed
     if(iTr != tr_vtx.size()) tr_vtx[iTr] = tracks[i];
     else tr_vtx.push_back(tracks[i]);
     
-    vtx = VertexFitter_Tk(0, tr_vtx);
+    vtx = VertexFitter_Tk(2, tr_vtx);
 
     // Constraints
     // chi2_contribution < threshold.
@@ -1421,7 +1421,7 @@ ROOT::VecOps::RVec<bool> VertexFitterSimple::isV0(ROOT::VecOps::RVec<edm4hep::Tr
       if(result[j] == true) continue;
       t_pair[1] = np_tracks[j];
 
-      V0 = VertexFitter_Tk(0, t_pair);
+      V0 = VertexFitter_Tk(2, t_pair);
 
       // invariant masses for V0 candidates
       double invM_Ks      = VertexingUtils::get_invM_pairs(V0, m_pi, m_pi);
@@ -1565,7 +1565,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s(ROOT::VecOps::RVec<edm
       if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
       tr_pair[1] = np_tracks[j];
 
-      V0_vtx = VertexFitter_Tk(0, tr_pair);
+      V0_vtx = VertexFitter_Tk(2, tr_pair);
 
       // constraint on chi2: chi2 < cut (9)
       double chi2_V0 = V0_vtx.vertex.chi2; // normalised but DOF=1
@@ -1769,7 +1769,7 @@ VertexingUtils::FCCAnalysesV0 VertexFitterSimple::get_V0s_jet(ROOT::VecOps::RVec
 	if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
 	tr_pair[1] = np_tracks[j];
 	
-	V0_vtx = VertexFitter_Tk(0, tr_pair);
+	V0_vtx = VertexFitter_Tk(2, tr_pair);
 	
 	// constraint on chi2: chi2 < cut (9)
 	double chi2_V0 = V0_vtx.vertex.chi2; // normalised but DOF=1
