@@ -225,6 +225,22 @@ namespace VertexingUtils{
   ROOT::VecOps::RVec<double> get_d3d_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
 					 FCCAnalysesVertex PV );
 
+  /// Return the distances of all reconstructed verteces from given TVector3d object in 3D [mm] (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_d3d_SV_obj( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+                     TVector3 location );
+
+  /// Return the distances of all reconstructed verteces from given edm4hep::Vector3d object in 3D [mm] (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_d3d_SV_obj( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+                     edm4hep::Vector3d location );
+
+    /// Return the distance in R of all reconstructed verteces from given TVector3d object in 3D [mm] (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_dR_SV_obj( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+                     TVector3 location );
+
+  /// Return the distances in R of all reconstructed verteces from given edm4hep::Vector3d object in 3D [mm] (SV.vtx or V0.vtx)
+  ROOT::VecOps::RVec<double> get_dR_SV_obj( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+                     edm4hep::Vector3d location );
+
   /// Return the tracks separated by jets
   std::vector<std::vector<edm4hep::TrackState>> get_tracksInJets( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
 								  ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,

@@ -35,7 +35,8 @@ namespace myFinalSel{
 		ROOT::VecOps::RVec<int> ispv,
 		int index);
 
-
+  float get_abs_min(ROOT::VecOps::RVec<float> in);
+  float get_abs_max(ROOT::VecOps::RVec<float> in);
 
 }
 #endif
