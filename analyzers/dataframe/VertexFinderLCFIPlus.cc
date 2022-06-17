@@ -6,7 +6,7 @@
 
 using namespace VertexFinderLCFIPlus;
 
-bool debug = false;
+bool debug_me = false;
 
 
 VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
@@ -38,7 +38,7 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
 
   if(tracks.size() != isInPrimary.size()) std::cout<<"ERROR: isInPrimary vector size not the same as no of tracks"<<std::endl;
 
-  if(debug) std::cout<<"tracks extracted from the reco particles"<<std::endl;
+  if(debug_me) std::cout<<"tracks extracted from the reco particles"<<std::endl;
 
   // find SVs inside jet loop
   //
@@ -56,13 +56,13 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
       }
     }
     
-    if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in jet#"<<j+1<<std::endl;
+    if(debug_me) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in jet#"<<j+1<<std::endl;
     
     // V0 rejection (tight)
     // perform V0 rejection with tight constraints if user chooses
     ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = V0rejection_tight(np_tracks, PV, V0_rej);
     
-    if(debug) {
+    if(debug_me) {
       std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
       std::cout<<"now starting to find secondary vertices..."<<std::endl;
     }
@@ -103,7 +103,7 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
       // all this cause don't know how to remove multiple elements at once
       tr_vtx_fin.clear();
       
-      if(debug) std::cout<<result.size()<<" SV found"<<std::endl;
+      if(debug_me) std::cout<<result.size()<<" SV found"<<std::endl;
     }
 
     nSV_jet.push_back(i_nSV);
@@ -113,7 +113,7 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
     tracks_fin.clear();
   }
 
-  if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
+  if(debug_me) std::cout<<"no more SVs can be reconstructed"<<std::endl;
   
   // nSV_jet gives a handle on deciding which SVs are in which jet
   SV.vtx = result;
@@ -130,7 +130,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_
 											 double chi2_cut, double invM_cut, double chi2Tr_cut) {
   
   
-  if(debug) std::cout << "Starting SV finding!" << std::endl;
+  if(debug_me) std::cout << "Starting SV finding!" << std::endl;
 
   // find SVs using LCFI+ (w/o clustering)
   // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
@@ -142,7 +142,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_
   // retrieve the tracks associated to the recoparticles
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
 
-  if(debug) std::cout<<"tracks extracted from the reco particles"<<std::endl;
+  if(debug_me) std::cout<<"tracks extracted from the reco particles"<<std::endl;
 
   if(tracks.size() != isInPrimary.size()) std::cout<<"ISSUE: track vector and primary-nonprimary vector of diff sizes"<<std::endl;
 
@@ -152,25 +152,25 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_
     if (!isInPrimary[i]) np_tracks.push_back(tracks[i]);
   }
 
-  if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in the event"<<std::endl;
+  if(debug_me) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in the event"<<std::endl;
 
   // V0 rejection (tight)
   // perform V0 rejection with tight constraints if user chooses
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = V0rejection_tight(np_tracks, PV, V0_rej);
 
-  if(debug) {
+  if(debug_me) {
     std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
     std::cout<<"now starting to find secondary vertices..."<<std::endl;
   }
   
-  //if(debug) std::cout << "tracks_fin.size() = " << tracks_fin.size() << std::endl;
+  //if(debug_me) std::cout << "tracks_fin.size() = " << tracks_fin.size() << std::endl;
 
   // start finding SVs (only if there are 2 or more tracks)
   while(tracks_fin.size() > 1) {
     // find vertex seed
     ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
     
-    if(debug){
+    if(debug_me){
       std::cout << "tracks_fin.size(): " << tracks_fin.size() << std::endl;
       for(int i=0; i<vtx_seed.size();i++)
 	std::cout << "vtx_seed: " << vtx_seed[i] << std::endl;
@@ -190,7 +190,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_
     ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
     for(int i_tr : vtx_fin){
       tr_vtx_fin.push_back(tracks_fin[i_tr]);
-      if(debug) std::cout << "Pushing back tracks_fin[i_tr]" << std::endl;
+      if(debug_me) std::cout << "Pushing back tracks_fin[i_tr]" << std::endl;
     }
     VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_vtx_fin); // flag 2 for SVs
 
@@ -206,10 +206,10 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_
     }
     // all this cause don't know how to remove multiple elements at once
 
-    if(debug) std::cout<<result.size()<<" SV found"<<std::endl;
+    if(debug_me) std::cout<<result.size()<<" SV found"<<std::endl;
   }
 
-  if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
+  if(debug_me) std::cout<<"no more SVs can be reconstructed"<<std::endl;
   
   //SV.vtx = result;
   //
@@ -233,7 +233,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_
   // perform V0 rejection with tight constraints if user chooses
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = V0rejection_tight(np_tracks, PV, V0_rej);
 
-  if(debug) {
+  if(debug_me) {
     std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
     std::cout<<"now starting to find secondary vertices..."<<std::endl;
   }
@@ -271,10 +271,10 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_
     
     result.push_back(sec_vtx);    
 
-    if(debug) std::cout<<result.size()<<" SV found"<<std::endl;
+    if(debug_me) std::cout<<result.size()<<" SV found"<<std::endl;
   }
 
-  if(debug) std::cout<<"no more SVs can be reconstructed"<<std::endl;
+  if(debug_me) std::cout<<"no more SVs can be reconstructed"<<std::endl;
   
   //SV.vtx = result;
   //
@@ -378,8 +378,8 @@ ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::addTrack_best(ROOT::VecOps::RVec<e
 
   // add tracks of the previously formed vtx to a vector
   for(int tr : vtx_tr) {
-    if(debug) std::cout << "Track integer: " << tr << std::endl;
-    if(debug) std::cout <<  "Track value: " << tracks[tr] << std::endl;
+    if(debug_me) std::cout << "Track integer: " << tr << std::endl;
+    if(debug_me) std::cout <<  "Track value: " << tracks[tr] << std::endl;
     tr_vtx.push_back(tracks[tr]);
   }
   int iTr = tr_vtx.size();
@@ -441,6 +441,59 @@ ROOT::VecOps::RVec<edm4hep::TrackState> VertexFinderLCFIPlus::V0rejection_tight(
     }
   }
   else result = tracks;
+  //
+  return result;
+}
+
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> findSVfromTracks(ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin,
+								       VertexingUtils::FCCAnalysesVertex PV,
+								       double chi2_cut, double invM_cut, double chi2Tr_cut) {
+
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
+
+  while(tracks_fin.size() > 1) {
+    // find vertex seed
+    ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
+    
+    if(debug_me){
+      std::cout << "tracks_fin.size(): " << tracks_fin.size() << std::endl;
+      for(int i=0; i<vtx_seed.size();i++)
+	std::cout << "vtx_seed: " << vtx_seed[i] << std::endl;
+    }
+    if(vtx_seed.size() == 0) break;
+    
+    // add tracks to the seed
+    // check if a track is added; if not break loop
+    ROOT::VecOps::RVec<int> vtx_fin = vtx_seed;
+    int vtx_fin_size = 0; // to start the loop
+    while(vtx_fin_size != vtx_fin.size()) {
+      vtx_fin_size = vtx_fin.size();
+      vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
+    }
+    
+    // fit tracks to SV and remove from tracks_fin
+    ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
+    for(int i_tr : vtx_fin){
+      tr_vtx_fin.push_back(tracks_fin[i_tr]);
+      if(debug_me) std::cout << "Pushing back tracks_fin[i_tr]" << std::endl;
+    }
+    VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_vtx_fin); // flag 2 for SVs
+
+    // see if we can also get indices in the reco collection (for tracks forming an SV)
+    //sec_vtx.reco_ind = VertexFitterSimple::get_reco_ind(recoparticles,thetracks); // incorrect
+
+    result.push_back(sec_vtx);
+    //
+    ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
+    tracks_fin.clear();
+    for(unsigned int t=0; t<temp.size(); t++) {
+      if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
+    }
+    // all this cause don't know how to remove multiple elements at once
+
+    if(debug_me) std::cout<<result.size()<<" SV found"<<std::endl;
+  }
+
   //
   return result;
 }
@@ -633,7 +686,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
       if(tight) {
 	// Ks
 	if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
-	  if(debug) std::cout<<"Found a Ks"<<std::endl;
+	  if(debug_me) std::cout<<"Found a Ks"<<std::endl;
 	  isInV0[i] = true;
 	  isInV0[j] = true;
 	  vtx.push_back(V0_vtx);
@@ -644,7 +697,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
       
 	// Lambda0
 	else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
-	  if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	  if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
 	  isInV0[i] = true;
 	  isInV0[j] = true;
 	  vtx.push_back(V0_vtx);
@@ -653,7 +706,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
 	  break;
 	}
 	else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
-	  if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	  if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
 	  isInV0[i] = true;
 	  isInV0[j] = true;
 	  vtx.push_back(V0_vtx);
@@ -664,7 +717,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
 	
 	// photon conversion
 	else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
-	  if(debug) std::cout<<"Found a Photon coversion"<<std::endl;
+	  if(debug_me) std::cout<<"Found a Photon coversion"<<std::endl;
 	  isInV0[i] = true;
 	  isInV0[j] = true;
 	  vtx.push_back(V0_vtx);
@@ -677,7 +730,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
       else {
 	// Ks
 	if(invM_Ks>0.488 && invM_Ks<0.508 && r>0.3 && p_r>0.999) {
-	  if(debug) std::cout<<"Found a Ks"<<std::endl;
+	  if(debug_me) std::cout<<"Found a Ks"<<std::endl;
 	  isInV0[i] = true;
 	  isInV0[j] = true;
 	  vtx.push_back(V0_vtx);
@@ -688,7 +741,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
       
 	// Lambda0
 	else if(invM_Lambda1>1.106 && invM_Lambda1<1.126 && r>0.3 && p_r>0.999) {
-	  if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	  if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
 	  isInV0[i] = true;
 	  isInV0[j] = true;
 	  vtx.push_back(V0_vtx);
@@ -697,7 +750,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
 	  break;
 	}
 	else if(invM_Lambda2>1.106 && invM_Lambda2<1.126 && r>0.3 && p_r>0.999) {
-	  if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	  if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
 	  isInV0[i] = true;
 	  isInV0[j] = true;
 	  vtx.push_back(V0_vtx);
@@ -708,7 +761,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
 	
 	// photon conversion
 	else if(invM_Gamma<0.01 && r>9 && p_r>0.999) {
-	  if(debug) std::cout<<"Found a Photon coversion"<<std::endl;
+	  if(debug_me) std::cout<<"Found a Photon coversion"<<std::endl;
 	  isInV0[i] = true;
 	  isInV0[j] = true;
 	  vtx.push_back(V0_vtx);
@@ -783,7 +836,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 
   if(tracks.size() != isInPrimary.size()) std::cout<<"ERROR: isInPrimary vector size not the same as no of tracks"<<std::endl;
   
-  if(debug) std::cout<<"tracks extracted from the reco particles"<<std::endl;
+  if(debug_me) std::cout<<"tracks extracted from the reco particles"<<std::endl;
   
   //
   for (unsigned int j=0; j<nJet; j++) {
@@ -798,7 +851,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
       }
     }
     
-    if(debug) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in jet#"<<j+1<<std::endl;
+    if(debug_me) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in jet#"<<j+1<<std::endl;
 
     int nTr = np_tracks.size();
     if(nTr<2) continue;    
@@ -837,7 +890,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	if(tight) {
 	  // Ks
 	  if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
-	    if(debug) std::cout<<"Found a Ks"<<std::endl;
+	    if(debug_me) std::cout<<"Found a Ks"<<std::endl;
 	    isInV0[i] = true;
 	    isInV0[j] = true;
 	    vtx.push_back(V0_vtx);
@@ -849,7 +902,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	  
 	  // Lambda0
 	  else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
-	    if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	    if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
 	    isInV0[i] = true;
 	    isInV0[j] = true;
 	    vtx.push_back(V0_vtx);
@@ -859,7 +912,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	    break;
 	  }
 	  else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
-	    if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	    if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
 	    isInV0[i] = true;
 	    isInV0[j] = true;
 	    vtx.push_back(V0_vtx);
@@ -871,7 +924,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	
 	  // photon conversion
 	  else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
-	    if(debug) std::cout<<"Found a Photon coversion"<<std::endl;
+	    if(debug_me) std::cout<<"Found a Photon coversion"<<std::endl;
 	    isInV0[i] = true;
 	    isInV0[j] = true;
 	    vtx.push_back(V0_vtx);
@@ -885,7 +938,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	else {
 	  // Ks
 	  if(invM_Ks>0.488 && invM_Ks<0.508 && r>0.3 && p_r>0.999) {
-	    if(debug) std::cout<<"Found a Ks"<<std::endl;
+	    if(debug_me) std::cout<<"Found a Ks"<<std::endl;
 	    isInV0[i] = true;
 	    isInV0[j] = true;
 	    vtx.push_back(V0_vtx);
@@ -897,7 +950,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
       
 	  // Lambda0
 	  else if(invM_Lambda1>1.106 && invM_Lambda1<1.126 && r>0.3 && p_r>0.999) {
-	    if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	    if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
 	    isInV0[i] = true;
 	    isInV0[j] = true;
 	    vtx.push_back(V0_vtx);
@@ -907,7 +960,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	    break;
 	  }
 	  else if(invM_Lambda2>1.106 && invM_Lambda2<1.126 && r>0.3 && p_r>0.999) {
-	    if(debug) std::cout<<"Found a Lambda0"<<std::endl;
+	    if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
 	    isInV0[i] = true;
 	    isInV0[j] = true;
 	    vtx.push_back(V0_vtx);
@@ -919,7 +972,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	
 	  // photon conversion
 	  else if(invM_Gamma<0.01 && r>9 && p_r>0.999) {
-	    if(debug) std::cout<<"Found a Photon coversion"<<std::endl;
+	    if(debug_me) std::cout<<"Found a Photon coversion"<<std::endl;
 	    isInV0[i] = true;
 	    isInV0[j] = true;
 	    vtx.push_back(V0_vtx);
