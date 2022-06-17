@@ -68,47 +68,15 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
     }
     
     // start finding SVs
-    while(tracks_fin.size() > 1) {
-      // find vertex seed
-      ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
-      // constraint thresholds can be chosen by user, here using default cuts
-      if(vtx_seed.size() == 0) break;
-      
-      // add tracks to the seed
-      // check if a track is added; if not break loop
-      ROOT::VecOps::RVec<int> vtx_fin = vtx_seed;
-      int vtx_fin_size = 0; // to start the loop
-      while(vtx_fin_size != vtx_fin.size()) {
-	vtx_fin_size = vtx_fin.size();
-	vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
-	// constraint thresholds can be chosen by user, here using default cuts
-      }
-      
-      // fit tracks to SV and remove from tracks_fin
-      ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
-      for(int i_tr : vtx_fin) tr_vtx_fin.push_back(tracks_fin[i_tr]);
-      VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_vtx_fin); // flag 2 for SVs
+    ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> i_result = findSVfromTracks(tracks_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
 
-      // see if we can also get indices in the reco collection (for tracks forming an SV)
-      //sec_vtx.reco_ind = VertexFitterSimple::get_reco_ind(recoparticles,thetracks); // incorrect
-
-      result.push_back(sec_vtx);
-      i_nSV++;
-      //
-      ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
-      tracks_fin.clear();
-      for(unsigned int t=0; t<temp.size(); t++) {
-	if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
-      }
-      // all this cause don't know how to remove multiple elements at once
-      tr_vtx_fin.clear();
-      
-      if(debug_me) std::cout<<result.size()<<" SV found"<<std::endl;
-    }
-
+    int i_nSV = i_result.size();
     nSV_jet.push_back(i_nSV);
+
+    result.insert(result.end(), i_result.begin(), i_result.end());
     
     // clean-up
+    i_result.clear();
     np_tracks.clear();
     tracks_fin.clear();
   }
@@ -122,12 +90,13 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
   return SV;
 }
 
-ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-											 ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-											 VertexingUtils::FCCAnalysesVertex PV,
-											 ROOT::VecOps::RVec<bool> isInPrimary,
-											 bool V0_rej,
-											 double chi2_cut, double invM_cut, double chi2Tr_cut) {
+//ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+								 ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+								 VertexingUtils::FCCAnalysesVertex PV,
+								 ROOT::VecOps::RVec<bool> isInPrimary,
+								 bool V0_rej,
+								 double chi2_cut, double invM_cut, double chi2Tr_cut) {
   
   
   if(debug_me) std::cout << "Starting SV finding!" << std::endl;
@@ -135,9 +104,9 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_
   // find SVs using LCFI+ (w/o clustering)
   // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
   
-  //VertexingUtils::FCCAnalysesSV SV;
+  VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
-  //SV.vtx = result;
+  SV.vtx = result;
 
   // retrieve the tracks associated to the recoparticles
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
@@ -166,68 +135,29 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_
   //if(debug_me) std::cout << "tracks_fin.size() = " << tracks_fin.size() << std::endl;
 
   // start finding SVs (only if there are 2 or more tracks)
-  while(tracks_fin.size() > 1) {
-    // find vertex seed
-    ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
-    
-    if(debug_me){
-      std::cout << "tracks_fin.size(): " << tracks_fin.size() << std::endl;
-      for(int i=0; i<vtx_seed.size();i++)
-	std::cout << "vtx_seed: " << vtx_seed[i] << std::endl;
-    }
-    if(vtx_seed.size() == 0) break;
-    
-    // add tracks to the seed
-    // check if a track is added; if not break loop
-    ROOT::VecOps::RVec<int> vtx_fin = vtx_seed;
-    int vtx_fin_size = 0; // to start the loop
-    while(vtx_fin_size != vtx_fin.size()) {
-      vtx_fin_size = vtx_fin.size();
-      vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
-    }
-    
-    // fit tracks to SV and remove from tracks_fin
-    ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
-    for(int i_tr : vtx_fin){
-      tr_vtx_fin.push_back(tracks_fin[i_tr]);
-      if(debug_me) std::cout << "Pushing back tracks_fin[i_tr]" << std::endl;
-    }
-    VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_vtx_fin); // flag 2 for SVs
+  result = findSVfromTracks(tracks_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
 
-    // see if we can also get indices in the reco collection (for tracks forming an SV)
-    //sec_vtx.reco_ind = VertexFitterSimple::get_reco_ind(recoparticles,thetracks); // incorrect
-
-    result.push_back(sec_vtx);
-    //
-    ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
-    tracks_fin.clear();
-    for(unsigned int t=0; t<temp.size(); t++) {
-      if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
-    }
-    // all this cause don't know how to remove multiple elements at once
-
-    if(debug_me) std::cout<<result.size()<<" SV found"<<std::endl;
-  }
-
-  if(debug_me) std::cout<<"no more SVs can be reconstructed"<<std::endl;
+  //if(debug_me) std::cout<<"no more SVs can be reconstructed"<<std::endl;
   
-  //SV.vtx = result;
+  SV.vtx = result;
   //
-  return result;
+  return SV;
+  //return result;
 }
 
-ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-											 VertexingUtils::FCCAnalysesVertex PV,
-											 bool V0_rej,
-											 double chi2_cut, double invM_cut, double chi2Tr_cut) {
+//ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+								 VertexingUtils::FCCAnalysesVertex PV,
+								 bool V0_rej,
+								 double chi2_cut, double invM_cut, double chi2Tr_cut) {
   
   // find SVs from non-primary tracks using LCFI+ (w/o clustering)
   // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
   // primary - non-primary separation done externally
   
-  //VertexingUtils::FCCAnalysesSV SV;
+  VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
-  //SV.vtx = result;
+  SV.vtx = result;
 
   // V0 rejection (tight)
   // perform V0 rejection with tight constraints if user chooses
@@ -239,47 +169,12 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_
   }
 
   // start finding SVs (only if there are 2 or more tracks)
-  while(tracks_fin.size() > 1) {
-    // find vertex seed
-    ROOT::VecOps::RVec<int> vtx_seed = VertexSeed_best(tracks_fin, PV, chi2_cut, invM_cut);
-    if(vtx_seed.size() == 0) break;
-    
-    // add tracks to the seed
-    // check if a track is added; if not break loop
-    ROOT::VecOps::RVec<int> vtx_fin = vtx_seed;
-    int vtx_fin_size = 0; // to start the loop
-    while(vtx_fin_size != vtx_fin.size()) {
-      vtx_fin_size = vtx_fin.size();
-      vtx_fin = addTrack_best(tracks_fin, vtx_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
-    }
-    
-    // fit tracks to SV and remove from tracks_fin
-    ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx_fin;
-    for(int i_tr : vtx_fin) tr_vtx_fin.push_back(tracks_fin[i_tr]);
-    VertexingUtils::FCCAnalysesVertex sec_vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_vtx_fin); // flag 2 for SVs
-
-    //
-    ROOT::VecOps::RVec<edm4hep::TrackState> temp = tracks_fin;
-    tracks_fin.clear();
-    for(unsigned int t=0; t<temp.size(); t++) {
-      if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
-    }
-    // all this cause don't know how to remove multiple elements at once
-
-    // see if we can also get indices in the reco collection (for tracks forming an SV)
-    //sec_vtx.reco_ind = VertexFitterSimple::get_reco_ind(recoparticles,thetracks); // incorrect
-    
-    result.push_back(sec_vtx);    
-
-    if(debug_me) std::cout<<result.size()<<" SV found"<<std::endl;
-  }
-
-  if(debug_me) std::cout<<"no more SVs can be reconstructed"<<std::endl;
+  result = findSVfromTracks(tracks_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
   
-  //SV.vtx = result;
+  SV.vtx = result;
   //
-  //return SV;
-  return result;
+  return SV;
+  //return result;
 }
 
 
@@ -445,10 +340,11 @@ ROOT::VecOps::RVec<edm4hep::TrackState> VertexFinderLCFIPlus::V0rejection_tight(
   return result;
 }
 
-ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> findSVfromTracks(ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin,
-								       VertexingUtils::FCCAnalysesVertex PV,
-								       double chi2_cut, double invM_cut, double chi2Tr_cut) {
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::findSVfromTracks(ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin,
+											     VertexingUtils::FCCAnalysesVertex PV,
+											     double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
+  // find SVs (only if there are 2 or more tracks)
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
 
   while(tracks_fin.size() > 1) {
