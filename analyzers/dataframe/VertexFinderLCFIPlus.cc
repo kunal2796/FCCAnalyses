@@ -44,8 +44,6 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
   //
   for (unsigned int j=0; j<nJet; j++) {
 
-    int i_nSV = 0;
-
     // remove primary tracks
     // separate non-primary tracks by jet
     std::vector<int> i_jetconsti = jet_consti[j];
