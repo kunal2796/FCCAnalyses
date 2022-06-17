@@ -8,7 +8,7 @@
 
 using namespace VertexFitterSimple;
 
-bool debug = false;
+//bool debug = false;
 
 
 TVector3 VertexFitterSimple::ParToP(TVectorD Par){
