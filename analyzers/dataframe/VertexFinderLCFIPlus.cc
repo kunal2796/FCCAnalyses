@@ -6,15 +6,17 @@
 
 using namespace VertexFinderLCFIPlus;
 
+bool debug = false;
+
 
 VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-							      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-							      VertexingUtils::FCCAnalysesVertex PV,
-							      ROOT::VecOps::RVec<bool> isInPrimary,
-							      ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
-							      std::vector<std::vector<int>> jet_consti,
-							      bool V0_rej,
-							      double chi2_cut, double invM_cut, double chi2Tr_cut) {
+								ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+								VertexingUtils::FCCAnalysesVertex PV,
+								ROOT::VecOps::RVec<bool> isInPrimary,
+								ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
+								std::vector<std::vector<int>> jet_consti,
+								bool V0_rej,
+								double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
   // find SVs using LCFI+ (clustering first)
   // change to vec of vec (RVec of RVec breaking) to separate SV from diff jets, currently don't separate SVs by jet
@@ -58,15 +60,7 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
     
     // V0 rejection (tight)
     // perform V0 rejection with tight constraints if user chooses
-    ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
-    if(V0_rej) {
-      bool tight = true;
-      ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
-      for(unsigned int i=0; i<isInV0.size(); i++) {
-	if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
-      }
-    }
-    else tracks_fin = np_tracks;
+    ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = V0rejection_tight(np_tracks, PV, V0_rej);
     
     if(debug) {
       std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
@@ -129,13 +123,13 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
 }
 
 VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-							       ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-							       VertexingUtils::FCCAnalysesVertex PV,
-							       ROOT::VecOps::RVec<bool> isInPrimary,
-							       bool V0_rej,
-							       double chi2_cut, double invM_cut, double chi2Tr_cut) {
-
-
+								 ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+								 VertexingUtils::FCCAnalysesVertex PV,
+								 ROOT::VecOps::RVec<bool> isInPrimary,
+								 bool V0_rej,
+								 double chi2_cut, double invM_cut, double chi2Tr_cut) {
+  
+  
   if(debug) std::cout << "Starting SV finding!" << std::endl;
 
   // find SVs using LCFI+ (w/o clustering)
@@ -162,23 +156,14 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::R
 
   // V0 rejection (tight)
   // perform V0 rejection with tight constraints if user chooses
-  ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
-  if(V0_rej) {
-    bool tight = true;
-    ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
-    for(unsigned int i=0; i<isInV0.size(); i++) {
-      if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
-    }
-  }
-  else tracks_fin = np_tracks;
+  ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = V0rejection_tight(np_tracks, PV, V0_rej);
 
   if(debug) {
     std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
     std::cout<<"now starting to find secondary vertices..."<<std::endl;
   }
   
-
-  if(debug) std::cout << "tracks_fin.size() = " << tracks_fin.size() << std::endl;
+  //if(debug) std::cout << "tracks_fin.size() = " << tracks_fin.size() << std::endl;
 
   // start finding SVs (only if there are 2 or more tracks)
   while(tracks_fin.size() > 1) {
@@ -232,9 +217,9 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::R
 }
 
 VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-							       VertexingUtils::FCCAnalysesVertex PV,
-							       bool V0_rej,
-							       double chi2_cut, double invM_cut, double chi2Tr_cut) {
+								 VertexingUtils::FCCAnalysesVertex PV,
+								 bool V0_rej,
+								 double chi2_cut, double invM_cut, double chi2Tr_cut) {
   
   // find SVs from non-primary tracks using LCFI+ (w/o clustering)
   // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
@@ -246,15 +231,7 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::R
 
   // V0 rejection (tight)
   // perform V0 rejection with tight constraints if user chooses
-  ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin;
-  if(V0_rej) {
-    bool tight = true;
-    ROOT::VecOps::RVec<bool> isInV0 = isV0(np_tracks, PV, tight);
-    for(unsigned int i=0; i<isInV0.size(); i++) {
-      if (!isInV0[i]) tracks_fin.push_back(np_tracks[i]);
-    }
-  }
-  else tracks_fin = np_tracks;
+  ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = V0rejection_tight(np_tracks, PV, V0_rej);
 
   if(debug) {
     std::cout<<np_tracks.size()-tracks_fin.size()<<" V0 tracks removed"<<std::endl;
@@ -306,7 +283,7 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::R
 
 
 ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_all_vertices(VertexingUtils::FCCAnalysesVertex PV,
-											   VertexingUtils::FCCAnalysesSV SV) {
+											     VertexingUtils::FCCAnalysesSV SV) {
   // Returns a vector of all vertices (PV and SVs)
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
   result.push_back(PV);
@@ -317,10 +294,10 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_
 }
 
 
-
+//
 ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::VertexSeed_best(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
-							    VertexingUtils::FCCAnalysesVertex PV,
-							    double chi2_cut, double invM_cut) {
+							      VertexingUtils::FCCAnalysesVertex PV,
+							      double chi2_cut, double invM_cut) {
 
   // gives indices of the best pair of tracks
   // maybe also update and write one to get first pair to pass constraints
@@ -382,68 +359,10 @@ ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::VertexSeed_best(ROOT::VecOps::RVec
   return result;
 }
 
-// ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> VertexFinderLCFIPlus::VertexSeed_all(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
-// 									       VertexingUtils::FCCAnalysesVertex PV,
-// 									       double chi2_cut, double invM_cut) {
-
-  // // gives indices of the all pairs of tracks which pass the constraints
-
-  // ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> result;
-  // ROOT::VecOps::RVec<int> ij_sel;
-  
-  // int nTr = tracks.size();
-  // ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
-  // // push empty tracks to make a size=2 vector
-  // edm4hep::TrackState tr_i;
-  // edm4hep::TrackState tr_j;
-  // tr_pair.push_back(tr_i);
-  // tr_pair.push_back(tr_j);
-  // VertexingUtils::FCCAnalysesVertex vtx_seed;
-  
-//   for(unsigned int i=0; i<nTr-1; i++) {
-//     if(i!=0) tr_pair[0] = tracks[i];
-
-//     for(unsigned int j=i+1; j<nTr; j++) {
-//       if(j!=1) tr_pair[1] = tracks[j];
-
-//       // V0 rejection (loose)
-//       ROOT::VecOps::RVec<bool> isInV0 = isV0(tr_pair, PV, false);
-//       if(isInV0[0] && isInV0[1]) continue;
-      
-//       vtx_seed = VertexFitterSimple::VertexFitter_Tk(2, tr_pair);
-
-//       // Constraints
-//       // chi2 < cut (9)
-//       double chi2_seed = vtx_seed.vertex.chi2; // normalised
-//       if(chi2_seed >= chi2_cut) continue; // nDOF for 2 track vtx = 1
-//       //
-//       // invM < cut (10GeV)
-//       double invM_seed = VertexingUtils::get_invM(vtx_seed);
-//       if(invM_seed >= invM_cut) continue;
-//       //
-//       // invM < sum of energy
-//       double E_pair = 0.;
-//       for(edm4hep::TrackState tr_e : tr_pair) E_pair += VertexingUtils::get_trackE(tr_e);
-//       if(invM_seed >= E_pair) continue;
-//       //
-//       // momenta sum & vtx r on same side
-//       double angle = VertexingUtils::get_PV2vtx_angle(tr_pair, vtx_seed, PV);
-//       if(angle<0) continue;
-
-//       // if a pair passes all constraints, store indices
-//       ij_sel.push_back(i); ij_sel.push_back(j);
-//       result.push_back(ij_sel);
-//       ij_sel.clear();
-//     }
-//   }
-
-//   return result;
-// }
-
 ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::addTrack_best(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
-							  ROOT::VecOps::RVec<int> vtx_tr,
-							  VertexingUtils::FCCAnalysesVertex PV,
-							  double chi2_cut, double invM_cut, double chi2Tr_cut) {
+							    ROOT::VecOps::RVec<int> vtx_tr,
+							    VertexingUtils::FCCAnalysesVertex PV,
+							    double chi2_cut, double invM_cut, double chi2Tr_cut) {
   // adds index of the best track to the (seed) vtx
   
   ROOT::VecOps::RVec<int> result = vtx_tr;
@@ -508,69 +427,26 @@ ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::addTrack_best(ROOT::VecOps::RVec<e
   return result;
 }
 
-// ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::addTrack_multi(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
-// 							   ROOT::VecOps::RVec<int> vtx_tr,
-// 							   VertexingUtils::FCCAnalysesVertex PV,
-// 							   double chi2_cut, double invM_cut, double chi2Tr_cut) {
-//   // adds indices of all tracks passing constraints to the (seed) vtx
-  
-//   ROOT::VecOps::RVec<int> result = vtx_tr;
-//   if(tracks.size() == vtx_tr.size()) return result;
-
-//   int nTr = tracks.size();
-//   ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx;
-//   VertexingUtils::FCCAnalysesVertex vtx;
-
-//   // tracks from the previously formed vtx
-//   for(int tr : vtx_tr) {
-//     tr_vtx.push_back(tracks[tr]);
-//   }
-//   int iTr = tr_vtx.size();
-  
-//   // find best track to add to the vtx
-//   for(unsigned int i=0; i<nTr; i++) {
-//     if(std::find(vtx_tr.begin(), vtx_tr.end(), i) != vtx_tr.end()) continue;
-
-//     if(iTr != tr_vtx.size()) tr_vtx[iTr] = tracks[i];
-//     else tr_vtx.push_back(tracks[i]);
-    
-//     vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_vtx);
-
-//     // Constraints
-//     // chi2_contribution < threshold.
-//     ROOT::VecOps::RVec<float> chi2_tr = vtx.reco_chi2;
-//     if(chi2_tr[iTr] >= chi2Tr_cut) continue; // threshold = 5 ok?
-//     //
-//     // chi2 < cut (9)
-//     double chi2_vtx = vtx.vertex.chi2; // normalised
-//     double nDOF = 2*(iTr+1) - 3; // nDOF = 2*nTr - 3
-//     chi2_vtx = chi2_vtx * nDOF;
-//     if(chi2_vtx >= chi2_cut) continue;
-//     //
-//     // invM < cut (10GeV)
-//     double invM_vtx = VertexingUtils::get_invM(vtx);
-//     if(invM_vtx >= invM_cut) continue;
-//     //
-//     // invM < sum of energy (should it be or not?)
-//     double E_vtx = 0.;
-//     for(edm4hep::TrackState tr_e : tr_vtx) E_vtx += VertexingUtils::get_trackE(tr_e);
-//     if(invM_vtx >= E_vtx) continue;
-//     //
-//     // momenta sum & vtx r on same side
-//     double angle = VertexingUtils::get_PV2vtx_angle(tr_vtx, vtx, PV);
-//     if(angle<0) continue;
-    
-//     // if a pair passes all constraints add to the vtx
-//     result.push_back(i);
-//     iTr++;
-//   }
-
-//   return result;
-// }
+ROOT::VecOps::RVec<edm4hep::TrackState> VertexFinderLCFIPlus::V0rejection_tight(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+										VertexingUtils::FCCAnalysesVertex PV,
+										bool V0_rej) {
+  // perform V0 rejection with tight constraints if user chooses
+  ROOT::VecOps::RVec<edm4hep::TrackState> result;
+  if(V0_rej) {
+    bool tight = true;
+    ROOT::VecOps::RVec<bool> isInV0 = isV0(tracks, PV, tight);
+    for(unsigned int i=0; i<isInV0.size(); i++) {
+      if (!isInV0[i]) result.push_back(tracks[i]);
+    }
+  }
+  else result = tracks;
+  //
+  return result;
+}
 
 ROOT::VecOps::RVec<bool> VertexFinderLCFIPlus::isV0(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-						  VertexingUtils::FCCAnalysesVertex PV,
-						  bool tight) {
+						    VertexingUtils::FCCAnalysesVertex PV,
+						    bool tight) {
   // V0 rejection
   //
   // take all non-primary tracks & assign "true" to pairs that form V0
@@ -686,9 +562,9 @@ ROOT::VecOps::RVec<bool> VertexFinderLCFIPlus::isV0(ROOT::VecOps::RVec<edm4hep::
 ///////////////////////////
 
 VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-							  VertexingUtils::FCCAnalysesVertex PV,
-							  bool tight,
-							  double chi2_cut) {
+							    VertexingUtils::FCCAnalysesVertex PV,
+							    bool tight,
+							    double chi2_cut) {
   // V0 reconstruction
   // if(tight)  -> tight constraints
   // if(!tight) -> loose constraints
@@ -854,13 +730,13 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
 }
 
 VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-							      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-							      ROOT::VecOps::RVec<bool> isInPrimary,
-							      ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
-							      std::vector<std::vector<int>> jet_consti,
-							      VertexingUtils::FCCAnalysesVertex PV,
-							      bool tight,
-							      double chi2_cut) {
+								ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+								ROOT::VecOps::RVec<bool> isInPrimary,
+								ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
+								std::vector<std::vector<int>> jet_consti,
+								VertexingUtils::FCCAnalysesVertex PV,
+								bool tight,
+								double chi2_cut) {
   // V0 reconstruction after jet clustering
   // if(tight)  -> tight constraints
   // if(!tight) -> loose constraints
@@ -1070,3 +946,123 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
   //
   return result;
 }
+
+
+// ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> VertexFinderLCFIPlus::VertexSeed_all(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+// 					  				            VertexingUtils::FCCAnalysesVertex PV,
+// 									            double chi2_cut, double invM_cut) {
+
+  // // gives indices of the all pairs of tracks which pass the constraints
+
+  // ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> result;
+  // ROOT::VecOps::RVec<int> ij_sel;
+  
+  // int nTr = tracks.size();
+  // ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
+  // // push empty tracks to make a size=2 vector
+  // edm4hep::TrackState tr_i;
+  // edm4hep::TrackState tr_j;
+  // tr_pair.push_back(tr_i);
+  // tr_pair.push_back(tr_j);
+  // VertexingUtils::FCCAnalysesVertex vtx_seed;
+  
+//   for(unsigned int i=0; i<nTr-1; i++) {
+//     if(i!=0) tr_pair[0] = tracks[i];
+
+//     for(unsigned int j=i+1; j<nTr; j++) {
+//       if(j!=1) tr_pair[1] = tracks[j];
+
+//       // V0 rejection (loose)
+//       ROOT::VecOps::RVec<bool> isInV0 = isV0(tr_pair, PV, false);
+//       if(isInV0[0] && isInV0[1]) continue;
+      
+//       vtx_seed = VertexFitterSimple::VertexFitter_Tk(2, tr_pair);
+
+//       // Constraints
+//       // chi2 < cut (9)
+//       double chi2_seed = vtx_seed.vertex.chi2; // normalised
+//       if(chi2_seed >= chi2_cut) continue; // nDOF for 2 track vtx = 1
+//       //
+//       // invM < cut (10GeV)
+//       double invM_seed = VertexingUtils::get_invM(vtx_seed);
+//       if(invM_seed >= invM_cut) continue;
+//       //
+//       // invM < sum of energy
+//       double E_pair = 0.;
+//       for(edm4hep::TrackState tr_e : tr_pair) E_pair += VertexingUtils::get_trackE(tr_e);
+//       if(invM_seed >= E_pair) continue;
+//       //
+//       // momenta sum & vtx r on same side
+//       double angle = VertexingUtils::get_PV2vtx_angle(tr_pair, vtx_seed, PV);
+//       if(angle<0) continue;
+
+//       // if a pair passes all constraints, store indices
+//       ij_sel.push_back(i); ij_sel.push_back(j);
+//       result.push_back(ij_sel);
+//       ij_sel.clear();
+//     }
+//   }
+
+//   return result;
+// }
+
+
+// ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::addTrack_multi(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+// 							        ROOT::VecOps::RVec<int> vtx_tr,
+// 							        VertexingUtils::FCCAnalysesVertex PV,
+// 							        double chi2_cut, double invM_cut, double chi2Tr_cut) {
+//   // adds indices of all tracks passing constraints to the (seed) vtx
+  
+//   ROOT::VecOps::RVec<int> result = vtx_tr;
+//   if(tracks.size() == vtx_tr.size()) return result;
+
+//   int nTr = tracks.size();
+//   ROOT::VecOps::RVec<edm4hep::TrackState> tr_vtx;
+//   VertexingUtils::FCCAnalysesVertex vtx;
+
+//   // tracks from the previously formed vtx
+//   for(int tr : vtx_tr) {
+//     tr_vtx.push_back(tracks[tr]);
+//   }
+//   int iTr = tr_vtx.size();
+  
+//   // find best track to add to the vtx
+//   for(unsigned int i=0; i<nTr; i++) {
+//     if(std::find(vtx_tr.begin(), vtx_tr.end(), i) != vtx_tr.end()) continue;
+
+//     if(iTr != tr_vtx.size()) tr_vtx[iTr] = tracks[i];
+//     else tr_vtx.push_back(tracks[i]);
+    
+//     vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_vtx);
+
+//     // Constraints
+//     // chi2_contribution < threshold.
+//     ROOT::VecOps::RVec<float> chi2_tr = vtx.reco_chi2;
+//     if(chi2_tr[iTr] >= chi2Tr_cut) continue; // threshold = 5 ok?
+//     //
+//     // chi2 < cut (9)
+//     double chi2_vtx = vtx.vertex.chi2; // normalised
+//     double nDOF = 2*(iTr+1) - 3; // nDOF = 2*nTr - 3
+//     chi2_vtx = chi2_vtx * nDOF;
+//     if(chi2_vtx >= chi2_cut) continue;
+//     //
+//     // invM < cut (10GeV)
+//     double invM_vtx = VertexingUtils::get_invM(vtx);
+//     if(invM_vtx >= invM_cut) continue;
+//     //
+//     // invM < sum of energy (should it be or not?)
+//     double E_vtx = 0.;
+//     for(edm4hep::TrackState tr_e : tr_vtx) E_vtx += VertexingUtils::get_trackE(tr_e);
+//     if(invM_vtx >= E_vtx) continue;
+//     //
+//     // momenta sum & vtx r on same side
+//     double angle = VertexingUtils::get_PV2vtx_angle(tr_vtx, vtx, PV);
+//     if(angle<0) continue;
+    
+//     // if a pair passes all constraints add to the vtx
+//     result.push_back(i);
+//     iTr++;
+//   }
+
+//   return result;
+// }
