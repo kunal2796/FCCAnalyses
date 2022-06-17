@@ -105,7 +105,7 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
       
       if(debug) std::cout<<result.size()<<" SV found"<<std::endl;
     }
-s
+
     nSV_jet.push_back(i_nSV);
     
     // clean-up
