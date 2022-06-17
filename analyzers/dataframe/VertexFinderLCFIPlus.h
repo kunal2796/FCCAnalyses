@@ -48,21 +48,23 @@ namespace VertexFinderLCFIPlus{
    *  SV finding done before jet clustering
    *  non-primary separated from all tracks using isInPrimary (bool) vector
    */
-  VertexingUtils::FCCAnalysesSV get_SV_event( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-					      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-					      VertexingUtils::FCCAnalysesVertex PV,
-					      ROOT::VecOps::RVec<bool> isInPrimary,
-					      bool V0_rej=true,
-					      double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
+  //VertexingUtils::FCCAnalysesSV get_SV_event( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+								      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+								      VertexingUtils::FCCAnalysesVertex PV,
+								      ROOT::VecOps::RVec<bool> isInPrimary,
+								      bool V0_rej=true,
+								      double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
 
   /** returns SVs reconstructed from non-primary tracks of the event
    *  SV finding done before jet clustering
    */
-  VertexingUtils::FCCAnalysesSV get_SV_event( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-					      VertexingUtils::FCCAnalysesVertex PV,
-					      bool V0_rej=true,
-					      double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
-
+  //VertexingUtils::FCCAnalysesSV get_SV_event( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+								      VertexingUtils::FCCAnalysesVertex PV,
+								      bool V0_rej=true,
+								      double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
+  
   /** returns a vector of all vertices (PV and SVs), e.g to use in myUtils::get_Vertex_d2PV
    *  first entry: PV, all subsequent entries: SVs
    */
