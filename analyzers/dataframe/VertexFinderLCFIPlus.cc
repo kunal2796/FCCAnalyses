@@ -373,12 +373,12 @@ bool VertexFinderLCFIPlus::check_constraints(VertexingUtils::FCCAnalysesVertex v
 
   bool result = true;
 
-  int iTr = chi2_tr.size() - 1;  // final track index
+  int nTr = tracks.size();  // no of tracks
   
   // Constraints
   // chi2 < cut (9)
   double chi2 = vtx.vertex.chi2; // normalised
-  double nDOF = 2*(iTr+1) - 3;   // nDOF = 2*nTr - 3
+  double nDOF = 2*nTr - 3;       // nDOF
   chi2 = chi2 * nDOF;
   if(chi2 >= chi2_cut) result = false;
   //
@@ -398,7 +398,7 @@ bool VertexFinderLCFIPlus::check_constraints(VertexingUtils::FCCAnalysesVertex v
   if(!seed) {
     // chi2_contribution(track) < threshold
     ROOT::VecOps::RVec<float> chi2_tr = vtx.reco_chi2;
-    if(chi2_tr[iTr] >= chi2Tr_cut) result = false;    // threshold = 5 ok?
+    if(chi2_tr[nTr-1] >= chi2Tr_cut) result = false;    // threshold = 5 ok?
   }
   //
   return result;
