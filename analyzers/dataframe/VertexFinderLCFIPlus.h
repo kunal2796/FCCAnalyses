@@ -48,7 +48,7 @@ namespace VertexFinderLCFIPlus{
    *  SV finding done before jet clustering
    *  non-primary separated from all tracks using isInPrimary (bool) vector
    */
-//ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+  //ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
   VertexingUtils::FCCAnalysesSV get_SV_event( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
 					      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 					      VertexingUtils::FCCAnalysesVertex PV,
@@ -101,6 +101,17 @@ namespace VertexFinderLCFIPlus{
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> findSVfromTracks( ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin,
 									  VertexingUtils::FCCAnalysesVertex PV,
 									  double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5.) ;
+
+  /** check constraints of vertex candidates
+   *  default values of thresholds for the constraints are set
+   *  default constraint check is that for finding vertex seed
+   *  seed=true -> constraints for seed; seed=false -> constraints for adding tracks
+   */
+  bool check_constraints( VertexingUtils::FCCAnalysesVertex vtx,
+			  ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+			  VertexingUtils::FCCAnalysesVertex PV,
+			  bool seed=true,
+			  double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5.) ;
   
   /** V0 rejection/identification
    *  takes all (non-primary) tracks & assigns "true" to pairs that form a V0
