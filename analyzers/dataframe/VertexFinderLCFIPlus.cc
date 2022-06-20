@@ -222,10 +222,11 @@ ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::VertexSeed_best(ROOT::VecOps::RVec
       vtx_seed = VertexFitterSimple::VertexFitter_Tk(2, tr_pair);
       
       // Constraints
-      bool pass = check_constraints(vtx_seed, tr_pair, PV, true, chi2_cut, invM_cut, chi2Tr_cut);
+      bool pass = check_constraints(vtx_seed, tr_pair, PV, true, chi2_cut, invM_cut);
       if(!pass) continue;
       
       // if a pair passes all constraints compare chi2, store lowest chi2
+      double chi2_seed = vtx_seed.vertex.chi2; // normalised but nDOF=1 for nTr=2      
       if(chi2_seed < chi2_min) {
 	isel = i; jsel =j;
 	chi2_min = chi2_seed;
@@ -274,10 +275,13 @@ ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::addTrack_best(ROOT::VecOps::RVec<e
     vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_vtx);
 
     // Constraints
-    bool pass = check_constraints(vtx_seed, tr_pair, PV, false, chi2_cut, invM_cut, chi2Tr_cut);
+    bool pass = check_constraints(vtx, tr_vtx, PV, false, chi2_cut, invM_cut, chi2Tr_cut);
     if(!pass) continue;
     
     // if a track passes all constraints compare chi2, store lowest chi2
+    double chi2_vtx = vtx.vertex.chi2; // normalised
+    double nDOF = 2*(iTr+1) - 3;       // nDOF = 2*nTr - 3
+    chi2_vtx = chi2_vtx * nDOF;
     if(chi2_vtx < chi2_min) {
       isel = i;
       chi2_min = chi2_vtx;
@@ -368,6 +372,8 @@ bool VertexFinderLCFIPlus::check_constraints(VertexingUtils::FCCAnalysesVertex v
   // if any constraint fails -> false
 
   bool result = true;
+
+  int iTr = chi2_tr.size() - 1;  // final track index
   
   // Constraints
   // chi2 < cut (9)
@@ -392,7 +398,6 @@ bool VertexFinderLCFIPlus::check_constraints(VertexingUtils::FCCAnalysesVertex v
   if(!seed) {
     // chi2_contribution(track) < threshold
     ROOT::VecOps::RVec<float> chi2_tr = vtx.reco_chi2;
-    int iTr = chi2_tr.size() - 1;                     // final track index
     if(chi2_tr[iTr] >= chi2Tr_cut) result = false;    // threshold = 5 ok?
   }
   //
