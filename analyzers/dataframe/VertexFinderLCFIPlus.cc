@@ -71,7 +71,8 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
     int i_nSV = i_result.size();
     nSV_jet.push_back(i_nSV);
 
-    result.insert(result.end(), i_result.begin(), i_result.end());
+    //result.insert(result.end(), i_result.begin(), i_result.end()); // compilation error
+    for(i_sv : i_result) result.push_back(i_sv);
     
     // clean-up
     i_result.clear();
@@ -391,6 +392,46 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::find
   //
   return result;
 }
+
+// bool VertexFinderLCFIPlus::check_constraints(VertexingUtils::FCCAnalysesVertex vtx,
+// 					     ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+// 					     VertexingUtils::FCCAnalysesVertex PV,
+// 					     bool seed,
+// 					     double chi2_cut, double invM_cut, double chi2Tr_cut) {
+//   // if all constraints pass -> true
+//   // if any constraint fails -> false
+
+//   bool result = true;
+  
+//   // Constraints
+//   // chi2 < cut (9)
+//   double chi2 = vtx.vertex.chi2; // normalised
+//   double nDOF = 2*(iTr+1) - 3;   // nDOF = 2*nTr - 3
+//   chi2 = chi2 * nDOF;
+//   if(chi2 >= chi2_cut) result = false;
+//   //
+//   // invM < cut (10GeV)
+//   double invM = VertexingUtils::get_invM(vtx);
+//   if(invM >= invM_cut) result = false;
+//   //
+//   // invM < sum of energy
+//   double E_tracks = 0.;
+//   for(edm4hep::TrackState tr_e : tracks) E_tracks += VertexingUtils::get_trackE(tr_e);
+//   if(invM >= E_tracks) result = false;
+//   //
+//   // momenta sum & vtx r on same side
+//   double angle = VertexingUtils::get_PV2vtx_angle(tracks, vtx, PV);
+//   if(angle<0) result = false;
+//   //
+//   if(!seed) {
+//     // chi2_contribution(track) < threshold
+//     ROOT::VecOps::RVec<float> chi2_tr = vtx.reco_chi2;
+//     int iTr = chi2_tr.size() - 1;                  // final track index
+//     if(chi2_tr[iTr] >= chi2Tr_cut) result = false; // threshold = 5 ok?
+//   }
+//   //
+//   return result;
+// }
 
 ROOT::VecOps::RVec<bool> VertexFinderLCFIPlus::isV0(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 						    VertexingUtils::FCCAnalysesVertex PV,
