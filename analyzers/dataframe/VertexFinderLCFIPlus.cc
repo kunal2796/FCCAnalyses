@@ -72,7 +72,7 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
     nSV_jet.push_back(i_nSV);
 
     //result.insert(result.end(), i_result.begin(), i_result.end()); // compilation error
-    for(i_sv : i_result) result.push_back(i_sv);
+    for(VertexingUtils::FCCAnalysesVertex i_sv : i_result) result.push_back(i_sv);
     
     // clean-up
     i_result.clear();
