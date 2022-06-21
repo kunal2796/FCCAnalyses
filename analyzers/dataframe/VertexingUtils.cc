@@ -116,7 +116,7 @@ float VertexingUtils::get_trackMom( edm4hep::TrackState & atrack ) {
 
 TMatrixDSym 
 VertexingUtils::get_trackCov( edm4hep::TrackState &  atrack) {
-  std::array<float, 15> covMatrix = atrack.covMatrix;
+  auto covMatrix = atrack.covMatrix;
   TMatrixDSym covM(5);
   
   double scale0 = 1e-3;
@@ -261,6 +261,19 @@ TMatrixDSym VertexingUtils::CovToACTS(TMatrixDSym Cov, TVectorD Par){
 }
 
 ////////////////////////////////////////////////////
+
+// get all reconstructed vertices in a single vector
+ROOT::VecOps::RVec<FCCAnalysesVertex> VertexingUtils::get_all_vertices( FCCAnalysesVertex PV,
+									FCCAnalysesSV SV ) {
+  // Returns a vector of all vertices (PV and SVs)
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
+  result.push_back(PV);
+  for (auto &p:SV.vtx){
+    result.push_back(p);
+  }
+  return result;  
+}
+
 
 // no of reconstructed SVs
 int VertexingUtils::get_n_SV( FCCAnalysesSV SV ) {

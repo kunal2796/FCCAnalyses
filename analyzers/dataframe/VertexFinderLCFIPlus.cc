@@ -1,13 +1,14 @@
 #include "VertexFinderLCFIPlus.h"
 #include <iostream>
 
-#include "TFile.h"
-#include "TString.h"
-
 using namespace VertexFinderLCFIPlus;
 
 bool debug_me = false;
-
+//
+const double m_pi = 0.13957039; // pi+- mass [GeV]
+const double m_p  = 0.93827208; // p+- mass [GeV]
+const double m_e  = 0.00051099; // e+- mass [GeV]
+//
 
 VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
 								ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
@@ -28,7 +29,6 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
   SV.vtx = result;
   SV.nSV_jet = nSV_jet;
 
-  int nJet = jets.size();
   ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks;
 
   // retrieve tracks from reco particles & get a vector with their indices in the reco collection
@@ -42,7 +42,7 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
 
   // find SVs inside jet loop
   //
-  for (unsigned int j=0; j<nJet; j++) {
+  for (unsigned int j=0; j<jets.size(); j++) {
 
     // remove primary tracks
     // separate non-primary tracks by jet
@@ -68,8 +68,7 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
     // start finding SVs
     ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> i_result = findSVfromTracks(tracks_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
 
-    int i_nSV = i_result.size();
-    nSV_jet.push_back(i_nSV);
+    nSV_jet.push_back(i_result.size());
 
     //result.insert(result.end(), i_result.begin(), i_result.end()); // compilation error
     for(VertexingUtils::FCCAnalysesVertex i_sv : i_result) result.push_back(i_sv);
@@ -175,19 +174,6 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::R
   return SV;
   //return result;
 }
-
-
-ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_all_vertices(VertexingUtils::FCCAnalysesVertex PV,
-											     VertexingUtils::FCCAnalysesSV SV) {
-  // Returns a vector of all vertices (PV and SVs)
-  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
-  result.push_back(PV);
-  for (auto &p:SV.vtx){
-    result.push_back(p);
-  }
-  return result;  
-}
-
 
 //
 ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::VertexSeed_best(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
@@ -434,10 +420,6 @@ ROOT::VecOps::RVec<bool> VertexFinderLCFIPlus::isV0(ROOT::VecOps::RVec<edm4hep::
   t_pair.push_back(tr_j);
   VertexingUtils::FCCAnalysesVertex V0;
   //
-  const double m_pi = 0.13957039; // pi+- mass [GeV]
-  const double m_p  = 0.93827208; // p+- mass
-  const double m_e  = 0.00051099; // e+- mass
-  //
   for(unsigned int i=0; i<nTr-1; i++) {
     if(result[i] == true) continue;
     t_pair[0] = np_tracks[i];
@@ -539,10 +521,6 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
   edm4hep::TrackState tr_j;
   tr_pair.push_back(tr_i);
   tr_pair.push_back(tr_j);
-  //
-  const double m_pi = 0.13957039; // pi+- mass [GeV]
-  const double m_p  = 0.93827208; // p+- mass
-  const double m_e  = 0.00051099; // e+- mass
   //
   for(unsigned int i=0; i<nTr-1; i++) {
     if(isInV0[i] == true) continue; // don't pair a track if it already forms a V0
@@ -663,10 +641,6 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
   
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm
 
-  const double m_pi = 0.13957039; // pi+- mass [GeV]
-  const double m_p  = 0.93827208; // p+- mass
-  const double m_e  = 0.00051099; // e+- mass
-
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
   // push empty tracks to make a size=2 vector
   edm4hep::TrackState tr_i;
@@ -676,7 +650,6 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 
   // find V0s inside the jet loop (only from non-primary tracks)
   // first separate reco particles by jet then get the associated tracks
-  int nJet = jets.size();
   ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks;
   
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks   = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
@@ -688,7 +661,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
   if(debug_me) std::cout<<"tracks extracted from the reco particles"<<std::endl;
   
   //
-  for (unsigned int j=0; j<nJet; j++) {
+  for (unsigned int j=0; j<jets.size(); j++) {
 
     int i_nSV = 0;
     
@@ -982,10 +955,6 @@ ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::constraints_Gamma(bool tight) {
 //   t_pair.push_back(tr_i);
 //   t_pair.push_back(tr_j);
 //   VertexingUtils::FCCAnalysesVertex V0;
-//   //
-//   const double m_pi = 0.13957039; // pi+- mass [GeV]
-//   const double m_p  = 0.93827208; // p+- mass
-//   const double m_e  = 0.00051099; // e+- mass
 //   //
 //   for(unsigned int i=0; i<nTr-1; i++) {
 //     if(result[i] == true) continue;

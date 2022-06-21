@@ -8,20 +8,9 @@
 #include "edm4hep/ReconstructedParticleData.h"
 #include "edm4hep/TrackState.h"
 
-#include "TVectorD.h"
-#include "TVector3.h"
-#include "TMatrixDSym.h"
-#include "TMath.h"
-#include "TDecompChol.h"
-#include "TMatrixD.h"
-
 #include "ReconstructedParticle2Track.h"
-#include "ReconstructedParticle2MC.h"
 #include "VertexFitterSimple.h"
 #include "VertexingUtils.h"
-
-#include "edm4hep/VertexData.h"
-#include "edm4hep/Vertex.h"
 
 #include "fastjet/JetDefinition.hh"
 
@@ -65,12 +54,6 @@ namespace VertexFinderLCFIPlus{
 					      bool V0_rej=true,
 					      double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
   
-  /** returns a vector of all vertices (PV and SVs), e.g to use in myUtils::get_Vertex_d2PV
-   *  first entry: PV, all subsequent entries: SVs
-   */
-  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_all_vertices( VertexingUtils::FCCAnalysesVertex PV,
-									  VertexingUtils::FCCAnalysesSV SV ); 
-
   /** returns indices of the best pair of tracks from a vector of (non-primary) tracks 
    *  default chi2 threshold is 9 and default invariant mass threshold is 10GeV
    */
@@ -132,6 +115,9 @@ namespace VertexFinderLCFIPlus{
 					 bool tight = true,
 					 double chi2_cut=9. ) ;
 
+  /** returns V0s reconstructed in each jet of the event (as an FCCAnalysesV0 object)
+   *  need to perform jet clustering before calling this function
+   */
   VertexingUtils::FCCAnalysesV0 get_V0s_jet( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
 					     ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 					     ROOT::VecOps::RVec<bool> isInPrimary,
