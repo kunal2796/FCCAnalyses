@@ -141,6 +141,19 @@ namespace VertexFinderLCFIPlus{
 					     bool tight = true,
 					     double chi2_cut=9. );
 
+  /** functions to fill constraint thresholds
+   *  tight  -> tight constraints
+   *  !tight -> loose constraints
+   *
+   *  [0] -> invariant mass lower limit [GeV]
+   *  [1] -> invariant mass upper limit [GeV]
+   *  [2] -> distance from PV [mm]
+   *  [3] -> colinearity
+   */
+  ROOT::VecOps::RVec<double> constraints_Ks(bool tight) ;
+  ROOT::VecOps::RVec<double> constraints_Lambda0(bool tight) ;
+  ROOT::VecOps::RVec<double> constraints_Gamma(bool tight) ;
+  
   /** returns indices of the all pairs of tracks that pass a set of constraints from a vector of (non-primary) tracks
    *  default chi2 threshold is 9 and default invariant mass threshold is 10GeV
    */

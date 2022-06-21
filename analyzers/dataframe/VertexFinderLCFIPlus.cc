@@ -418,6 +418,11 @@ ROOT::VecOps::RVec<bool> VertexFinderLCFIPlus::isV0(ROOT::VecOps::RVec<edm4hep::
   ROOT::VecOps::RVec<bool> result(nTr, false);
   // true -> forms a V0, false -> doesn't form a V0
   if(nTr<2) return result;
+
+  // set constraints (if(tight==true) tight_set)
+  ROOT::VecOps::RVec<double> isKs      = constraints_Ks(tight);
+  ROOT::VecOps::RVec<double> isLambda0 = constraints_Lambda0(tight);
+  ROOT::VecOps::RVec<double> isGamma   = constraints_Gamma(tight);
   
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
   
@@ -458,58 +463,32 @@ ROOT::VecOps::RVec<bool> VertexFinderLCFIPlus::isV0(ROOT::VecOps::RVec<edm4hep::
       // angle b/n V0 candidate momentum & PV-V0 displacement vector
       double p_r = VertexingUtils::get_PV2V0angle(V0, PV);
 
-      if(tight) {
-	// Ks
-	if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
-	  result[i] = true;
-	  result[j] = true;
-	  break;
-	}
-
-	// Lambda0
-	else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
-	  result[i] = true;
-	  result[j] = true;
-	  break;
-	}
-	else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
-	  result[i] = true;
-	  result[j] = true;
-	  break;
-	}
-
-	// photon conversion
-	else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
-	  result[i] = true;
-	  result[j] = true;
-	  break;
-	}	
+      // Ks
+      if(invM_Ks>isKs[0] && invM_Ks<isKs[1] && r>isKs[2] && p_r>isKs[3]) {
+	result[i] = true;
+	result[j] = true;
+	break;
       }
 
-      else {
-	// Ks
-	if(invM_Ks>0.488 && invM_Ks<0.508 && r>0.3 && p_r>0.999) {
-	  result[i] = true;
-	  result[j] = true;
-	}
-	
-	// Lambda0
-	else if(invM_Lambda1>1.106 && invM_Lambda1<1.126 && r>0.3 && p_r>0.999) {
-	  result[i] = true;
-	  result[j] = true;
-	}
-	else if(invM_Lambda2>1.106 && invM_Lambda2<1.126 && r>0.3 && p_r>0.999) {
-	  result[i] = true;
-	  result[j] = true;
-	}
-	
-	// photon conversion
-	else if(invM_Gamma<0.01 && r>9 && p_r>0.999) {
-	  result[i] = true;
-	  result[j] = true;
-	}	
+      // Lambda0
+      else if(invM_Lambda1>isLambda0[0] && invM_Lambda1<isLambda0[1] && r>isLambda0[2] && p_r>isLambda0[3]) {
+	result[i] = true;
+	result[j] = true;
+	break;
       }
-      
+      else if(invM_Lambda2>isLambda0[0] && invM_Lambda2<isLambda0[1] && r>isLambda0[2] && p_r>isLambda0[3]) {
+	result[i] = true;
+	result[j] = true;
+	break;
+      }
+
+      // photon conversion
+      else if(invM_Gamma<isGamma[1] && r>isGamma[2] && p_r>isGamma[3]) {
+	result[i] = true;
+	result[j] = true;
+	break;
+      }	
+      //  
     }
   }
 
@@ -546,6 +525,11 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
   int nTr = np_tracks.size();
   if(nTr<2) return result;
   ROOT::VecOps::RVec<bool> isInV0(nTr, false);
+
+  // set constraints (if(tight==true) tight_set)
+  ROOT::VecOps::RVec<double> isKs      = constraints_Ks(tight);
+  ROOT::VecOps::RVec<double> isLambda0 = constraints_Lambda0(tight);
+  ROOT::VecOps::RVec<double> isGamma   = constraints_Gamma(tight);
 
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
   
@@ -589,94 +573,48 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
       // angle b/n V0 candidate momentum & PV-V0 displacement vector
       double p_r = VertexingUtils::get_PV2V0angle(V0_vtx, PV);
 
-      if(tight) {
-	// Ks
-	if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
-	  if(debug_me) std::cout<<"Found a Ks"<<std::endl;
-	  isInV0[i] = true;
-	  isInV0[j] = true;
-	  vtx.push_back(V0_vtx);
-	  pdgAbs.push_back(310);
-	  invM.push_back(invM_Ks);
-	  break;
-	}
-      
-	// Lambda0
-	else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
-	  if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
-	  isInV0[i] = true;
-	  isInV0[j] = true;
-	  vtx.push_back(V0_vtx);
-	  pdgAbs.push_back(3122);
-	  invM.push_back(invM_Lambda1);
-	  break;
-	}
-	else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
-	  if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
-	  isInV0[i] = true;
-	  isInV0[j] = true;
-	  vtx.push_back(V0_vtx);
-	  pdgAbs.push_back(3122);
-	  invM.push_back(invM_Lambda2);
-	  break;
-	}
-	
-	// photon conversion
-	else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
-	  if(debug_me) std::cout<<"Found a Photon coversion"<<std::endl;
-	  isInV0[i] = true;
-	  isInV0[j] = true;
-	  vtx.push_back(V0_vtx);
-	  pdgAbs.push_back(22);
-	  invM.push_back(invM_Gamma);
-	  break;
-	}
-      }
-
-      else {
-	// Ks
-	if(invM_Ks>0.488 && invM_Ks<0.508 && r>0.3 && p_r>0.999) {
-	  if(debug_me) std::cout<<"Found a Ks"<<std::endl;
-	  isInV0[i] = true;
-	  isInV0[j] = true;
-	  vtx.push_back(V0_vtx);
-	  pdgAbs.push_back(310);
-	  invM.push_back(invM_Ks);
-	  break;
-	}
-      
-	// Lambda0
-	else if(invM_Lambda1>1.106 && invM_Lambda1<1.126 && r>0.3 && p_r>0.999) {
-	  if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
-	  isInV0[i] = true;
-	  isInV0[j] = true;
-	  vtx.push_back(V0_vtx);
-	  pdgAbs.push_back(3122);
-	  invM.push_back(invM_Lambda1);
-	  break;
-	}
-	else if(invM_Lambda2>1.106 && invM_Lambda2<1.126 && r>0.3 && p_r>0.999) {
-	  if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
-	  isInV0[i] = true;
-	  isInV0[j] = true;
-	  vtx.push_back(V0_vtx);
-	  pdgAbs.push_back(3122);
-	  invM.push_back(invM_Lambda2);
-	  break;
-	}
-	
-	// photon conversion
-	else if(invM_Gamma<0.01 && r>9 && p_r>0.999) {
-	  if(debug_me) std::cout<<"Found a Photon coversion"<<std::endl;
-	  isInV0[i] = true;
-	  isInV0[j] = true;
-	  vtx.push_back(V0_vtx);
-	  pdgAbs.push_back(22);
-	  invM.push_back(invM_Gamma);
-	  break;
-	}
+      // Ks
+      if(invM_Ks>isKs[0] && invM_Ks<isKs[1] && r>isKs[2] && p_r>isKs[3]) {
+	if(debug_me) std::cout<<"Found a Ks"<<std::endl;
+	isInV0[i] = true;
+	isInV0[j] = true;
+	vtx.push_back(V0_vtx);
+	pdgAbs.push_back(310);
+	invM.push_back(invM_Ks);
+	break;
       }
       
+      // Lambda0
+      else if(invM_Lambda1>isLambda0[0] && invM_Lambda1<isLambda0[1] && r>isLambda0[2] && p_r>isLambda0[3]) {
+	if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
+	isInV0[i] = true;
+	isInV0[j] = true;
+	vtx.push_back(V0_vtx);
+	pdgAbs.push_back(3122);
+	invM.push_back(invM_Lambda1);
+	break;
+      }
+      else if(invM_Lambda2>isLambda0[0] && invM_Lambda2<isLambda0[1] && r>isLambda0[2] && p_r>isLambda0[3]) {
+	if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
+	isInV0[i] = true;
+	isInV0[j] = true;
+	vtx.push_back(V0_vtx);
+	pdgAbs.push_back(3122);
+	invM.push_back(invM_Lambda2);
+	break;
+      }
+	
+      // photon conversion
+      else if(invM_Gamma<isGamma[1] && r>isGamma[2] && p_r>isGamma[3]) {
+	if(debug_me) std::cout<<"Found a Photon coversion"<<std::endl;
+	isInV0[i] = true;
+	isInV0[j] = true;
+	vtx.push_back(V0_vtx);
+	pdgAbs.push_back(22);
+	invM.push_back(invM_Gamma);
+	break;
+      }
+      //
     }
   }
 
@@ -717,6 +655,11 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 
   int n_par = recoparticles.size();
   if(n_par<2) return result;
+
+  // set constraints (if(tight==true) tight_set)
+  ROOT::VecOps::RVec<double> isKs      = constraints_Ks(tight);
+  ROOT::VecOps::RVec<double> isLambda0 = constraints_Lambda0(tight);
+  ROOT::VecOps::RVec<double> isGamma   = constraints_Gamma(tight);
   
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm
 
@@ -793,102 +736,52 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	// angle b/n V0 candidate momentum & PV-V0 displacement vector
 	double p_r = VertexingUtils::get_PV2V0angle(V0_vtx, PV);
 	
-	if(tight) {
-	  // Ks
-	  if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
-	    if(debug_me) std::cout<<"Found a Ks"<<std::endl;
-	    isInV0[i] = true;
-	    isInV0[j] = true;
-	    vtx.push_back(V0_vtx);
-	    pdgAbs.push_back(310);
-	    invM.push_back(invM_Ks);
-	    i_nSV++;
-	    break;
-	  }
+	// Ks
+	if(invM_Ks>isKs[0] && invM_Ks<isKs[1] && r>isKs[2] && p_r>isKs[3]) {
+	  if(debug_me) std::cout<<"Found a Ks"<<std::endl;
+	  isInV0[i] = true;
+	  isInV0[j] = true;
+	  vtx.push_back(V0_vtx);
+	  pdgAbs.push_back(310);
+	  invM.push_back(invM_Ks);
+	  i_nSV++;
+	  break;
+	}
 	  
-	  // Lambda0
-	  else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
-	    if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
-	    isInV0[i] = true;
-	    isInV0[j] = true;
-	    vtx.push_back(V0_vtx);
-	    pdgAbs.push_back(3122);
-	    invM.push_back(invM_Lambda1);
-	    i_nSV++;
-	    break;
-	  }
-	  else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
-	    if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
-	    isInV0[i] = true;
-	    isInV0[j] = true;
-	    vtx.push_back(V0_vtx);
-	    pdgAbs.push_back(3122);
-	    invM.push_back(invM_Lambda2);
-	    i_nSV++;
-	    break;
-	  }
-	
-	  // photon conversion
-	  else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
-	    if(debug_me) std::cout<<"Found a Photon coversion"<<std::endl;
-	    isInV0[i] = true;
-	    isInV0[j] = true;
-	    vtx.push_back(V0_vtx);
-	    pdgAbs.push_back(22);
-	    invM.push_back(invM_Gamma);
-	    i_nSV++;
-	    break;
-	  }
+	// Lambda0
+	else if(invM_Lambda1>isLambda0[0] && invM_Lambda1<isLambda0[1] && r>isLambda0[2] && p_r>isLambda0[3]) {
+	  if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
+	  isInV0[i] = true;
+	  isInV0[j] = true;
+	  vtx.push_back(V0_vtx);
+	  pdgAbs.push_back(3122);
+	  invM.push_back(invM_Lambda1);
+	  i_nSV++;
+	  break;
 	}
-
-	else {
-	  // Ks
-	  if(invM_Ks>0.488 && invM_Ks<0.508 && r>0.3 && p_r>0.999) {
-	    if(debug_me) std::cout<<"Found a Ks"<<std::endl;
-	    isInV0[i] = true;
-	    isInV0[j] = true;
-	    vtx.push_back(V0_vtx);
-	    pdgAbs.push_back(310);
-	    invM.push_back(invM_Ks);
-	    i_nSV++;
-	    break;
-	  }
-      
-	  // Lambda0
-	  else if(invM_Lambda1>1.106 && invM_Lambda1<1.126 && r>0.3 && p_r>0.999) {
-	    if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
-	    isInV0[i] = true;
-	    isInV0[j] = true;
-	    vtx.push_back(V0_vtx);
-	    pdgAbs.push_back(3122);
-	    invM.push_back(invM_Lambda1);
-	    i_nSV++;
-	    break;
-	  }
-	  else if(invM_Lambda2>1.106 && invM_Lambda2<1.126 && r>0.3 && p_r>0.999) {
-	    if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
-	    isInV0[i] = true;
-	    isInV0[j] = true;
-	    vtx.push_back(V0_vtx);
-	    pdgAbs.push_back(3122);
-	    invM.push_back(invM_Lambda2);
-	    i_nSV++;
-	    break;
-	  }
-	
-	  // photon conversion
-	  else if(invM_Gamma<0.01 && r>9 && p_r>0.999) {
-	    if(debug_me) std::cout<<"Found a Photon coversion"<<std::endl;
-	    isInV0[i] = true;
-	    isInV0[j] = true;
-	    vtx.push_back(V0_vtx);
-	    pdgAbs.push_back(22);
-	    invM.push_back(invM_Gamma);
-	    i_nSV++;
-	    break;
-	  }
+	else if(invM_Lambda2>isLambda0[0] && invM_Lambda2<isLambda0[1] && r>isLambda0[2] && p_r>isLambda0[3]) {
+	  if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
+	  isInV0[i] = true;
+	  isInV0[j] = true;
+	  vtx.push_back(V0_vtx);
+	  pdgAbs.push_back(3122);
+	  invM.push_back(invM_Lambda2);
+	  i_nSV++;
+	  break;
 	}
-      
+	
+	// photon conversion
+	else if(invM_Gamma<isGamma[1] && r>isGamma[2] && p_r>isGamma[3]) {
+	  if(debug_me) std::cout<<"Found a Photon coversion"<<std::endl;
+	  isInV0[i] = true;
+	  isInV0[j] = true;
+	  vtx.push_back(V0_vtx);
+	  pdgAbs.push_back(22);
+	  invM.push_back(invM_Gamma);
+	  i_nSV++;
+	  break;
+	}
+	//      
       }
     }
 
@@ -907,6 +800,78 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
   return result;
 }
 
+
+// functions to fill constraint thresholds
+// tight  -> tight constraints
+// !tight -> loose constraints
+//
+// [0] -> invariant mass lower limit [GeV]
+// [1] -> invariant mass upper limit [GeV]
+// [2] -> distance from PV [mm]
+// [3] -> colinearity
+
+ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::constraints_Ks(bool tight) {
+
+  ROOT::VecOps::RVec<double> result(4, 0);
+
+  if(tight) {
+    result[0] = 0.493;
+    result[1] = 0.503;
+    result[2] = 0.5;
+    result[3] = 0.999;
+  }
+
+  else {
+    result[0] = 0.488;
+    result[1] = 0.508;
+    result[2] = 0.3;
+    result[3] = 0.999;
+  }
+  //
+  return result;
+}
+
+ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::constraints_Lambda0(bool tight) {
+
+  ROOT::VecOps::RVec<double> result(4, 0);
+
+  if(tight) {
+    result[0] = 1.111;
+    result[1] = 1.121;
+    result[2] = 0.5;
+    result[3] = 0.99995;
+  }
+
+  else {
+    result[0] = 1.106;
+    result[1] = 1.126;
+    result[2] = 0.3;
+    result[3] = 0.999;
+  }
+  //
+  return result;
+}
+
+ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::constraints_Gamma(bool tight) {
+
+  ROOT::VecOps::RVec<double> result(4, 0);
+
+  if(tight) {
+    result[0] = 0.;
+    result[1] = 0.005;
+    result[2] = 9;
+    result[3] = 0.99995;
+  }
+
+  else {
+    result[0] = 0.;
+    result[1] = 0.01;
+    result[2] = 9;
+    result[3] = 0.999;
+  }
+  //
+  return result;
+}
 
 // ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> VertexFinderLCFIPlus::VertexSeed_all(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
 // 					  				            VertexingUtils::FCCAnalysesVertex PV,
@@ -988,6 +953,118 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 //     // if a pair passes all constraints add to the vtx
 //     result.push_back(i);
 //     iTr++;
+//   }
+
+//   return result;
+// }
+
+// ROOT::VecOps::RVec<bool> VertexFinderLCFIPlus::isV0(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+// 						    VertexingUtils::FCCAnalysesVertex PV,
+// 						    bool tight) {
+//   // V0 rejection
+//   //
+//   // take all non-primary tracks & assign "true" to pairs that form V0
+//   // if(tight)  -> tight constraints
+//   // if(!tight) -> loose constraints
+
+//   int nTr = np_tracks.size();
+
+//   ROOT::VecOps::RVec<bool> result(nTr, false);
+//   // true -> forms a V0, false -> doesn't form a V0
+//   if(nTr<2) return result;
+  
+//   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
+  
+//   ROOT::VecOps::RVec<edm4hep::TrackState> t_pair;
+//   // push empty tracks to make a size=2 vector
+//   edm4hep::TrackState tr_i;
+//   edm4hep::TrackState tr_j;
+//   t_pair.push_back(tr_i);
+//   t_pair.push_back(tr_j);
+//   VertexingUtils::FCCAnalysesVertex V0;
+//   //
+//   const double m_pi = 0.13957039; // pi+- mass [GeV]
+//   const double m_p  = 0.93827208; // p+- mass
+//   const double m_e  = 0.00051099; // e+- mass
+//   //
+//   for(unsigned int i=0; i<nTr-1; i++) {
+//     if(result[i] == true) continue;
+//     t_pair[0] = np_tracks[i];
+
+//     for(unsigned int j=i+1; j<nTr; j++) {
+//       if(result[j] == true) continue;
+//       t_pair[1] = np_tracks[j];
+
+//       V0 = VertexFitterSimple::VertexFitter_Tk(2, t_pair);
+
+//       // invariant masses for V0 candidates
+//       double invM_Ks      = VertexingUtils::get_invM_pairs(V0, m_pi, m_pi);
+//       double invM_Lambda1 = VertexingUtils::get_invM_pairs(V0, m_pi, m_p);
+//       double invM_Lambda2 = VertexingUtils::get_invM_pairs(V0, m_p, m_pi);
+//       double invM_Gamma   = VertexingUtils::get_invM_pairs(V0, m_e, m_e);
+
+//       // V0 candidate distance from PV
+//       edm4hep::Vector3f r_V0 = V0.vertex.position; // in mm
+//       // does Vector3f class has similar functions as root vectors?
+//       TVector3 r_V0_PV(r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
+//       double r = r_V0_PV.Mag(); // in mm
+
+//       // angle b/n V0 candidate momentum & PV-V0 displacement vector
+//       double p_r = VertexingUtils::get_PV2V0angle(V0, PV);
+
+//       if(tight) {
+// 	// Ks
+// 	if(invM_Ks>0.493 && invM_Ks<0.503 && r>0.5 && p_r>0.999) {
+// 	  result[i] = true;
+// 	  result[j] = true;
+// 	  break;
+// 	}
+
+// 	// Lambda0
+// 	else if(invM_Lambda1>1.111 && invM_Lambda1<1.121 && r>0.5 && p_r>0.99995) {
+// 	  result[i] = true;
+// 	  result[j] = true;
+// 	  break;
+// 	}
+// 	else if(invM_Lambda2>1.111 && invM_Lambda2<1.121 && r>0.5 && p_r>0.99995) {
+// 	  result[i] = true;
+// 	  result[j] = true;
+// 	  break;
+// 	}
+
+// 	// photon conversion
+// 	else if(invM_Gamma<0.005 && r>9 && p_r>0.99995) {
+// 	  result[i] = true;
+// 	  result[j] = true;
+// 	  break;
+// 	}	
+//       }
+
+//       else {
+// 	// Ks
+// 	if(invM_Ks>0.488 && invM_Ks<0.508 && r>0.3 && p_r>0.999) {
+// 	  result[i] = true;
+// 	  result[j] = true;
+// 	}
+	
+// 	// Lambda0
+// 	else if(invM_Lambda1>1.106 && invM_Lambda1<1.126 && r>0.3 && p_r>0.999) {
+// 	  result[i] = true;
+// 	  result[j] = true;
+// 	}
+// 	else if(invM_Lambda2>1.106 && invM_Lambda2<1.126 && r>0.3 && p_r>0.999) {
+// 	  result[i] = true;
+// 	  result[j] = true;
+// 	}
+	
+// 	// photon conversion
+// 	else if(invM_Gamma<0.01 && r>9 && p_r>0.999) {
+// 	  result[i] = true;
+// 	  result[j] = true;
+// 	}	
+//       }
+      
+//     }
 //   }
 
 //   return result;
