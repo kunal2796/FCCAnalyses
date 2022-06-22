@@ -190,8 +190,9 @@ ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::VertexSeed_best(ROOT::VecOps::RVec
   int nTr = tracks.size();
   // push empty tracks to make a size=2 vector
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
-  tr_pair.push_back(tracks[0]);
-  tr_pair.push_back(tracks[1]);
+  edm4hep::TrackState tr_i, tr_j;
+  tr_pair.push_back(tr_i);
+  tr_pair.push_back(tr_j);
   VertexingUtils::FCCAnalysesVertex vtx_seed;
   double chi2_min = 99;
   
@@ -251,7 +252,8 @@ ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::addTrack_best(ROOT::VecOps::RVec<e
   }
   int iTr = tr_vtx.size();
   // add an empty track to increase vector size by 1
-  tr_vtx.push_back(tracks[0]);
+  edm4hep::TrackState tr_i;
+  tr_vtx.push_back(tr_i);
 
   // find best track to add to the vtx
   for(unsigned int i=0; i<nTr; i++) {
@@ -414,8 +416,7 @@ ROOT::VecOps::RVec<bool> VertexFinderLCFIPlus::isV0(ROOT::VecOps::RVec<edm4hep::
   
   ROOT::VecOps::RVec<edm4hep::TrackState> t_pair;
   // push empty tracks to make a size=2 vector
-  edm4hep::TrackState tr_i;
-  edm4hep::TrackState tr_j;
+  edm4hep::TrackState tr_i, tr_j;
   t_pair.push_back(tr_i);
   t_pair.push_back(tr_j);
   VertexingUtils::FCCAnalysesVertex V0;
@@ -517,8 +518,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
   
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
   // push empty tracks to make a size=2 vector
-  edm4hep::TrackState tr_i;
-  edm4hep::TrackState tr_j;
+  edm4hep::TrackState tr_i, tr_j;
   tr_pair.push_back(tr_i);
   tr_pair.push_back(tr_j);
   //
@@ -643,8 +643,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
   // push empty tracks to make a size=2 vector
-  edm4hep::TrackState tr_i;
-  edm4hep::TrackState tr_j;
+  edm4hep::TrackState tr_i, tr_j;
   tr_pair.push_back(tr_i);
   tr_pair.push_back(tr_j);
 
@@ -830,14 +829,12 @@ ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::constraints_Gamma(bool tight) {
   ROOT::VecOps::RVec<double> result(4, 0);
 
   if(tight) {
-    result[0] = 0.;
     result[1] = 0.005;
     result[2] = 9;
     result[3] = 0.99995;
   }
 
   else {
-    result[0] = 0.;
     result[1] = 0.01;
     result[2] = 9;
     result[3] = 0.999;
