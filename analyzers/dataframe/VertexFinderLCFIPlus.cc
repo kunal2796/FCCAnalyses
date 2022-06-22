@@ -511,7 +511,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
       if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
       tr_pair[1] = np_tracks[j];
 
-      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(&V0_vtx, tr_pair, PV, true, chi2_cut);
+      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0_vtx, tr_pair, PV, true, chi2_cut);
       if(V0_cand[0] == -1) continue;
       
       // Ks
@@ -648,7 +648,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
 	tr_pair[1] = np_tracks[j];
 	
-	ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(&V0_vtx, tr_pair, PV, true, chi2_cut);
+	ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0_vtx, tr_pair, PV, true, chi2_cut);
 	if(V0_cand[0] == -1) continue;
 	
 	// Ks
@@ -716,7 +716,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 }
 
 //
-ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::get_V0candidate(VertexingUtils::FCCAnalysesVertex V0_vtx,
+ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::get_V0candidate(VertexingUtils::FCCAnalysesVertex &V0_vtx,
 								 ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair,
 								 VertexingUtils::FCCAnalysesVertex PV,
 								 bool chi2,
