@@ -127,6 +127,20 @@ namespace VertexFinderLCFIPlus{
 					     bool tight = true,
 					     double chi2_cut=9. );
 
+  /** returns invariant mass, distance from PV, and colliniarity variables for all V0 candidates
+   *  [0] -> invM_Ks [GeV]
+   *  [1] -> invM_Lambda1 [GeV]
+   *  [2] -> invM_Lambda2 [GeV]
+   *  [3] -> invM_Gamma [GeV]
+   *  [4] -> r [mm]
+   *  [5] -> r.p [unit vector]
+   *  boolean check for if chi2 constraint needs to be checked
+   *  skip the candidate with output size 0 - doesn't pass the chi2 cut
+   */
+  ROOT::VecOps::RVec<double> get_V0candidates( ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair,
+					       bool chi2,
+					       double chi2_cut=9. );
+
   /** functions to fill constraint thresholds
    *  tight  -> tight constraints
    *  !tight -> loose constraints
