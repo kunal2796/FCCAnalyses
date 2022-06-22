@@ -529,7 +529,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
       tr_pair[1] = np_tracks[j];
 
       ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0_vtx, tr_pair, PV, true, chi2_cut);
-      if(V0_cand.size() == 0) continue;
+      if(V0_cand[0] == -1) continue;
       
       // V0_vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_pair);
 
@@ -687,7 +687,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	tr_pair[1] = np_tracks[j];
 	
 	ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0_vtx, tr_pair, PV, true, chi2_cut);
-	if(V0_cand.size() == 0) continue;
+	if(V0_cand[0] == -1) continue;
 	
 	// Ks
 	if(V0_cand[0]>isKs[0] && V0_cand[0]<isKs[1] && V0_cand[4]>isKs[2] && V0_cand[5]>isKs[3]) {
@@ -770,7 +770,7 @@ ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::get_V0candidate(VertexingUtils:
   // [5] -> r.p [unit vector]
   // skip the candidate with output size 0
   
-  ROOT::VecOps::RVec<double> result;
+  ROOT::VecOps::RVec<double> result(6, -1);
 
   edm4hep::Vector3f r_PV = PV.vertex.position; // in mm
   
