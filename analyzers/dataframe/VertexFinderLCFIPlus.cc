@@ -428,23 +428,6 @@ ROOT::VecOps::RVec<bool> VertexFinderLCFIPlus::isV0(ROOT::VecOps::RVec<edm4hep::
       t_pair[1] = np_tracks[j];
 
       ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0, t_pair, PV, false);
-      
-      // V0 = VertexFitterSimple::VertexFitter_Tk(2, t_pair);
-
-      // // invariant masses for V0 candidates
-      // double invM_Ks      = VertexingUtils::get_invM_pairs(V0, m_pi, m_pi);
-      // double invM_Lambda1 = VertexingUtils::get_invM_pairs(V0, m_pi, m_p);
-      // double invM_Lambda2 = VertexingUtils::get_invM_pairs(V0, m_p, m_pi);
-      // double invM_Gamma   = VertexingUtils::get_invM_pairs(V0, m_e, m_e);
-
-      // // V0 candidate distance from PV
-      // edm4hep::Vector3f r_V0 = V0.vertex.position; // in mm
-      // // does Vector3f class has similar functions as root vectors?
-      // TVector3 r_V0_PV(r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
-      // double r = r_V0_PV.Mag(); // in mm
-
-      // // angle b/n V0 candidate momentum & PV-V0 displacement vector
-      // double p_r = VertexingUtils::get_PV2V0angle(V0, PV);
 
       // Ks
       if(V0_cand[0]>isKs[0] && V0_cand[0]<isKs[1] && V0_cand[4]>isKs[2] && V0_cand[5]>isKs[3]) {
@@ -528,30 +511,9 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
       if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
       tr_pair[1] = np_tracks[j];
 
-      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0_vtx, tr_pair, PV, true, chi2_cut);
+      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(&V0_vtx, tr_pair, PV, true, chi2_cut);
       if(V0_cand[0] == -1) continue;
       
-      // V0_vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_pair);
-
-      // // constraint on chi2: chi2 < cut (9)
-      // double chi2_V0 = V0_vtx.vertex.chi2; // normalised but DOF=1
-      // if(chi2_V0 >= chi2_cut) continue;
-
-      // // invariant masses for V0 candidates
-      // double invM_Ks      = VertexingUtils::get_invM_pairs(V0_vtx, m_pi, m_pi);
-      // double invM_Lambda1 = VertexingUtils::get_invM_pairs(V0_vtx, m_pi, m_p);
-      // double invM_Lambda2 = VertexingUtils::get_invM_pairs(V0_vtx, m_p, m_pi);
-      // double invM_Gamma   = VertexingUtils::get_invM_pairs(V0_vtx, m_e, m_e);
-
-      // // V0 candidate distance from PV
-      // edm4hep::Vector3f r_V0 = V0_vtx.vertex.position; // in mm
-      // // does Vector3f class has similar functions as root vectors?
-      // TVector3 r_V0_PV(r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
-      // double r = r_V0_PV.Mag(); // in mm
-
-      // // angle b/n V0 candidate momentum & PV-V0 displacement vector
-      // double p_r = VertexingUtils::get_PV2V0angle(V0_vtx, PV);
-
       // Ks
       if(V0_cand[0]>isKs[0] && V0_cand[0]<isKs[1] && V0_cand[4]>isKs[2] && V0_cand[5]>isKs[3]) {
 	if(debug_me) std::cout<<"Found a Ks"<<std::endl;
@@ -686,7 +648,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
 	tr_pair[1] = np_tracks[j];
 	
-	ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0_vtx, tr_pair, PV, true, chi2_cut);
+	ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(&V0_vtx, tr_pair, PV, true, chi2_cut);
 	if(V0_cand[0] == -1) continue;
 	
 	// Ks
