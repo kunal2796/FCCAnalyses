@@ -137,7 +137,7 @@ namespace VertexFinderLCFIPlus{
    *  boolean check for if chi2 constraint needs to be checked
    *  skip the candidate with output size 0 - doesn't pass the chi2 cut
    */
-  ROOT::VecOps::RVec<double> get_V0candidate( VertexingUtils::FCCAnalysesVertex V0_vtx,
+  ROOT::VecOps::RVec<double> get_V0candidate( VertexingUtils::FCCAnalysesVertex &V0_vtx,
 					      ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair,
 					      VertexingUtils::FCCAnalysesVertex PV,
 					      bool chi2,
