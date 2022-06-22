@@ -137,9 +137,9 @@ namespace VertexFinderLCFIPlus{
    *  boolean check for if chi2 constraint needs to be checked
    *  skip the candidate with output size 0 - doesn't pass the chi2 cut
    */
-  ROOT::VecOps::RVec<double> get_V0candidates( ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair,
-					       bool chi2,
-					       double chi2_cut=9. );
+  ROOT::VecOps::RVec<double> get_V0candidate( ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair,
+					      bool chi2,
+					      double chi2_cut=9. );
 
   /** functions to fill constraint thresholds
    *  tight  -> tight constraints

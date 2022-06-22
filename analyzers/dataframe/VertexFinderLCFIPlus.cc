@@ -412,8 +412,6 @@ ROOT::VecOps::RVec<bool> VertexFinderLCFIPlus::isV0(ROOT::VecOps::RVec<edm4hep::
   ROOT::VecOps::RVec<double> isLambda0 = constraints_Lambda0(tight);
   ROOT::VecOps::RVec<double> isGamma   = constraints_Gamma(tight);
   
-  edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
-  
   ROOT::VecOps::RVec<edm4hep::TrackState> t_pair;
   // push empty tracks to make a size=2 vector
   edm4hep::TrackState tr_i, tr_j;
@@ -429,7 +427,7 @@ ROOT::VecOps::RVec<bool> VertexFinderLCFIPlus::isV0(ROOT::VecOps::RVec<edm4hep::
       if(result[j] == true) continue;
       t_pair[1] = np_tracks[j];
 
-      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(t_pair, false);
+      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(t_pair, PV, false);
       
       // V0 = VertexFitterSimple::VertexFitter_Tk(2, t_pair);
 
@@ -516,8 +514,6 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
   ROOT::VecOps::RVec<double> isLambda0 = constraints_Lambda0(tight);
   ROOT::VecOps::RVec<double> isGamma   = constraints_Gamma(tight);
 
-  edm4hep::Vector3f r_PV = PV.vertex.position; // in mm  
-  
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
   // push empty tracks to make a size=2 vector
   edm4hep::TrackState tr_i, tr_j;
@@ -532,7 +528,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
       if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
       tr_pair[1] = np_tracks[j];
 
-      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(tr_pair, true, chi2_cut);
+      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(tr_pair, PV, true, chi2_cut);
       if(V0_cand.size() == 0) continue;
       
       // V0_vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_pair);
@@ -563,7 +559,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
 	isInV0[j] = true;
 	vtx.push_back(V0_vtx);
 	pdgAbs.push_back(310);
-	invM.push_back(invM_Ks);
+	invM.push_back(V0_cand[0]);
 	break;
       }
       
@@ -574,7 +570,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
 	isInV0[j] = true;
 	vtx.push_back(V0_vtx);
 	pdgAbs.push_back(3122);
-	invM.push_back(invM_Lambda1);
+	invM.push_back(V0_cand[1]);
 	break;
       }
       else if(V0_cand[2]>isLambda0[0] && V0_cand[2]<isLambda0[1] && V0_cand[4]>isLambda0[2] && V0_cand[5]>isLambda0[3]) {
@@ -583,7 +579,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
 	isInV0[j] = true;
 	vtx.push_back(V0_vtx);
 	pdgAbs.push_back(3122);
-	invM.push_back(invM_Lambda2);
+	invM.push_back(V0_cand[2]);
 	break;
       }
 	
@@ -594,7 +590,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
 	isInV0[j] = true;
 	vtx.push_back(V0_vtx);
 	pdgAbs.push_back(22);
-	invM.push_back(invM_Gamma);
+	invM.push_back(V0_cand[3]);
 	break;
       }
       //
@@ -644,8 +640,6 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
   ROOT::VecOps::RVec<double> isLambda0 = constraints_Lambda0(tight);
   ROOT::VecOps::RVec<double> isGamma   = constraints_Gamma(tight);
   
-  edm4hep::Vector3f r_PV = PV.vertex.position; // in mm
-
   ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
   // push empty tracks to make a size=2 vector
   edm4hep::TrackState tr_i, tr_j;
@@ -692,7 +686,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
 	tr_pair[1] = np_tracks[j];
 	
-	ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(tr_pair, true, chi2_cut);
+	ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(tr_pair, PV, true, chi2_cut);
 	if(V0_cand.size() == 0) continue;
 	
 	// Ks
@@ -702,7 +696,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	  isInV0[j] = true;
 	  vtx.push_back(V0_vtx);
 	  pdgAbs.push_back(310);
-	  invM.push_back(invM_Ks);
+	  invM.push_back(V0_cand[0]);
 	  i_nSV++;
 	  break;
 	}
@@ -714,7 +708,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	  isInV0[j] = true;
 	  vtx.push_back(V0_vtx);
 	  pdgAbs.push_back(3122);
-	  invM.push_back(invM_Lambda1);
+	  invM.push_back(V0_cand[1]);
 	  i_nSV++;
 	  break;
 	}
@@ -724,7 +718,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	  isInV0[j] = true;
 	  vtx.push_back(V0_vtx);
 	  pdgAbs.push_back(3122);
-	  invM.push_back(invM_Lambda2);
+	  invM.push_back(V0_cand[2]);
 	  i_nSV++;
 	  break;
 	}
@@ -736,7 +730,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	  isInV0[j] = true;
 	  vtx.push_back(V0_vtx);
 	  pdgAbs.push_back(22);
-	  invM.push_back(invM_Gamma);
+	  invM.push_back(V0_cand[3]);
 	  i_nSV++;
 	  break;
 	}
@@ -760,9 +754,10 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 }
 
 //
-ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::get_V0candidates(ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair,
-								  bool chi2,
-								  double chi2_cut)
+ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::get_V0candidate(ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair,
+								 VertexingUtils::FCCAnalysesVertex PV,
+								 bool chi2,
+								 double chi2_cut)
 {
   // get invariant mass, distance from PV, and colliniarity variables for all V0 candidates
   
@@ -775,6 +770,8 @@ ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::get_V0candidates(ROOT::VecOps::
   // skip the candidate with output size 0
   
   ROOT::VecOps::RVec<double> result;
+
+  edm4hep::Vector3f r_PV = PV.vertex.position; // in mm
   
   V0_vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_pair);
 
