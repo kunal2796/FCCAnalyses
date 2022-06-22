@@ -427,7 +427,7 @@ ROOT::VecOps::RVec<bool> VertexFinderLCFIPlus::isV0(ROOT::VecOps::RVec<edm4hep::
       if(result[j] == true) continue;
       t_pair[1] = np_tracks[j];
 
-      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(t_pair, PV, false);
+      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0, t_pair, PV, false);
       
       // V0 = VertexFitterSimple::VertexFitter_Tk(2, t_pair);
 
@@ -528,7 +528,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
       if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
       tr_pair[1] = np_tracks[j];
 
-      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(tr_pair, PV, true, chi2_cut);
+      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0_vtx, tr_pair, PV, true, chi2_cut);
       if(V0_cand.size() == 0) continue;
       
       // V0_vtx = VertexFitterSimple::VertexFitter_Tk(2, tr_pair);
@@ -686,7 +686,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 	if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
 	tr_pair[1] = np_tracks[j];
 	
-	ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(tr_pair, PV, true, chi2_cut);
+	ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0_vtx, tr_pair, PV, true, chi2_cut);
 	if(V0_cand.size() == 0) continue;
 	
 	// Ks
@@ -754,7 +754,8 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 }
 
 //
-ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::get_V0candidate(ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair,
+ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::get_V0candidate(VertexingUtils::FCCAnalysesVertex V0_vtx,
+								 ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair,
 								 VertexingUtils::FCCAnalysesVertex PV,
 								 bool chi2,
 								 double chi2_cut)
