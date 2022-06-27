@@ -4,7 +4,7 @@
 using namespace VertexFinderLCFIPlus;
 
 bool debug_me = false;
-//
+// if particle masses defined in a dedicated file, call those rather than defining here
 const double m_pi = 0.13957039; // pi+- mass [GeV]
 const double m_p  = 0.93827208; // p+- mass [GeV]
 const double m_e  = 0.00051099; // e+- mass [GeV]
@@ -20,8 +20,6 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
 								double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
   // find SVs using LCFI+ (clustering first)
-  // change to vec of vec (RVec of RVec breaking) to separate SV from diff jets, currently don't separate SVs by jet
-  // added a vector containing number of SVs per jet
   
   VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
@@ -41,11 +39,9 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
   if(debug_me) std::cout<<"tracks extracted from the reco particles"<<std::endl;
 
   // find SVs inside jet loop
-  //
   for (unsigned int j=0; j<jets.size(); j++) {
 
-    // remove primary tracks
-    // separate non-primary tracks by jet
+    // remove primary tracks & separate non-primary tracks by jet
     std::vector<int> i_jetconsti = jet_consti[j];
     for (int ctr=0; ctr<tracks.size(); ctr++) {
       if(isInPrimary[ctr]) continue; // remove primary tracks
@@ -56,8 +52,7 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
     
     if(debug_me) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in jet#"<<j+1<<std::endl;
     
-    // V0 rejection (tight)
-    // perform V0 rejection with tight constraints if user chooses
+    // V0 rejection (tight) - perform V0 rejection with tight constraints if user chooses
     ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = V0rejection_tight(np_tracks, PV, V0_rej);
     
     if(debug_me) {
@@ -70,7 +65,6 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_jets(ROOT::VecOps::RV
 
     nSV_jet.push_back(i_result.size());
 
-    //result.insert(result.end(), i_result.begin(), i_result.end()); // compilation error
     for(VertexingUtils::FCCAnalysesVertex i_sv : i_result) result.push_back(i_sv);
     
     // clean-up
@@ -95,13 +89,11 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::R
 								 ROOT::VecOps::RVec<bool> isInPrimary,
 								 bool V0_rej,
 								 double chi2_cut, double invM_cut, double chi2Tr_cut) {
-  
+    
+  // find SVs using LCFI+ (w/o clustering)
   
   if(debug_me) std::cout << "Starting SV finding!" << std::endl;
 
-  // find SVs using LCFI+ (w/o clustering)
-  // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
-  
   VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
   SV.vtx = result;
@@ -121,8 +113,7 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::R
 
   if(debug_me) std::cout<<"primary tracks removed; there are "<<np_tracks.size()<<" non-primary tracks in the event"<<std::endl;
 
-  // V0 rejection (tight)
-  // perform V0 rejection with tight constraints if user chooses
+  // V0 rejection (tight) - perform V0 rejection with tight constraints if user chooses
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = V0rejection_tight(np_tracks, PV, V0_rej);
 
   if(debug_me) {
@@ -140,7 +131,6 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::R
   SV.vtx = result;
   //
   return SV;
-  //return result;
 }
 
 //ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
@@ -150,15 +140,13 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::R
 								 double chi2_cut, double invM_cut, double chi2Tr_cut) {
   
   // find SVs from non-primary tracks using LCFI+ (w/o clustering)
-  // still need to think a little about jet clustering using SVs & pseudo-vertices as seeds
   // primary - non-primary separation done externally
   
   VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
   SV.vtx = result;
 
-  // V0 rejection (tight)
-  // perform V0 rejection with tight constraints if user chooses
+  // V0 rejection (tight) - perform V0 rejection with tight constraints if user chooses
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = V0rejection_tight(np_tracks, PV, V0_rej);
 
   if(debug_me) {
@@ -172,16 +160,16 @@ VertexingUtils::FCCAnalysesSV VertexFinderLCFIPlus::get_SV_event(ROOT::VecOps::R
   SV.vtx = result;
   //
   return SV;
-  //return result;
 }
 
-//
+
+//** internal functions for SV finder **//
+
 ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::VertexSeed_best(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
 							      VertexingUtils::FCCAnalysesVertex PV,
 							      double chi2_cut, double invM_cut) {
 
   // gives indices of the best pair of tracks
-  // maybe also update and write one to get first pair to pass constraints
 
   ROOT::VecOps::RVec<int> result;
   int isel = 0;
@@ -208,7 +196,7 @@ ROOT::VecOps::RVec<int> VertexFinderLCFIPlus::VertexSeed_best(ROOT::VecOps::RVec
       
       vtx_seed = VertexFitterSimple::VertexFitter_Tk(2, tr_pair);
       
-      // Constraints
+      // Constraints check
       bool pass = check_constraints(vtx_seed, tr_pair, PV, true, chi2_cut, invM_cut);
       if(!pass) continue;
       
@@ -315,8 +303,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::find
     }
     if(vtx_seed.size() == 0) break;
     
-    // add tracks to the seed
-    // check if a track is added; if not break loop
+    // add tracks to the seed, check if a track is added; if not break loop
     ROOT::VecOps::RVec<int> vtx_fin = vtx_seed;
     int vtx_fin_size = 0; // to start the loop
     while(vtx_fin_size != vtx_fin.size()) {
@@ -341,8 +328,7 @@ ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> VertexFinderLCFIPlus::find
     tracks_fin.clear();
     for(unsigned int t=0; t<temp.size(); t++) {
       if(std::find(vtx_fin.begin(), vtx_fin.end(), t) == vtx_fin.end()) tracks_fin.push_back(temp[t]);
-    }
-    // all this cause don't know how to remove multiple elements at once
+    }    // all this cause don't know how to remove multiple elements at once
 
     if(debug_me) std::cout<<result.size()<<" SV found"<<std::endl;
   }
@@ -474,10 +460,6 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
   // if(tight)  -> tight constraints
   // if(!tight) -> loose constraints
 
-  // also look into how to reconstruct pi0 soon
-
-  // can make it stand-alone (removing primary tracks etc)
-
   VertexingUtils::FCCAnalysesV0 result;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> vtx; // FCCAnalyses vertex object
   ROOT::VecOps::RVec<int> pdgAbs;                            // absolute PDG ID
@@ -559,8 +541,6 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s(ROOT::VecOps::RVec<e
     }
   }
 
-  //std::cout<<"Found "<<vtx.size()<<" V0s"<<std::endl;
-  
   result.vtx = vtx;
   result.pdgAbs = pdgAbs;
   result.invM = invM;
@@ -579,8 +559,6 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
   // V0 reconstruction after jet clustering
   // if(tight)  -> tight constraints
   // if(!tight) -> loose constraints
-
-  // write a separate fn to get non-primary tracks separated by jet so as not to replicate the calculation
 
   VertexingUtils::FCCAnalysesV0 result;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> vtx; // FCCAnalyses vertex object
@@ -609,7 +587,6 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
   tr_pair.push_back(tr_j);
 
   // find V0s inside the jet loop (only from non-primary tracks)
-  // first separate reco particles by jet then get the associated tracks
   ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks;
   
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks   = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
@@ -625,6 +602,7 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
 
     int i_nSV = 0;
     
+    // remove primary tracks & separate non-primary tracks by jet
     std::vector<int> i_jetconsti = jet_consti[j];
     for (int ctr=0; ctr<tracks.size(); ctr++) {
       if(isInPrimary[ctr]) continue; // remove primary tracks
@@ -638,7 +616,6 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
     int nTr = np_tracks.size();
     if(nTr<2) continue;    
     ROOT::VecOps::RVec<bool> isInV0(nTr, false);
-    
     //
     for(unsigned int i=0; i<nTr-1; i++) {
       if(isInV0[i] == true) continue; // don't pair a track if it already forms a V0
@@ -705,8 +682,6 @@ VertexingUtils::FCCAnalysesV0 VertexFinderLCFIPlus::get_V0s_jet(ROOT::VecOps::RV
     np_tracks.clear();
   } // jet loop ends
 
-  //std::cout<<"Found "<<vtx.size()<<" V0s"<<std::endl;
-  
   result.vtx = vtx;
   result.pdgAbs = pdgAbs;
   result.invM = invM;
@@ -728,9 +703,9 @@ ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::get_V0candidate(VertexingUtils:
   // [1] -> invM_Lambda1 [GeV]
   // [2] -> invM_Lambda2 [GeV]
   // [3] -> invM_Gamma [GeV]
-  // [4] -> r [mm]
-  // [5] -> r.p [unit vector]
-  // skip the candidate with output size 0
+  // [4] -> r (distance from PV) [mm]
+  // [5] -> r.p (colinearity) [r & p - unit vectors]
+  // skip the candidate with output entries = -1
   
   ROOT::VecOps::RVec<double> result(6, -1);
 
@@ -752,7 +727,6 @@ ROOT::VecOps::RVec<double> VertexFinderLCFIPlus::get_V0candidate(VertexingUtils:
 
   // V0 candidate distance from PV
   edm4hep::Vector3f r_V0 = V0_vtx.vertex.position; // in mm
-  // does Vector3f class has similar functions as root vectors?
   TVector3 r_V0_PV(r_V0[0] - r_PV[0], r_V0[1] - r_PV[1], r_V0[2] - r_PV[2]);
   result[4] = r_V0_PV.Mag(); // in mm
 
