@@ -10,7 +10,7 @@ prodTag     = "FCCee/spring2021/IDEA/"
 outputDir   = "outputs/FCCee/KG"
 
 #Optional: ncpus, default is 4
-#nCPUS       = 8
+nCPUS       = 8
 
 #Optional running on HTCondor, default is False
 #runBatch    = False
@@ -61,7 +61,7 @@ class RDFanalysis():
             .Define("IsPrimary_based_on_reco",  "VertexFitterSimple::IsPrimary_forTracks( EFlowTrack_1,  RecoedPrimaryTracks )")
             
             # find V0s                                                                                                                                                    
-            .Define("V0", "VertexFitterSimple::get_V0s(SecondaryTracks, PrimaryVertexObject)")
+            .Define("V0", "VertexFinderLCFIPlus::get_V0s(SecondaryTracks, PrimaryVertexObject)")
             # get pdg vector out                                                                                                                                          
             .Define("V0_pdg", "VertexingUtils::get_pdg_V0(V0)")
             # get invariant mass vector out                                                                                                                               
@@ -71,7 +71,7 @@ class RDFanalysis():
             # get the chi2
             .Define("V0_chi2", "VertexingUtils::get_chi2_SV(V0)")
             # get the momenta                                                                                                                                            
-            .Define("V0_p", "VertexingUtils::get_p_V0(V0)")
+            .Define("V0_p", "VertexingUtils::get_p_SV(V0)")
 
         )
         return df2
