@@ -104,6 +104,13 @@ namespace VertexingUtils{
   int get_nTracks(ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
 
   /// functions used for SV reconstruction
+
+  /** returns a vector of all vertices (PV and SVs), e.g to use in myUtils::get_Vertex_d2PV
+   *  first entry: PV, all subsequent entries: SVs
+   */
+  ROOT::VecOps::RVec<FCCAnalysesVertex> get_all_vertices( FCCAnalysesVertex PV,
+							  FCCAnalysesSV SV ); 
+
   /** returns the invariant mass of a two-track vertex
    *  CAUTION: m1 -> mass of first track, m2 -> mass of second track
    *  by default both pions
@@ -113,8 +120,8 @@ namespace VertexingUtils{
 			 double m2 = 0.13957039) ;
 
   ROOT::VecOps::RVec<double> get_invM_pairs( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
-             double m1 = 0.13957039,
-             double m2 = 0.13957039) ;  
+					     double m1 = 0.13957039,
+					     double m2 = 0.13957039 ) ;  
 
   /** returns the invariant mass of a vertex
    *  assuming all tracks to be pions
