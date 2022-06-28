@@ -86,6 +86,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_f_c_c_analyses_1_1_jet_clustering_utils_1_1_f_c_c_analyses_jet.html">FCCAnalysesJet</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to keep useful informations for the jets.  <a href="struct_f_c_c_analyses_1_1_jet_clustering_utils_1_1_f_c_c_analyses_jet.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_f_c_c_analyses_1_1_jet_clustering_utils_1_1flav__details.html">flav_details</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader">JetClusteringUtils</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p ><a class="anchor" id="amgrpa71a92cac92379220630783dad16f46c"></a>Jet clustering interface utilities. </p>
@@ -93,7 +95,7 @@ Classes</h2></td></tr>
 <tr class="memitem:a8cb30991db6727e0c230bbe84b7dacfe"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a8cb30991db6727e0c230bbe84b7dacfe">Nmax_dmerge</a> = 10</td></tr>
 <tr class="separator:a8cb30991db6727e0c230bbe84b7dacfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9e847f3943c1e33bd8f6e51cafa3621"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fastjet::PseudoJet &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#ae9e847f3943c1e33bd8f6e51cafa3621">set_pseudoJets</a> (const ROOT::VecOps::RVec&lt; float &gt; &amp;px, const ROOT::VecOps::RVec&lt; float &gt; &amp;py, const ROOT::VecOps::RVec&lt; float &gt; &amp;pz, const ROOT::VecOps::RVec&lt; float &gt; &amp;e)</td></tr>
-<tr class="memdesc:ae9e847f3943c1e33bd8f6e51cafa3621"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set fastjet pseudoJet for later reconstruction.  <a href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#ae9e847f3943c1e33bd8f6e51cafa3621">More...</a><br /></td></tr>
+<tr class="memdesc:ae9e847f3943c1e33bd8f6e51cafa3621"><td class="mdescLeft">&#160;</td><td class="mdescRight">&zwj;** Structure to keep useful informations for the jets*&zwj;/  <a href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#ae9e847f3943c1e33bd8f6e51cafa3621">More...</a><br /></td></tr>
 <tr class="separator:ae9e847f3943c1e33bd8f6e51cafa3621"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2968c138f4aa7e9cf9c22d45bfdda475"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fastjet::PseudoJet &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a2968c138f4aa7e9cf9c22d45bfdda475">set_pseudoJets_xyzm</a> (const ROOT::VecOps::RVec&lt; float &gt; &amp;px, const ROOT::VecOps::RVec&lt; float &gt; &amp;py, const ROOT::VecOps::RVec&lt; float &gt; &amp;pz, const ROOT::VecOps::RVec&lt; float &gt; &amp;m)</td></tr>
 <tr class="memdesc:a2968c138f4aa7e9cf9c22d45bfdda475"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set fastjet pseudoJet for later reconstruction using px, py, pz and m.  <a href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a2968c138f4aa7e9cf9c22d45bfdda475">More...</a><br /></td></tr>
@@ -155,8 +157,10 @@ Classes</h2></td></tr>
 <tr class="memdesc:a62721b4b3601664c99c7484db372fbbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get PDG IDs of reco+ghosts PDG_reco = 0 PDG_ghosts = PDG.  <a href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a62721b4b3601664c99c7484db372fbbd">More...</a><br /></td></tr>
 <tr class="separator:a62721b4b3601664c99c7484db372fbbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13bc75f753c22dac1feb9b543cfd8062"><td class="memItemLeft" align="right" valign="top">ROOT::VecOps::RVec&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a13bc75f753c22dac1feb9b543cfd8062">get_nConstituents</a> (std::vector&lt; std::vector&lt; int &gt; &gt; in)</td></tr>
-<tr class="memdesc:a13bc75f753c22dac1feb9b543cfd8062"><td class="mdescLeft">&#160;</td><td class="mdescRight">---&mdash; ///  <a href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a13bc75f753c22dac1feb9b543cfd8062">More...</a><br /></td></tr>
+<tr class="memdesc:a13bc75f753c22dac1feb9b543cfd8062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of constituents per jet.  <a href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a13bc75f753c22dac1feb9b543cfd8062">More...</a><br /></td></tr>
 <tr class="separator:a13bc75f753c22dac1feb9b543cfd8062"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2871a25df1e4120dc951f2211b97898d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a2871a25df1e4120dc951f2211b97898d">get_n_jets</a> (ROOT::VecOps::RVec&lt; fastjet::PseudoJet &gt; in)</td></tr>
+<tr class="separator:a2871a25df1e4120dc951f2211b97898d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0087f4915eba668b40deb2a0b65eed92"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; float &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a0087f4915eba668b40deb2a0b65eed92">get_dTheta</a> (ROOT::VecOps::RVec&lt; float &gt; jet_theta, std::vector&lt; std::vector&lt; float &gt; &gt; constituents_theta)</td></tr>
 <tr class="memdesc:a0087f4915eba668b40deb2a0b65eed92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get difference of jet theta and jet constituent theta.  <a href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a0087f4915eba668b40deb2a0b65eed92">More...</a><br /></td></tr>
 <tr class="separator:a0087f4915eba668b40deb2a0b65eed92"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -169,9 +173,9 @@ Classes</h2></td></tr>
 <tr class="memitem:a124de31f8550faf9fffce8b5c3070ae3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; float &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a124de31f8550faf9fffce8b5c3070ae3">reshape2jet</a> (ROOT::VecOps::RVec&lt; float &gt; var, std::vector&lt; std::vector&lt; int &gt; &gt; constituents)</td></tr>
 <tr class="memdesc:a124de31f8550faf9fffce8b5c3070ae3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reshape the given variable (given as a flat vector for the event) into 2d vector per jet.  <a href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a124de31f8550faf9fffce8b5c3070ae3">More...</a><br /></td></tr>
 <tr class="separator:a124de31f8550faf9fffce8b5c3070ae3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c7faf747940a3011fa45c14c0a17c45"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_f_c_c_analyses_1_1_jet_clustering_utils_1_1_f_c_c_analyses_jet.html">FCCAnalysesJet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a9c7faf747940a3011fa45c14c0a17c45">initialise_FCCAnalysesJet</a> ()</td></tr>
-<tr class="memdesc:a9c7faf747940a3011fa45c14c0a17c45"><td class="mdescLeft">&#160;</td><td class="mdescRight">---&mdash; ///  <a href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a9c7faf747940a3011fa45c14c0a17c45">More...</a><br /></td></tr>
-<tr class="separator:a9c7faf747940a3011fa45c14c0a17c45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a733948f84517764ddbb5166450ba9b9a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_f_c_c_analyses_1_1_jet_clustering_utils_1_1_f_c_c_analyses_jet.html">FCCAnalysesJet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a733948f84517764ddbb5166450ba9b9a">initialise_FCCAnalysesJet</a> (TString clustering_algo=&quot;default_string&quot;, ROOT::VecOps::RVec&lt; float &gt; clustering_params={})</td></tr>
+<tr class="memdesc:a733948f84517764ddbb5166450ba9b9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal methods.  <a href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a733948f84517764ddbb5166450ba9b9a">More...</a><br /></td></tr>
+<tr class="separator:a733948f84517764ddbb5166450ba9b9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a289e9e060e767773e049e733cf4acd2d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_f_c_c_analyses_1_1_jet_clustering_utils_1_1_f_c_c_analyses_jet.html">FCCAnalysesJet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a289e9e060e767773e049e733cf4acd2d">build_FCCAnalysesJet</a> (const std::vector&lt; fastjet::PseudoJet &gt; &amp;in, const std::vector&lt; float &gt; &amp;dmerge, const std::vector&lt; float &gt; &amp;dmerge_max)</td></tr>
 <tr class="separator:a289e9e060e767773e049e733cf4acd2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a74435b9258adddc0820c44dca975dd"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fastjet::PseudoJet &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a2a74435b9258adddc0820c44dca975dd">build_jets</a> (fastjet::ClusterSequence &amp;cs, int exclusive, float cut, int sorted)</td></tr>
@@ -542,7 +546,6 @@ Classes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Get difference of jet theta and jet constituent theta. </p>
-<p >ROOT::VecOps::RVec&lt;float&gt; get_dTheta(ROOT::VecOps::RVec&lt;fastjet::PseudoJet&gt; in, ROOT::VecOps::RVec&lt;fastjet::PseudoJet&gt; constituents, std::vector&lt;std::vector&lt;int&gt;&gt; indices){ ROOT::VecOps::RVec&lt;float&gt; result(constituents.size(), 0); //for (auto&amp; ind : indices){ for (int j=0; j&lt;indices.size(); j++){ for (auto&amp; i : indices[j]){ //for (int i=0; i&lt;contituents.size()) result[i] = in[j].theta()-constituents[i].theta(); } } return result; }. </p>
 
 </div>
 </div>
@@ -703,6 +706,24 @@ Classes</h2></td></tr>
 
 </div>
 </div>
+<a id="a2871a25df1e4120dc951f2211b97898d" name="a2871a25df1e4120dc951f2211b97898d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2871a25df1e4120dc951f2211b97898d">&#9670;&nbsp;</a></span>get_n_jets()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int FCCAnalyses::JetClusteringUtils::get_n_jets </td>
+          <td>(</td>
+          <td class="paramtype">ROOT::VecOps::RVec&lt; fastjet::PseudoJet &gt;&#160;</td>
+          <td class="paramname"><em>in</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a13bc75f753c22dac1feb9b543cfd8062" name="a13bc75f753c22dac1feb9b543cfd8062"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a13bc75f753c22dac1feb9b543cfd8062">&#9670;&nbsp;</a></span>get_nConstituents()</h2>
 
@@ -719,8 +740,7 @@ Classes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>---&mdash; /// </p>
-<p >Get number of constituents per jet. </p>
+<p>Get number of constituents per jet. </p>
 
 </div>
 </div>
@@ -921,8 +941,8 @@ Classes</h2></td></tr>
 
 </div>
 </div>
-<a id="a9c7faf747940a3011fa45c14c0a17c45" name="a9c7faf747940a3011fa45c14c0a17c45"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9c7faf747940a3011fa45c14c0a17c45">&#9670;&nbsp;</a></span>initialise_FCCAnalysesJet()</h2>
+<a id="a733948f84517764ddbb5166450ba9b9a" name="a733948f84517764ddbb5166450ba9b9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a733948f84517764ddbb5166450ba9b9a">&#9670;&nbsp;</a></span>initialise_FCCAnalysesJet()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -930,14 +950,24 @@ Classes</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="struct_f_c_c_analyses_1_1_jet_clustering_utils_1_1_f_c_c_analyses_jet.html">FCCAnalysesJet</a> FCCAnalyses::JetClusteringUtils::initialise_FCCAnalysesJet </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">TString&#160;</td>
+          <td class="paramname"><em>clustering_algo</em> = <code>&quot;default_string&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">ROOT::VecOps::RVec&lt; float &gt;&#160;</td>
+          <td class="paramname"><em>clustering_params</em> = <code>{}</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>---&mdash; /// </p>
-<p >Internal methods </p>
+<p>Internal methods. </p>
 
 </div>
 </div>
@@ -1027,7 +1057,8 @@ Classes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Set fastjet pseudoJet for later reconstruction. </p>
+<p>&zwj;** Structure to keep useful informations for the jets*&zwj;/ </p>
+<p >Set fastjet pseudoJet for later reconstruction </p>
 
 </div>
 </div>
@@ -1093,7 +1124,7 @@ Classes</h2></td></tr>
 <!-- HTML footer for doxygen 1.8.15-->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jun 28 2022 16:43:08 for FCCAnalyses by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jun 28 2022 17:23:54 for FCCAnalyses by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.9.3
 </small></address>

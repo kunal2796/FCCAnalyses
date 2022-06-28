@@ -251,8 +251,8 @@ Functions</h2></td></tr>
 <tr class="separator:ab2242582200e5fd506468182328d3556"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1ded95f5799482856bea03e073af3f6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#ab1ded95f5799482856bea03e073af3f6">get_invM</a> (std::vector&lt; std::vector&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt; &gt; vertices)</td></tr>
 <tr class="separator:ab1ded95f5799482856bea03e073af3f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3af103a99b4668842061e6c806e80d37"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; TVector3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a3af103a99b4668842061e6c806e80d37">get_p_SV</a> (std::vector&lt; std::vector&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt; &gt; vertices)</td></tr>
-<tr class="separator:a3af103a99b4668842061e6c806e80d37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21e1fa67179b2a6e2a58e199c226d8cf"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; TLorentzVector &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a21e1fa67179b2a6e2a58e199c226d8cf">get_p4_SV</a> (std::vector&lt; std::vector&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt; &gt; vertices)</td></tr>
+<tr class="separator:a21e1fa67179b2a6e2a58e199c226d8cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1483aeadc94b48b1ce137d842e1276e7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a1483aeadc94b48b1ce137d842e1276e7">get_pMag_SV</a> (std::vector&lt; std::vector&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt; &gt; vertices)</td></tr>
 <tr class="separator:a1483aeadc94b48b1ce137d842e1276e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d970dd5ea7f9b2b3934dd88ac30ca20"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a2d970dd5ea7f9b2b3934dd88ac30ca20">get_VertexNtrk</a> (std::vector&lt; std::vector&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt; &gt; vertices)</td></tr>
@@ -291,6 +291,8 @@ Functions</h2></td></tr>
 <tr class="separator:a5f43b223d06744303442542fc44809ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d9a8e8d87409a8f6d22cbee921e0d16"><td class="memItemLeft" align="right" valign="top">TMatrixDSym&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a2d9a8e8d87409a8f6d22cbee921e0d16">CovToACTS</a> (TMatrixDSym Cov, TVectorD Par)</td></tr>
 <tr class="separator:a2d9a8e8d87409a8f6d22cbee921e0d16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3af103a99b4668842061e6c806e80d37"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; TVector3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a3af103a99b4668842061e6c806e80d37">get_p_SV</a> (std::vector&lt; std::vector&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt; &gt; vertices)</td></tr>
+<tr class="separator:a3af103a99b4668842061e6c806e80d37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a2d9a8e8d87409a8f6d22cbee921e0d16" name="a2d9a8e8d87409a8f6d22cbee921e0d16"></a>
@@ -1045,6 +1047,24 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Retrieve the number of reconstructed vertices from the collection of vertex object. </p>
+
+</div>
+</div>
+<a id="a21e1fa67179b2a6e2a58e199c226d8cf" name="a21e1fa67179b2a6e2a58e199c226d8cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21e1fa67179b2a6e2a58e199c226d8cf">&#9670;&nbsp;</a></span>get_p4_SV()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::vector&lt; TLorentzVector &gt; &gt; FCCAnalyses::VertexingUtils::get_p4_SV </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; std::vector&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt; &gt;&#160;</td>
+          <td class="paramname"><em>vertices</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -2020,7 +2040,7 @@ Functions</h2></td></tr>
 <!-- HTML footer for doxygen 1.8.15-->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jun 28 2022 16:43:08 for FCCAnalyses by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jun 28 2022 17:23:55 for FCCAnalyses by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.9.3
 </small></address>
