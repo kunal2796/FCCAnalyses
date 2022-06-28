@@ -81,8 +81,8 @@ get_btag(ROOT::VecOps::RVec<int> in,
 
 ROOT::VecOps::RVec<int>
 get_ctag(ROOT::VecOps::RVec<int> in,
-                          float efficiency, float mistag_b,
-                          float mistag_l, float mistag_g) {
+	 float efficiency, float mistag_b,
+	 float mistag_l, float mistag_g) {
 
   ROOT::VecOps::RVec<int> result(in.size(),0);
 
@@ -97,8 +97,8 @@ get_ctag(ROOT::VecOps::RVec<int> in,
 
 ROOT::VecOps::RVec<int>
 get_ltag(ROOT::VecOps::RVec<int> in,
-                          float efficiency, float mistag_b,
-                          float mistag_c, float mistag_g) {
+	 float efficiency, float mistag_b,
+	 float mistag_c, float mistag_g) {
 
   ROOT::VecOps::RVec<int> result(in.size(),0);
 
@@ -128,7 +128,7 @@ get_gtag(ROOT::VecOps::RVec<int> in,
 }
 
 
-ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_manual(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<float> pdg_gm){
+ROOT::VecOps::RVec<int> get_flavour_gm_manual(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<float> pdg_gm){
   // can later change the argument from the jet vectors to the number of jets
   // (get_njets)
 
@@ -146,7 +146,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_manual(ROOT::VecOps::RVe
   return result;
 }
 
-ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_auto(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin){
+ROOT::VecOps::RVec<int> get_flavour_gm_auto(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin){
 
   // pseudoJet vector is the one before addign ghosts
   // get the pdg_gm vector here (instead of in a separate fn)
@@ -182,7 +182,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_auto(ROOT::VecOps::RVec<
   return result;
 }
 
-ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm7x_auto(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin){
+ROOT::VecOps::RVec<int> get_flavour_gm7x_auto(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin){
 
   // pseudoJet vector is the one before addign ghosts
   // get the pdg_gm vector here (instead of in a separate fn)
@@ -214,7 +214,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm7x_auto(ROOT::VecOps::RVe
   return result;
 }
 
-ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_pcut(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, float p_cut) {
+ROOT::VecOps::RVec<int> get_flavour_gm_pcut(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, float p_cut) {
 
   // push back zeros for all the particles except for ghosts
   ROOT::VecOps::RVec<float> pdg_gm(PJin.size(),0);
@@ -249,7 +249,7 @@ ROOT::VecOps::RVec<int> JetTaggingUtils::get_flavour_gm_pcut(ROOT::VecOps::RVec<
   return result;
 }
 
-std::vector<std::vector<int>> JetTaggingUtils::get_flavour_gm(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, int statCode, float p_cut) {
+std::vector<std::vector<int>> get_flavour_gm(ROOT::VecOps::RVec<fastjet::PseudoJet> in, std::vector<std::vector<int>> inJC, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin, std::vector<fastjet::PseudoJet> PJin, int statCode, float p_cut) {
 
   // CAUTION: use the SAME statCode here as in addGhosts_pseudoJets
     

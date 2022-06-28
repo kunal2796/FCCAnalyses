@@ -4,6 +4,7 @@
 #include <vector>
 #include "Math/Vector4D.h"
 #include "ROOT/RVec.hxx"
+#include "TLorentzVector.h"
 #include "edm4hep/MCParticleData.h"
 #include "fastjet/JetDefinition.hh"
 #include "TRandom3.h"

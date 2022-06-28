@@ -404,13 +404,13 @@ int getJet_ntags(ROOT::VecOps::RVec<bool> in) {
 /// ------ ///
 // From Edi //
 
-ReconstructedParticle::sel_template::sel_template(float arg_pass){m_pass = arg_pass;}
+sel_template::sel_template(float arg_pass){m_pass = arg_pass;}
 
 template<class G>
-ROOT::VecOps::RVec<G> ReconstructedParticle::sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in){
-//ROOT::VecOps::RVec<G> ReconstructedParticle::sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in){
-//////////ROOT::VecOps::RVec<int> ReconstructedParticle::sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<int> in){
-//ROOT::VecOps::RVec<G> ReconstructedParticle::sel_template(ROOT::VecOps::RVec<G> in){
+ROOT::VecOps::RVec<G> sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in){
+//ROOT::VecOps::RVec<G> sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in){
+//////////ROOT::VecOps::RVec<int> sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<int> in){
+//ROOT::VecOps::RVec<G> sel_template(ROOT::VecOps::RVec<G> in){
   ////////ROOT::VecOps::RVec<G> result;
   ROOT::VecOps::RVec<int> result;
   //ROOT::VecOps::RVec<G> result = in;
@@ -425,10 +425,10 @@ ROOT::VecOps::RVec<G> ReconstructedParticle::sel_template::operator()(ROOT::VecO
   }
   return result;
 }
-std::vector<std::vector<int>> ReconstructedParticle::sel_template::operator()(std::vector<std::vector<float>> tag_vector, std::vector<std::vector<int>> in){
-//ROOT::VecOps::RVec<G> ReconstructedParticle::sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in){
-//////////ROOT::VecOps::RVec<int> ReconstructedParticle::sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<int> in){
-//ROOT::VecOps::RVec<G> ReconstructedParticle::sel_template(ROOT::VecOps::RVec<G> in){
+std::vector<std::vector<int>> sel_template::operator()(std::vector<std::vector<float>> tag_vector, std::vector<std::vector<int>> in){
+//ROOT::VecOps::RVec<G> sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in){
+//////////ROOT::VecOps::RVec<int> sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<int> in){
+//ROOT::VecOps::RVec<G> sel_template(ROOT::VecOps::RVec<G> in){
   ////////ROOT::VecOps::RVec<G> result;
   std::vector<std::vector<int>> result;
   //ROOT::VecOps::RVec<G> result = in;
@@ -448,7 +448,7 @@ std::vector<std::vector<int>> ReconstructedParticle::sel_template::operator()(st
   return result;
 }
 
-std::vector<std::vector<float>> ReconstructedParticle::sel_template::operator()(std::vector<std::vector<float>> tag_vector, std::vector<std::vector<float>> in){
+std::vector<std::vector<float>> sel_template::operator()(std::vector<std::vector<float>> tag_vector, std::vector<std::vector<float>> in){
   std::vector<std::vector<float>> result;
   //ROOT::VecOps::RVec<G> result = in;
   //////bool m_pass=true;
@@ -477,8 +477,8 @@ std::vector<std::vector<float>> ReconstructedParticle::sel_template::operator()(
 //template ROOT::VecOps::RVec<JetClusteringUtils::FCCAnalysesJet> sel_template<JetClusteringUtils::FCCAnalysesJet>(ROOT::VecOps::RVec<bool>, ROOT::VecOps::RVec<JetClusteringUtils::FCCAnalysesJet>);
 //think about adding additional instantiations as the need arises...
 
-ROOT::VecOps::RVec<int> ReconstructedParticle::index_splitter(ROOT::VecOps::RVec<int> ind){
-//ROOT::VecOps::RVec<int> ReconstructedParticle::index_splitter(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, ROOT::VecOps::RVec<int> ind){
+ROOT::VecOps::RVec<int> index_splitter(ROOT::VecOps::RVec<int> ind){
+//ROOT::VecOps::RVec<int> index_splitter(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, ROOT::VecOps::RVec<int> ind){
   ROOT::VecOps::RVec<int> result;
   int charged_counter, neutral_counter=0;
   for(size_t i = 0; i < ind.size(); ++i){
@@ -494,7 +494,7 @@ ROOT::VecOps::RVec<int> ReconstructedParticle::index_splitter(ROOT::VecOps::RVec
   return result;
 }
 
-std::vector<std::vector<int>> ReconstructedParticle::index_converter(std::vector<std::vector<int>> RP_ind, ROOT::VecOps::RVec<int> split_ind){
+std::vector<std::vector<int>> index_converter(std::vector<std::vector<int>> RP_ind, ROOT::VecOps::RVec<int> split_ind){
   std::vector<std::vector<int>> result;
   //for(size_t i = 0; i < in.size(); ++i){
   for(auto& indices : RP_ind){
@@ -507,7 +507,7 @@ std::vector<std::vector<int>> ReconstructedParticle::index_converter(std::vector
   return result;
 }
 
-ROOT::VecOps::RVec<float> ReconstructedParticle::is_particle(ROOT::VecOps::RVec<int> index, const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> & in){
+ROOT::VecOps::RVec<float> is_particle(ROOT::VecOps::RVec<int> index, const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> & in){
   ROOT::VecOps::RVec<float> result(in.size(), 0);
   for(auto& i : index){
     result[i] = 1;
@@ -515,7 +515,7 @@ ROOT::VecOps::RVec<float> ReconstructedParticle::is_particle(ROOT::VecOps::RVec<
   return result;
 }
 
-std::vector<std::vector<float>> ReconstructedParticle::one_hot_encode(ROOT::VecOps::RVec<float> flavour){
+std::vector<std::vector<float>> one_hot_encode(ROOT::VecOps::RVec<float> flavour){
   std::vector<std::vector<float>> result;
   int min = -5; //std::min_element(flavour.begin(),flavour.end());
   int max = 5; //std::max_element(flavour.begin(),flavour.end());

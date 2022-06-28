@@ -1,5 +1,5 @@
 #include "FCCAnalyses/ReconstructedParticle2Track.h"
-#include "VertexingUtils.h"
+#include "FCCAnalyses/VertexingUtils.h"
 
 namespace FCCAnalyses{
 

@@ -136,11 +136,11 @@ ROOT::VecOps::RVec<float> get_theta(const ROOT::VecOps::RVec<fastjet::PseudoJet>
 }
 
 // Ghost Matching
-std::vector<fastjet::PseudoJet> JetClusteringUtils::addMore_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
-								       ROOT::VecOps::RVec<float> px, 
-								       ROOT::VecOps::RVec<float> py, 
-								       ROOT::VecOps::RVec<float> pz, 
-								       ROOT::VecOps::RVec<float> e) {
+std::vector<fastjet::PseudoJet> addMore_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
+						   ROOT::VecOps::RVec<float> px, 
+						   ROOT::VecOps::RVec<float> py, 
+						   ROOT::VecOps::RVec<float> pz, 
+						   ROOT::VecOps::RVec<float> e) {
   unsigned index = pseudoJ.size();
   for (size_t i = 0; i < px.size(); ++i) {
     pseudoJ.emplace_back(px.at(i), py.at(i), pz.at(i), e.at(i));
@@ -150,7 +150,7 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::addMore_pseudoJets(std::vect
   return pseudoJ;
 }
 
-std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets_old(std::vector<fastjet::PseudoJet> pseudoJ,
+std::vector<fastjet::PseudoJet> addGhosts_pseudoJets_old(std::vector<fastjet::PseudoJet> pseudoJ,
 									     ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin) {
   unsigned index = pseudoJ.size();
   for (size_t i = 0; i < MCin.size(); ++i) {
@@ -171,7 +171,7 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets_old(std
   return pseudoJ;
 }
 
-std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
+std::vector<fastjet::PseudoJet> addGhosts_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
 									 ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin,
 									 int statCode) {
   unsigned index = pseudoJ.size();
@@ -207,7 +207,7 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts_pseudoJets(std::ve
   return pseudoJ;
 }
 
-std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts7x_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
+std::vector<fastjet::PseudoJet> addGhosts7x_pseudoJets(std::vector<fastjet::PseudoJet> pseudoJ,
 									   ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin) {
   unsigned index = pseudoJ.size();
   for (size_t i = 0; i < MCin.size(); ++i) {
@@ -227,7 +227,7 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::addGhosts7x_pseudoJets(std::
   return pseudoJ;
 }
 
-ROOT::VecOps::RVec<float> JetClusteringUtils::get_gmPDG(ROOT::VecOps::RVec<float> pdg, 
+ROOT::VecOps::RVec<float> get_gmPDG(ROOT::VecOps::RVec<float> pdg, 
 							ROOT::VecOps::RVec<float> px, 
 							ROOT::VecOps::RVec<float> px_g) {
   // the arguments can later be changed to accept size (get_n) instead of the momentum vectors
@@ -243,7 +243,7 @@ ROOT::VecOps::RVec<float> JetClusteringUtils::get_gmPDG(ROOT::VecOps::RVec<float
 /// ------ ///
 // From Edi //
 
-ROOT::VecOps::RVec<float> JetClusteringUtils::get_nConstituents(std::vector<std::vector<int>> constituents){
+ROOT::VecOps::RVec<float> get_nConstituents(std::vector<std::vector<int>> constituents){
   ROOT::VecOps::RVec<float> result;
   for (auto& constis : constituents){
     result.push_back(constis.size());
@@ -252,7 +252,7 @@ ROOT::VecOps::RVec<float> JetClusteringUtils::get_nConstituents(std::vector<std:
 }
 
 //Note that the below doesn't make sense atm, there is no consti vec of pseudojets (to my knowledge, maybe this refers to an old implementation)...
-///ROOT::VecOps::RVec<float> JetClusteringUtils::get_dTheta(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<fastjet::PseudoJet> constituents, std::vector<std::vector<int>> indices){
+///ROOT::VecOps::RVec<float> get_dTheta(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<fastjet::PseudoJet> constituents, std::vector<std::vector<int>> indices){
 ///  ROOT::VecOps::RVec<float> result(constituents.size(), 0);
 ///  //for (auto& ind : indices){
 ///  for (int j=0; j<indices.size(); j++){
@@ -264,7 +264,7 @@ ROOT::VecOps::RVec<float> JetClusteringUtils::get_nConstituents(std::vector<std:
 ///  return result;
 ///}
 
-std::vector<std::vector<float>> JetClusteringUtils::get_dTheta(ROOT::VecOps::RVec<float> jet_theta, std::vector<std::vector<float>> constituents_theta){
+std::vector<std::vector<float>> get_dTheta(ROOT::VecOps::RVec<float> jet_theta, std::vector<std::vector<float>> constituents_theta){
   std::vector<std::vector<float>> result;
   //for (auto& ind : indices){
   for (int j=0; j<jet_theta.size(); j++){
@@ -277,7 +277,7 @@ std::vector<std::vector<float>> JetClusteringUtils::get_dTheta(ROOT::VecOps::RVe
   return result;
 }
 
-std::vector<std::vector<float>> JetClusteringUtils::get_dPhi(ROOT::VecOps::RVec<float> jet_phi, std::vector<std::vector<float>> constituents_phi){
+std::vector<std::vector<float>> get_dPhi(ROOT::VecOps::RVec<float> jet_phi, std::vector<std::vector<float>> constituents_phi){
   //const float  PI = 3.14159265358979f;
   float dphi; 
   std::vector<std::vector<float>> result;
@@ -300,7 +300,7 @@ std::vector<std::vector<float>> JetClusteringUtils::get_dPhi(ROOT::VecOps::RVec<
   return result;
 }
 
-std::vector<std::vector<float>> JetClusteringUtils::get_pRel(ROOT::VecOps::RVec<float> jet_p, std::vector<std::vector<float>> constituents_p){
+std::vector<std::vector<float>> get_pRel(ROOT::VecOps::RVec<float> jet_p, std::vector<std::vector<float>> constituents_p){
   std::vector<std::vector<float>> result;
   //for (auto& ind : indices){
   for (int j=0; j<jet_p.size(); j++){
@@ -313,7 +313,7 @@ std::vector<std::vector<float>> JetClusteringUtils::get_pRel(ROOT::VecOps::RVec<
   return result;
 }
 
-std::vector<std::vector<float>> JetClusteringUtils::reshape2jet(ROOT::VecOps::RVec<float> var, std::vector<std::vector<int>> constituents){
+std::vector<std::vector<float>> reshape2jet(ROOT::VecOps::RVec<float> var, std::vector<std::vector<int>> constituents){
   std::vector<std::vector<float>> result;
   for (auto& ind : constituents){
     //ROOT::VecOps::RVec<float> tmp_res(ind.size(), 0);
