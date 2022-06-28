@@ -1,6 +1,7 @@
 #Mandatory: List of processes
 processList = {
-    'p8_ee_Zbb_ecm91':{'fraction':0.0001}, #Run 0.01% statistics in one output file named <outputDir>/p8_ee_Zbb_ecm91.root
+    'p8_ee_Zuds_ecm91':{'fraction':0.0001}, #Run 0.01% statistics in one output file named <outputDir>/p8_ee_Zuds_ecm91.root
+    #'p8_ee_Zcc_ecm91':{'fraction':0.0001}, #Run 0.01% statistics in one output file named <outputDir>/p8_ee_Zcc_ecm91.root
     #'p8_ee_Zbb_ecm91':{'fraction':0.0001, 'output':'p8_ee_Zbb_ecm91_SV_100K'},
 }
 
@@ -11,7 +12,7 @@ prodTag     = "FCCee/spring2021/IDEA/"
 outputDir   = "outputs/FCCee/KG/"
 
 #Optional: ncpus, default is 4
-#nCPUS       = 8
+nCPUS       = 8
 
 #Optional running on HTCondor, default is False
 #runBatch    = False
@@ -96,22 +97,22 @@ class RDFanalysis():
             
             
             # finding SVs in jets
-            .Define("SV_jet", "VertexFitterSimple::get_SV_jets(ReconstructedParticles, EFlowTrack_1, PrimaryVertexObject, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents_ee_kt)")
+            #.Define("SV_jet", "VertexFinderLCFIPlus::get_SV_jets(ReconstructedParticles, EFlowTrack_1, PrimaryVertexObject, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents_ee_kt)")
             # finding SVs in the event
-            .Define("SV_evt1", "VertexFitterSimple::get_SV_event(ReconstructedParticles, EFlowTrack_1, PrimaryVertexObject, IsPrimary_based_on_reco)")
-            .Define("SV_evt2", "VertexFitterSimple::get_SV_event(ReconstructedParticles, EFlowTrack_1, SecondaryTracks, PrimaryVertexObject)")
+            .Define("SV_evt1", "VertexFinderLCFIPlus::get_SV_event(ReconstructedParticles, EFlowTrack_1, PrimaryVertexObject, IsPrimary_based_on_reco)")
+            .Define("SV_evt2", "VertexFinderLCFIPlus::get_SV_event(SecondaryTracks, PrimaryVertexObject)")
             # multiplicity
             .Define("SV_evt2_n","VertexingUtils::get_n_SV(SV_evt2)")
             .Define("SV_evt1_n","VertexingUtils::get_n_SV(SV_evt1)")
-            .Define("SV_jet_n", "VertexingUtils::get_n_SV(SV_jet)")
+            #.Define("SV_jet_n", "VertexingUtils::get_n_SV(SV_jet)")
             # vertex position
-            .Define("SV_jet_position",  "VertexingUtils::get_position_SV( SV_jet )")
-            .Define("SV_evt1_position", "VertexingUtils::get_position_SV( SV_evt1 )")
-            .Define("SV_evt2_position", "VertexingUtils::get_position_SV( SV_evt2 )")
+            #.Define("SV_jet_position",  "VertexingUtils::get_position_SV( SV_jet )")
+            #.Define("SV_evt1_position", "VertexingUtils::get_position_SV( SV_evt1 )")
+            #.Define("SV_evt2_position", "VertexingUtils::get_position_SV( SV_evt2 )")
             # vertex chi2
-            .Define("SV_jet_chi2",   "VertexingUtils::get_chi2_SV( SV_jet )")
-            .Define("SV_evt1_chi2",  "VertexingUtils::get_chi2_SV( SV_evt1 )")
-            .Define("SV_evt2_chi2",  "VertexingUtils::get_chi2_SV( SV_evt2 )")
+            #.Define("SV_jet_chi2",   "VertexingUtils::get_chi2_SV( SV_jet.vtx )")
+            #.Define("SV_evt1_chi2",  "VertexingUtils::get_chi2_SV( SV_evt1.vtx )")
+            #.Define("SV_evt2_chi2",  "VertexingUtils::get_chi2_SV( SV_evt2.vtx )")
             
         )
         return df2
@@ -125,23 +126,23 @@ class RDFanalysis():
             "PrimaryVertex",
             
             # vector of SV vertex objects
-            "SV_jet",
+            #"SV_jet",
             "SV_evt1",
             "SV_evt2",
             
             # SV multiplicity
             "SV_evt1_n",
             "SV_evt2_n",
-            "SV_jet_n",
+            #"SV_jet_n",
             # SV position
-            "SV_jet_position",
-            "SV_evt1_position",
-            "SV_evt2_position",
+            #"SV_jet_position",
+            #"SV_evt1_position",
+            #"SV_evt2_position",
             # SV chi2
             # SV position
-            "SV_jet_chi2",
-            "SV_evt1_chi2",
-            "SV_evt2_chi2"
+            #"SV_jet_chi2",
+            #"SV_evt1_chi2",
+            #"SV_evt2_chi2"
             
         ]
         return branchList
