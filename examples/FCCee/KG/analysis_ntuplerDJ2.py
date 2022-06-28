@@ -7,8 +7,8 @@ processList = {
 
     # 400K b & c, 1M uds
     #'p8_ee_Zbb_ecm91':{'fraction':0.0004, 'chunks':4},
-    #'p8_ee_Zcc_ecm91':{'fraction':0.0004, 'chunks':4},
-    'p8_ee_Zuds_ecm91':{'fraction':0.001, 'chunks':10},
+    'p8_ee_Zcc_ecm91':{'fraction':0.0004, 'chunks':4},
+    #'p8_ee_Zuds_ecm91':{'fraction':0.001, 'chunks':10},
 }
 
 #Mandatory: Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics
@@ -236,8 +236,8 @@ class RDFanalysis():
             .Define("isUD", "std::vector<int> isUD; for(int i=0; i<jets_isU.size(); ++i){isUD.push_back(jets_isU[i]+jets_isD[i]);}; return isUD;")
             .Define("isS", "std::vector<int> isS(jets_isS.begin(), jets_isS.end()); return isS;")
             #.Define("isUndefined", "std::vector<int> isUndefined(jets_isB.size(), 0); for(int i=0; i<isUndefined.size(); ++i){isUndefined[i] = (jets_isB[i]==0);}; return isUndefined;")
-            #.Define("isUndefined", "std::vector<int> isUndefined(jets_isC.size(), 0); for(int i=0; i<isUndefined.size(); ++i){isUndefined[i] = (jets_isC[i]==0);}; return isUndefined;")
-            .Define("isUndefined", "std::vector<int> isUndefined(jets_isU.size(), 0); for(int i=0; i<isUndefined.size(); ++i){isUndefined[i] = (jets_isU[i]==0)&&(jets_isD[i]==0)&&(jets_isS[i]==0);}; return isUndefined;")
+            .Define("isUndefined", "std::vector<int> isUndefined(jets_isC.size(), 0); for(int i=0; i<isUndefined.size(); ++i){isUndefined[i] = (jets_isC[i]==0);}; return isUndefined;")
+            #.Define("isUndefined", "std::vector<int> isUndefined(jets_isU.size(), 0); for(int i=0; i<isUndefined.size(); ++i){isUndefined[i] = (jets_isU[i]==0)&&(jets_isD[i]==0)&&(jets_isS[i]==0);}; return isUndefined;")
             #.Define("isB", "int isB = jets_isB_placeholder[0]; return isB;")
             #.Define("isC", "int isC = jets_isC_placeholder[0]; return isC;")
             #.Define("isUD", "int isUD = jets_isU_placeholder[0]+jets_isD_placeholder[0]; return isUD;")
