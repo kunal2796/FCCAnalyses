@@ -1,11 +1,12 @@
 <map id="analyzers/dataframe/src/JetClusteringUtils.cc" name="analyzers/dataframe/src/JetClusteringUtils.cc">
-<area shape="rect" id="node1" title=" " alt="" coords="303,6,483,47"/>
-<area shape="rect" id="node2" href="$_jet_clustering_utils_8h.html" title=" " alt="" coords="297,97,489,138"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,187,67,213"/>
-<area shape="rect" id="node4" title=" " alt="" coords="91,187,153,213"/>
-<area shape="rect" id="node5" title=" " alt="" coords="178,187,307,213"/>
-<area shape="rect" id="node6" title=" " alt="" coords="332,187,455,213"/>
-<area shape="rect" id="node7" title=" " alt="" coords="479,187,677,213"/>
-<area shape="rect" id="node8" title=" " alt="" coords="703,187,871,213"/>
-<area shape="rect" id="node9" title=" " alt="" coords="895,187,999,213"/>
+<area shape="rect" id="node1" title=" " alt="" coords="383,6,563,47"/>
+<area shape="rect" id="node2" href="$_jet_clustering_utils_8h.html" title=" " alt="" coords="377,97,569,138"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,187,136,213"/>
+<area shape="rect" id="node4" title=" " alt="" coords="161,187,223,213"/>
+<area shape="rect" id="node5" title=" " alt="" coords="247,187,309,213"/>
+<area shape="rect" id="node6" title=" " alt="" coords="334,187,463,213"/>
+<area shape="rect" id="node7" title=" " alt="" coords="488,187,611,213"/>
+<area shape="rect" id="node8" title=" " alt="" coords="635,187,833,213"/>
+<area shape="rect" id="node9" title=" " alt="" coords="859,187,1027,213"/>
+<area shape="rect" id="node10" title=" " alt="" coords="1051,187,1155,213"/>
 </map>

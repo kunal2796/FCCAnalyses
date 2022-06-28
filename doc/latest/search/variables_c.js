@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['particle_0',['particle',['../struct_f_c_c_analyses_1_1my_utils_1_1_f_c_c_analyses_composite.html#a6990407739c9fe0c066573c80b806f86',1,'FCCAnalyses::myUtils::FCCAnalysesComposite::particle()'],['../struct_f_c_c_analyses_1_1my_utils_1_1_f_c_c_analyses_composite2.html#a85254f1a3c9b18ebc2313589173df619',1,'FCCAnalyses::myUtils::FCCAnalysesComposite2::particle()']]],
-  ['parton_5fflavour_1',['parton_flavour',['../struct_f_c_c_analyses_1_1_jet_clustering_utils_1_1flav__details.html#a167dae2901c945c4d042880d17ebf414',1,'FCCAnalyses::JetClusteringUtils::flav_details']]],
-  ['pdgabs_2',['pdgAbs',['../struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_v0.html#a40e6ddf74b8f8966e4528ce7b1c62007',1,'FCCAnalyses::VertexingUtils::FCCAnalysesV0']]]
+  ['r_0',['R',['../classcontrib_1_1_valencia_brief_jet.html#af5f006f4c085d06ec28407b8f8dd841e',1,'contrib::ValenciaBriefJet']]],
+  ['r_5f_1',['R_',['../classcontrib_1_1_valencia_info.html#a79d6105f376cedbb2e53183a9c26c61c',1,'contrib::ValenciaInfo']]],
+  ['reco_5fchi2_2',['reco_chi2',['../struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html#a7808a3d5dd0616b5a2bda7bb2398bd2f',1,'FCCAnalyses::VertexingUtils::FCCAnalysesVertex']]],
+  ['reco_5find_3',['reco_ind',['../struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html#a1907c2f10ca2653d57187401e2cf97aa',1,'FCCAnalyses::VertexingUtils::FCCAnalysesVertex']]]
 ];
