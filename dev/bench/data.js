@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657118122753,
+  "lastUpdate": 1657118124633,
   "repoUrl": "https://github.com/kunal2796/FCCAnalyses",
   "entries": {
     "Benchmark": [
@@ -686,6 +686,40 @@ window.BENCHMARK_DATA = {
             "unit": "Seconds",
             "range": 10,
             "extra": "Analysis path: examples/FCCee/flavour/Bc2TauNu"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "committer": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "distinct": true,
+          "id": "2e8c5d967e510ac47834a2a4907154adbc0160ea",
+          "message": "test analysis file",
+          "timestamp": "2022-07-06T16:14:32+02:00",
+          "tree_id": "f565e02b873e9bcc49d0f9cc18bba1b3200f752c",
+          "url": "https://github.com/kunal2796/FCCAnalyses/commit/2e8c5d967e510ac47834a2a4907154adbc0160ea"
+        },
+        "date": 1657118123863,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/higgs/mH-recoil/mumu",
+            "value": 7.4609334420551265,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/flavour/Bc2TauNu",
+            "value": 6.019910393655377,
+            "unit": "Evt/s"
           }
         ]
       }
