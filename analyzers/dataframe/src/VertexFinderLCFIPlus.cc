@@ -84,21 +84,21 @@ VertexingUtils::FCCAnalysesSV get_SV_jets(ROOT::VecOps::RVec<edm4hep::Reconstruc
   return SV;
 }
 
-//ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-					   ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-					   VertexingUtils::FCCAnalysesVertex PV,
-					   ROOT::VecOps::RVec<bool> isInPrimary,
-					   bool V0_rej,
-					   double chi2_cut, double invM_cut, double chi2Tr_cut) {
+//VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+								   ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+								   VertexingUtils::FCCAnalysesVertex PV,
+								   ROOT::VecOps::RVec<bool> isInPrimary,
+								   bool V0_rej,
+								   double chi2_cut, double invM_cut, double chi2Tr_cut) {
     
   // find SVs using LCFI+ (w/o clustering)
   
   if(debug_me) std::cout << "Starting SV finding!" << std::endl;
 
-  VertexingUtils::FCCAnalysesSV SV;
+  //VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
-  SV.vtx = result;
+  //SV.vtx = result;
 
   // retrieve the tracks associated to the recoparticles
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
@@ -130,23 +130,24 @@ VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::Reconstru
 
   //if(debug_me) std::cout<<"no more SVs can be reconstructed"<<std::endl;
   
-  SV.vtx = result;
+  //SV.vtx = result;
   //
-  return SV;
+  //return SV;
+  return result;
 }
 
-//ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-					   VertexingUtils::FCCAnalysesVertex PV,
-					   bool V0_rej,
-					   double chi2_cut, double invM_cut, double chi2Tr_cut) {
+//VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+								   VertexingUtils::FCCAnalysesVertex PV,
+								   bool V0_rej,
+								   double chi2_cut, double invM_cut, double chi2Tr_cut) {
   
   // find SVs from non-primary tracks using LCFI+ (w/o clustering)
   // primary - non-primary separation done externally
   
-  VertexingUtils::FCCAnalysesSV SV;
+  //VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
-  SV.vtx = result;
+  //SV.vtx = result;
 
   // V0 rejection (tight) - perform V0 rejection with tight constraints if user chooses
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = V0rejection_tight(np_tracks, PV, V0_rej);
@@ -159,9 +160,10 @@ VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackStat
   // start finding SVs (only if there are 2 or more tracks)
   result = findSVfromTracks(tracks_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
   
-  SV.vtx = result;
+  //SV.vtx = result;
   //
-  return SV;
+  //return SV;
+  return result;
 }
 
 
