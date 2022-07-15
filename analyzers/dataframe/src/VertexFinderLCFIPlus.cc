@@ -808,6 +808,43 @@ ROOT::VecOps::RVec<double> constraints_Gamma(bool tight) {
   return result;
 }
 
+// User set constraints
+ROOT::VecOps::RVec<double> constraints_Ks(double invM_low, double invM_high, double dis, double cosAng) {
+
+  ROOT::VecOps::RVec<double> result(4, 0);
+
+  result[0] = invM_low;
+  result[1] = invM_hig;
+  result[2] = dis;
+  result[3] = cosAng;
+  //
+  return result;
+}
+
+ROOT::VecOps::RVec<double> constraints_Lambda0(double invM_low, double invM_high, double dis, double cosAng) {
+
+  ROOT::VecOps::RVec<double> result(4, 0);
+
+  result[0] = invM_low;
+  result[1] = invM_hig;
+  result[2] = dis;
+  result[3] = cosAng;
+  //
+  return result;
+}
+
+ROOT::VecOps::RVec<double> constraints_Gamma(double invM_low, double invM_high, double dis, double cosAng) {
+
+  ROOT::VecOps::RVec<double> result(4, 0);
+
+  result[0] = invM_low;
+  result[1] = invM_hig;
+  result[2] = dis;
+  result[3] = cosAng;
+  //
+  return result;
+}
+
 // ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> VertexSeed_all(ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
 // 					  		      VertexingUtils::FCCAnalysesVertex PV,
 // 							      double chi2_cut, double invM_cut) {
