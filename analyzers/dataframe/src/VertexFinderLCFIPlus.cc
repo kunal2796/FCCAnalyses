@@ -814,7 +814,7 @@ ROOT::VecOps::RVec<double> constraints_Ks(double invM_low, double invM_high, dou
   ROOT::VecOps::RVec<double> result(4, 0);
 
   result[0] = invM_low;
-  result[1] = invM_hig;
+  result[1] = invM_high;
   result[2] = dis;
   result[3] = cosAng;
   //
@@ -826,7 +826,7 @@ ROOT::VecOps::RVec<double> constraints_Lambda0(double invM_low, double invM_high
   ROOT::VecOps::RVec<double> result(4, 0);
 
   result[0] = invM_low;
-  result[1] = invM_hig;
+  result[1] = invM_high;
   result[2] = dis;
   result[3] = cosAng;
   //
@@ -838,7 +838,7 @@ ROOT::VecOps::RVec<double> constraints_Gamma(double invM_low, double invM_high, 
   ROOT::VecOps::RVec<double> result(4, 0);
 
   result[0] = invM_low;
-  result[1] = invM_hig;
+  result[1] = invM_high;
   result[2] = dis;
   result[3] = cosAng;
   //
