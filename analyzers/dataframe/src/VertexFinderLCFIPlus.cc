@@ -779,7 +779,7 @@ VertexingUtils::FCCAnalysesV0 get_V0s_jet(ROOT::VecOps::RVec<edm4hep::Reconstruc
     nSV_jet.push_back(i_nSV);
     // clean-up
     np_tracks.clear();
-]  } // jet loop ends
+  } // jet loop ends
 
   result.vtx = vtx;
   result.pdgAbs = pdgAbs;
