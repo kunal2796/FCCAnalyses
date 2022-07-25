@@ -556,6 +556,12 @@ ROOT::VecOps::RVec<double> get_chi2_SV( FCCAnalysesV0 SV ) {
 
 // passing a vector of FCCAnalysesVertex instead of new structs
 
+// no of reconstructed SVs
+int get_n_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
+  int result = vertices.size();
+  return result;
+}
+
 // vector of momenta of all reconstructed vertices (SV.vtx or V0.vtx)
 ROOT::VecOps::RVec<TVector3> get_p_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices ) {
   ROOT::VecOps::RVec<TVector3> result;

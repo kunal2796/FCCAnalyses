@@ -84,21 +84,21 @@ VertexingUtils::FCCAnalysesSV get_SV_jets(ROOT::VecOps::RVec<edm4hep::Reconstruc
   return SV;
 }
 
-//ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-					   ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-					   VertexingUtils::FCCAnalysesVertex PV,
-					   ROOT::VecOps::RVec<bool> isInPrimary,
-					   bool V0_rej,
-					   double chi2_cut, double invM_cut, double chi2Tr_cut) {
+//VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+								   ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+								   VertexingUtils::FCCAnalysesVertex PV,
+								   ROOT::VecOps::RVec<bool> isInPrimary,
+								   bool V0_rej,
+								   double chi2_cut, double invM_cut, double chi2Tr_cut) {
     
   // find SVs using LCFI+ (w/o clustering)
   
   if(debug_me) std::cout << "Starting SV finding!" << std::endl;
 
-  VertexingUtils::FCCAnalysesSV SV;
+  //VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
-  SV.vtx = result;
+  //SV.vtx = result;
 
   // retrieve the tracks associated to the recoparticles
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks = ReconstructedParticle2Track::getRP2TRK( recoparticles, thetracks );
@@ -130,23 +130,24 @@ VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::Reconstru
 
   //if(debug_me) std::cout<<"no more SVs can be reconstructed"<<std::endl;
   
-  SV.vtx = result;
+  //SV.vtx = result;
   //
-  return SV;
+  //return SV;
+  return result;
 }
 
-//ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-					   VertexingUtils::FCCAnalysesVertex PV,
-					   bool V0_rej,
-					   double chi2_cut, double invM_cut, double chi2Tr_cut) {
+//VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+								   VertexingUtils::FCCAnalysesVertex PV,
+								   bool V0_rej,
+								   double chi2_cut, double invM_cut, double chi2Tr_cut) {
   
   // find SVs from non-primary tracks using LCFI+ (w/o clustering)
   // primary - non-primary separation done externally
   
-  VertexingUtils::FCCAnalysesSV SV;
+  //VertexingUtils::FCCAnalysesSV SV;
   ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
-  SV.vtx = result;
+  //SV.vtx = result;
 
   // V0 rejection (tight) - perform V0 rejection with tight constraints if user chooses
   ROOT::VecOps::RVec<edm4hep::TrackState> tracks_fin = V0rejection_tight(np_tracks, PV, V0_rej);
@@ -159,9 +160,10 @@ VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::TrackStat
   // start finding SVs (only if there are 2 or more tracks)
   result = findSVfromTracks(tracks_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
   
-  SV.vtx = result;
+  //SV.vtx = result;
   //
-  return SV;
+  //return SV;
+  return result;
 }
 
 
@@ -550,6 +552,103 @@ VertexingUtils::FCCAnalysesV0 get_V0s(ROOT::VecOps::RVec<edm4hep::TrackState> np
   return result;
 }
 
+VertexingUtils::FCCAnalysesV0 get_V0s(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+				      VertexingUtils::FCCAnalysesVertex PV,
+				      double Ks_invM_low, double Ks_invM_high, double Ks_dis, double Ks_cosAng,
+				      double Lambda_invM_low, double Lambda_invM_high, double Lambda_dis, double Lambda_cosAng,
+				      double Gamma_invM_low, double Gamma_invM_high, double Gamma_dis, double Gamma_cosAng,
+				      double chi2_cut) {
+  // V0 reconstruction
+  // by default set to the tight set of constraints
+
+  VertexingUtils::FCCAnalysesV0 result;
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> vtx; // FCCAnalyses vertex object
+  ROOT::VecOps::RVec<int> pdgAbs;                            // absolute PDG ID
+  ROOT::VecOps::RVec<double> invM;                           // invariant mass
+  result.vtx = vtx;
+  result.pdgAbs = pdgAbs;
+  result.invM = invM;
+
+  VertexingUtils::FCCAnalysesVertex V0_vtx;
+  
+  int nTr = np_tracks.size();
+  if(nTr<2) return result;
+  ROOT::VecOps::RVec<bool> isInV0(nTr, false);
+
+  // set constraints (if(tight==true) tight_set)
+  ROOT::VecOps::RVec<double> isKs      = constraints_Ks(Ks_invM_low, Ks_invM_high, Ks_dis, Ks_cosAng);
+  ROOT::VecOps::RVec<double> isLambda0 = constraints_Lambda0(Lambda_invM_low, Lambda_invM_high, Lambda_dis, Lambda_cosAng);
+  ROOT::VecOps::RVec<double> isGamma   = constraints_Gamma(Gamma_invM_low, Gamma_invM_high, Gamma_dis, Gamma_cosAng);
+
+  ROOT::VecOps::RVec<edm4hep::TrackState> tr_pair;
+  // push empty tracks to make a size=2 vector
+  edm4hep::TrackState tr_i, tr_j;
+  tr_pair.push_back(tr_i);
+  tr_pair.push_back(tr_j);
+  //
+  for(unsigned int i=0; i<nTr-1; i++) {
+    if(isInV0[i] == true) continue; // don't pair a track if it already forms a V0
+    tr_pair[0] = np_tracks[i];
+
+    for(unsigned int j=i+1; j<nTr; j++) {
+      if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
+      tr_pair[1] = np_tracks[j];
+
+      ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0_vtx, tr_pair, PV, true, chi2_cut);
+      if(V0_cand[0] == -1) continue;
+      
+      // Ks
+      if(V0_cand[0]>isKs[0] && V0_cand[0]<isKs[1] && V0_cand[4]>isKs[2] && V0_cand[5]>isKs[3]) {
+	if(debug_me) std::cout<<"Found a Ks"<<std::endl;
+	isInV0[i] = true;
+	isInV0[j] = true;
+	vtx.push_back(V0_vtx);
+	pdgAbs.push_back(310);
+	invM.push_back(V0_cand[0]);
+	break;
+      }
+      
+      // Lambda0
+      else if(V0_cand[1]>isLambda0[0] && V0_cand[1]<isLambda0[1] && V0_cand[4]>isLambda0[2] && V0_cand[5]>isLambda0[3]) {
+	if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
+	isInV0[i] = true;
+	isInV0[j] = true;
+	vtx.push_back(V0_vtx);
+	pdgAbs.push_back(3122);
+	invM.push_back(V0_cand[1]);
+	break;
+      }
+      else if(V0_cand[2]>isLambda0[0] && V0_cand[2]<isLambda0[1] && V0_cand[4]>isLambda0[2] && V0_cand[5]>isLambda0[3]) {
+	if(debug_me) std::cout<<"Found a Lambda0"<<std::endl;
+	isInV0[i] = true;
+	isInV0[j] = true;
+	vtx.push_back(V0_vtx);
+	pdgAbs.push_back(3122);
+	invM.push_back(V0_cand[2]);
+	break;
+      }
+	
+      // photon conversion
+      else if(V0_cand[3]<isGamma[1] && V0_cand[4]>isGamma[2] && V0_cand[5]>isGamma[3]) {
+	if(debug_me) std::cout<<"Found a Photon coversion"<<std::endl;
+	isInV0[i] = true;
+	isInV0[j] = true;
+	vtx.push_back(V0_vtx);
+	pdgAbs.push_back(22);
+	invM.push_back(V0_cand[3]);
+	break;
+      }
+      //
+    }
+  }
+
+  result.vtx = vtx;
+  result.pdgAbs = pdgAbs;
+  result.invM = invM;
+  //
+  return result;
+}
+
 VertexingUtils::FCCAnalysesV0 get_V0s_jet(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
 					  ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
 					  ROOT::VecOps::RVec<bool> isInPrimary,
@@ -804,6 +903,43 @@ ROOT::VecOps::RVec<double> constraints_Gamma(bool tight) {
     result[2] = 9;
     result[3] = 0.999;
   }
+  //
+  return result;
+}
+
+// User set constraints
+ROOT::VecOps::RVec<double> constraints_Ks(double invM_low, double invM_high, double dis, double cosAng) {
+
+  ROOT::VecOps::RVec<double> result(4, 0);
+
+  result[0] = invM_low;
+  result[1] = invM_high;
+  result[2] = dis;
+  result[3] = cosAng;
+  //
+  return result;
+}
+
+ROOT::VecOps::RVec<double> constraints_Lambda0(double invM_low, double invM_high, double dis, double cosAng) {
+
+  ROOT::VecOps::RVec<double> result(4, 0);
+
+  result[0] = invM_low;
+  result[1] = invM_high;
+  result[2] = dis;
+  result[3] = cosAng;
+  //
+  return result;
+}
+
+ROOT::VecOps::RVec<double> constraints_Gamma(double invM_low, double invM_high, double dis, double cosAng) {
+
+  ROOT::VecOps::RVec<double> result(4, 0);
+
+  result[0] = invM_low;
+  result[1] = invM_high;
+  result[2] = dis;
+  result[3] = cosAng;
   //
   return result;
 }
