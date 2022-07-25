@@ -190,6 +190,9 @@ namespace VertexingUtils{
   ROOT::VecOps::RVec<double> get_chi2_SV( FCCAnalysesV0 SV );
 
   /// Passing a vector of FCCAnalysesVertex instead of FCCAnalysesSV or FCCAnalysesV0
+  /// Return the number of reconstructed SVs
+  int get_n_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
+
   /// Return the momentum of all reconstructed vertices (SV.vtx or V0.vtx)
   ROOT::VecOps::RVec<TVector3> get_p_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices );
 
