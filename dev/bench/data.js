@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658740621846,
+  "lastUpdate": 1658742788982,
   "repoUrl": "https://github.com/kunal2796/FCCAnalyses",
   "entries": {
     "Benchmark": [
@@ -1440,6 +1440,44 @@ window.BENCHMARK_DATA = {
             "name": "nightly | Events processed per second: examples/FCCee/flavour/Bc2TauNu",
             "value": 5.7778358060283335,
             "unit": "Evt/s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "00451188f2df762b44c0607af79dd582e8eaa278",
+          "message": "Merge pull request #96 from EmanuelPerez/forKunal_SVtest\n\nfix test of get_SV_event w/o FCCAnalysesSV",
+          "timestamp": "2022-07-25T11:43:56+02:00",
+          "tree_id": "ab3366976022139d2cdb6ee82b72b319d76cd9e8",
+          "url": "https://github.com/kunal2796/FCCAnalyses/commit/00451188f2df762b44c0607af79dd582e8eaa278"
+        },
+        "date": 1658742786873,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "prod | Time spent running the analysis: examples/FCCee/higgs/mH-recoil/mumu",
+            "value": 16.475102424621582,
+            "unit": "Seconds",
+            "range": 10,
+            "extra": "Analysis path: examples/FCCee/higgs/mH-recoil/mumu"
+          },
+          {
+            "name": "prod | Time spent running the analysis: examples/FCCee/flavour/Bc2TauNu",
+            "value": 21.81977415084839,
+            "unit": "Seconds",
+            "range": 10,
+            "extra": "Analysis path: examples/FCCee/flavour/Bc2TauNu"
           }
         ]
       }
