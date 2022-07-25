@@ -22,5 +22,5 @@ var searchData=
   ['vertexingutils_2ecc_19',['VertexingUtils.cc',['../_vertexing_utils_8cc.html',1,'']]],
   ['vertexingutils_2eh_20',['VertexingUtils.h',['../_vertexing_utils_8h.html',1,'']]],
   ['vertexseed_5fbest_21',['VertexSeed_best',['../namespace_f_c_c_analyses_1_1_vertex_finder_l_c_f_i_plus.html#a76a26f41fcb17d11e5d78600df7ffcdd',1,'FCCAnalyses::VertexFinderLCFIPlus']]],
-  ['vtx_22',['vtx',['../struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_s_v.html#a866abb3d696379fa711cd193fd29296c',1,'FCCAnalyses::VertexingUtils::FCCAnalysesSV::vtx()'],['../struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_v0.html#aeb8d6a8ea2eb879c7eb67d3fe7cafcfa',1,'FCCAnalyses::VertexingUtils::FCCAnalysesV0::vtx()']]]
+  ['vtx_22',['vtx',['../struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_v0.html#aeb8d6a8ea2eb879c7eb67d3fe7cafcfa',1,'FCCAnalyses::VertexingUtils::FCCAnalysesV0']]]
 ];
