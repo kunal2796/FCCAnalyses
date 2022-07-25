@@ -26,14 +26,15 @@ namespace VertexFinderLCFIPlus{
    *  non-primary separated from all tracks using isInPrimary (bool) vector
    *  currently not separating SVs by jet
    */
-  VertexingUtils::FCCAnalysesSV get_SV_jets( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-					     ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-					     VertexingUtils::FCCAnalysesVertex PV,
-					     ROOT::VecOps::RVec<bool> isInPrimary,
-					     ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
-					     std::vector<std::vector<int>> jet_consti,
-					     bool V0_rej=true,
-					     double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
+  //VertexingUtils::FCCAnalysesSV get_SV_jets( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex>> get_SV_jets( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+											 ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+											 VertexingUtils::FCCAnalysesVertex PV,
+											 ROOT::VecOps::RVec<bool> isInPrimary,
+											 ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
+											 std::vector<std::vector<int>> jet_consti,
+											 bool V0_rej=true,
+											 double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
   
   /** returns SVs reconstructed from non-primary tracks of the event
    *  SV finding done before jet clustering
