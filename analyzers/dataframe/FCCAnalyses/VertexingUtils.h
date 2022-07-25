@@ -252,6 +252,10 @@ namespace VertexingUtils{
   ROOT::VecOps::RVec<double> get_dR_SV_obj( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
                      edm4hep::Vector3d location );
 
+  /// For get_SV_jets
+  /// Return the number of reconstructed SVs
+  int get_n_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices );
+
   /// Return the tracks separated by jets
   std::vector<std::vector<edm4hep::TrackState>> get_tracksInJets( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
 								  ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,

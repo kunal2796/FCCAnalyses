@@ -794,7 +794,18 @@ ROOT::VecOps::RVec<double> get_relPhi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> 
   return result;
 }
 
+// For get_SV_jets outputs
 
+// no of reconstructed SVs
+int get_n_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ) {
+  int result = 0;
+  if(vertices.size() != 0) {
+    for(auto SV_jets : vertices) result += SV_jets.size();
+  }
+  return result;
+}
+
+//
 // separate tracks by jet
 std::vector<std::vector<edm4hep::TrackState>> get_tracksInJets( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
 								ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,

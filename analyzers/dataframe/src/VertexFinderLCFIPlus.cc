@@ -12,22 +12,24 @@ const double m_p  = 0.93827208; // p+- mass [GeV]
 const double m_e  = 0.00051099; // e+- mass [GeV]
 //
 
-VertexingUtils::FCCAnalysesSV get_SV_jets(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-					  ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-					  VertexingUtils::FCCAnalysesVertex PV,
-					  ROOT::VecOps::RVec<bool> isInPrimary,
-					  ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
-					  std::vector<std::vector<int>> jet_consti,
-					  bool V0_rej,
-					  double chi2_cut, double invM_cut, double chi2Tr_cut) {
+//VertexingUtils::FCCAnalysesSV get_SV_jets(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+ROOT::VecOps::RVec<ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex>> get_SV_jets(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+										      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+										      VertexingUtils::FCCAnalysesVertex PV,
+										      ROOT::VecOps::RVec<bool> isInPrimary,
+										      ROOT::VecOps::RVec<fastjet::PseudoJet> jets,
+										      std::vector<std::vector<int>> jet_consti,
+										      bool V0_rej,
+										      double chi2_cut, double invM_cut, double chi2Tr_cut) {
 
   // find SVs using LCFI+ (clustering first)
   
-  VertexingUtils::FCCAnalysesSV SV;
-  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
-  ROOT::VecOps::RVec<int> nSV_jet;
-  SV.vtx = result;
-  SV.nSV_jet = nSV_jet;
+  //VertexingUtils::FCCAnalysesSV SV;
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex>> result;
+  //ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> result;
+  //ROOT::VecOps::RVec<int> nSV_jet;
+  //SV.vtx = result;
+  //SV.nSV_jet = nSV_jet;
 
   ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks;
 
@@ -65,9 +67,10 @@ VertexingUtils::FCCAnalysesSV get_SV_jets(ROOT::VecOps::RVec<edm4hep::Reconstruc
     // start finding SVs
     ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> i_result = findSVfromTracks(tracks_fin, PV, chi2_cut, invM_cut, chi2Tr_cut);
 
-    nSV_jet.push_back(i_result.size());
+    //nSV_jet.push_back(i_result.size());
 
-    for(VertexingUtils::FCCAnalysesVertex i_sv : i_result) result.push_back(i_sv);
+    //for(VertexingUtils::FCCAnalysesVertex i_sv : i_result) result.push_back(i_sv);
+    result.push_back(i_result);
     
     // clean-up
     i_result.clear();
@@ -78,10 +81,11 @@ VertexingUtils::FCCAnalysesSV get_SV_jets(ROOT::VecOps::RVec<edm4hep::Reconstruc
   if(debug_me) std::cout<<"no more SVs can be reconstructed"<<std::endl;
   
   // nSV_jet gives a handle on deciding which SVs are in which jet
-  SV.vtx = result;
-  SV.nSV_jet = nSV_jet;
+  //SV.vtx = result;
+  //SV.nSV_jet = nSV_jet;
   //
-  return SV;
+  //return SV;
+  return result;
 }
 
 //VertexingUtils::FCCAnalysesSV get_SV_event(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
