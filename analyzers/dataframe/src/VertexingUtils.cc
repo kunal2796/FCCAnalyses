@@ -799,7 +799,7 @@ int get_n_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices
 
 // Return the number of reconstructed SVs
 ROOT::VecOps::RVec<int> get_n_SV_jets( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ) {
-  ROOT::VecOps::RVec<int> result = 0;
+  ROOT::VecOps::RVec<int> result;
   if(vertices.size() != 0) {
     for(auto SV_jets : vertices) result.push_back(SV_jets.size());
   }
@@ -888,7 +888,7 @@ std::vector<std::vector<double>> get_invM( ROOT::VecOps::RVec<ROOT::VecOps::RVec
 
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<double> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
 
     for (auto & vertex: i_vertices) {
       ROOT::VecOps::RVec<TVector3> p_tracks = vertex.updated_track_momentum_at_vertex;
@@ -914,7 +914,7 @@ std::vector<std::vector<TVector3>> get_p_SV( ROOT::VecOps::RVec<ROOT::VecOps::RV
 
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<TVector3> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) {
       ROOT::VecOps::RVec<TVector3> p_tracks = ivtx.updated_track_momentum_at_vertex;
@@ -935,7 +935,7 @@ std::vector<std::vector<double>> get_pMag_SV( ROOT::VecOps::RVec<ROOT::VecOps::R
 
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<double> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) {
       ROOT::VecOps::RVec<TVector3> p_tracks = ivtx.updated_track_momentum_at_vertex;
@@ -955,7 +955,7 @@ std::vector<std::vector<int>> get_VertexNtrk( ROOT::VecOps::RVec<ROOT::VecOps::R
   std::vector<std::vector<int>> result;
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<int> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & TheVertex: i_vertices){
       i_result.push_back(TheVertex.ntracks);
@@ -971,7 +971,7 @@ std::vector<std::vector<double>> get_chi2_SV( ROOT::VecOps::RVec<ROOT::VecOps::R
 
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<double> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) {
       int nDOF = 2*ivtx.ntracks - 3;
@@ -988,7 +988,7 @@ std::vector<std::vector<double>> get_norm_chi2_SV( ROOT::VecOps::RVec<ROOT::VecO
 
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<double> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) i_result.push_back(ivtx.vertex.chi2);
     result.push_back(i_result);
@@ -1002,7 +1002,7 @@ std::vector<std::vector<int>> get_nDOF_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec
 
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<int> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) i_result.push_back(2*ivtx.ntracks - 3);
     result.push_back(i_result);
@@ -1016,7 +1016,7 @@ std::vector<std::vector<double>> get_theta_SV( ROOT::VecOps::RVec<ROOT::VecOps::
 
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<double> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     
     for(auto & ivtx : i_vertices) {
       TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
@@ -1033,7 +1033,7 @@ std::vector<std::vector<double>> get_phi_SV( ROOT::VecOps::RVec<ROOT::VecOps::RV
 
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<double> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     
     for(auto & ivtx : i_vertices) {
       TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
@@ -1051,7 +1051,7 @@ std::vector<std::vector<double>> get_relTheta_SV( ROOT::VecOps::RVec<ROOT::VecOp
 
   for(unsigned int i=0; i<jets.size(); i++) {
     std::vector<double> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     fastjet::PseudoJet i_jet = jets.at(i);
     for(auto & ivtx : i_vertices) {
       TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
@@ -1071,7 +1071,7 @@ std::vector<std::vector<double>> get_relPhi_SV( ROOT::VecOps::RVec<ROOT::VecOps:
 
   for(unsigned int i=0; i<jets.size(); i++) {
     std::vector<double> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     fastjet::PseudoJet i_jet = jets.at(i);
     for(auto & ivtx : i_vertices) {
       TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
@@ -1094,7 +1094,7 @@ std::vector<std::vector<double>> get_pointingangle_SV( ROOT::VecOps::RVec<ROOT::
 
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<double> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     for(auto & ivtx : i_vertices) {
       double pointangle = 0.;
       
@@ -1126,7 +1126,7 @@ std::vector<std::vector<double>> get_dxy_SV( ROOT::VecOps::RVec<ROOT::VecOps::RV
 
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<double> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) {
       TVector3 x_vtx(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
@@ -1147,7 +1147,7 @@ std::vector<std::vector<double>> get_d3d_SV( ROOT::VecOps::RVec<ROOT::VecOps::RV
 
   for(unsigned int i=0; i<vertices.size(); i++) {
     std::vector<double> i_result;
-    std::vector<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) {
       TVector3 x_vtx(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);

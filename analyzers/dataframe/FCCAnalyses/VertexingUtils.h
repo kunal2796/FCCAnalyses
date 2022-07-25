@@ -261,8 +261,8 @@ namespace VertexingUtils{
 								  std::vector<std::vector<int>> jet_consti );
 
   /// Return the SVs or V0s separated by jets
-  std::vector<std::vector<FCCAnalysesVertex>> get_svInJets( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
-							    ROOT::VecOps::RVec<int> nSV_jet );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> get_svInJets( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
+									  ROOT::VecOps::RVec<int> nSV_jet );
 
   // --- for personal use
   /// Return angles for reconstructed vertices from a jet wrt that jet
