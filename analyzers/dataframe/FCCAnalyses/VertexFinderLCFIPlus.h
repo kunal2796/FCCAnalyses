@@ -39,22 +39,22 @@ namespace VertexFinderLCFIPlus{
    *  SV finding done before jet clustering
    *  non-primary separated from all tracks using isInPrimary (bool) vector
    */
-  //ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-  VertexingUtils::FCCAnalysesSV get_SV_event( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-					      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-					      VertexingUtils::FCCAnalysesVertex PV,
-					      ROOT::VecOps::RVec<bool> isInPrimary,
-					      bool V0_rej=true,
-					      double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
+  //VertexingUtils::FCCAnalysesSV get_SV_event( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+								      ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+								      VertexingUtils::FCCAnalysesVertex PV,
+								      ROOT::VecOps::RVec<bool> isInPrimary,
+								      bool V0_rej=true,
+								      double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
 
   /** returns SVs reconstructed from non-primary tracks of the event
    *  SV finding done before jet clustering
    */
-  //ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-  VertexingUtils::FCCAnalysesSV get_SV_event( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
-					      VertexingUtils::FCCAnalysesVertex PV,
-					      bool V0_rej=true,
-					      double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
+  //VertexingUtils::FCCAnalysesSV get_SV_event( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+  ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> get_SV_event( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+								      VertexingUtils::FCCAnalysesVertex PV,
+								      bool V0_rej=true,
+								      double chi2_cut=9., double invM_cut=10., double chi2Tr_cut=5. ) ;
   
   /** returns indices of the best pair of tracks from a vector of (non-primary) tracks 
    *  default chi2 threshold is 9 and default invariant mass threshold is 10GeV
@@ -111,10 +111,21 @@ namespace VertexFinderLCFIPlus{
   ///
   
   /** returns V0s reconstructed from a set of tracks (as an FCCAnalysesV0 object)
+   *  constraint thresholds can be chosen out of two sets
    */
   VertexingUtils::FCCAnalysesV0 get_V0s( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 					 VertexingUtils::FCCAnalysesVertex PV,
 					 bool tight = true,
+					 double chi2_cut=9. ) ;
+
+  /** returns V0s reconstructed from a set of tracks (as an FCCAnalysesV0 object)
+   *  constraint thresholds can be set manually
+   */
+  VertexingUtils::FCCAnalysesV0 get_V0s( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
+					 VertexingUtils::FCCAnalysesVertex PV,
+					 double Ks_invM_low=0.493, double Ks_invM_high=0.503, double Ks_dis=0.5, double Ks_cosAng=0.999,
+					 double Lambda_invM_low=1.111, double Lambda_invM_high=1.121, double Lambda_dis=0.5, double Lambda_cosAng=0.99995,
+					 double Gamma_invM_low=0., double Gamma_invM_high=0.005, double Gamma_dis=9, double Gamma_cosAng=0.99995,
 					 double chi2_cut=9. ) ;
 
   /** returns V0s reconstructed in each jet of the event (as an FCCAnalysesV0 object)
@@ -148,6 +159,7 @@ namespace VertexFinderLCFIPlus{
   /** functions to fill constraint thresholds
    *  tight  -> tight constraints
    *  !tight -> loose constraints
+   *  also an option to choose constraint threshold
    *
    *  [0] -> invariant mass lower limit [GeV]
    *  [1] -> invariant mass upper limit [GeV]
@@ -157,7 +169,10 @@ namespace VertexFinderLCFIPlus{
   ROOT::VecOps::RVec<double> constraints_Ks(bool tight) ;
   ROOT::VecOps::RVec<double> constraints_Lambda0(bool tight) ;
   ROOT::VecOps::RVec<double> constraints_Gamma(bool tight) ;
-  
+  //
+  ROOT::VecOps::RVec<double> constraints_Ks(double invM_low, double invM_high, double dis, double cosAng) ;
+  ROOT::VecOps::RVec<double> constraints_Lambda0(double invM_low, double invM_high, double dis, double cosAng) ;
+  ROOT::VecOps::RVec<double> constraints_Gamma(double invM_low, double invM_high, double dis, double cosAng) ;
   /** returns indices of the all pairs of tracks that pass a set of constraints from a vector of (non-primary) tracks
    *  default chi2 threshold is 9 and default invariant mass threshold is 10GeV
    */
