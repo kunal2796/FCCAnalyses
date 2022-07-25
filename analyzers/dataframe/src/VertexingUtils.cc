@@ -5,6 +5,11 @@ namespace FCCAnalyses{
 
 namespace VertexingUtils{
 
+
+
+
+
+
 //
 // Selection of particles based on the d0 / z0 significances of the associated track
 //
@@ -280,6 +285,13 @@ int get_n_SV( FCCAnalysesSV SV ) {
   int result = SV.vtx.size();
   return result;
 }
+
+int get_n_SV( ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> v ) {
+  int n = v.size();
+  return n;
+}
+
+
 
 // vector of position of all reconstructed SV (in mm)
 ROOT::VecOps::RVec<TVector3> get_position_SV( FCCAnalysesSV SV ) {

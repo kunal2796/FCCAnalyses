@@ -153,6 +153,8 @@ namespace VertexingUtils{
   /// Return the number of reconstructed SVs
   int get_n_SV( FCCAnalysesSV SV );
 
+  int get_n_SV( ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex> v );
+
   /// Return the vertex position of all reconstructed SVs (in mm)
   ROOT::VecOps::RVec<TVector3> get_position_SV( FCCAnalysesSV SV );
 
