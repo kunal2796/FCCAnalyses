@@ -119,7 +119,7 @@ def getElement(rdfModule, element, isFinal=False):
 
         elif element=='procDictAdd':
             if isFinal:
-                print('The variable <{}> is optional in your analysis_final.py file return default value {}'.format(element))
+                print('The variable <{}> is optional in your analysis_final.py file return empty dictionary'.format(element))
                 return {}
             else: print('The option <{}> is not available in presel analysis'.format(element))
 
@@ -389,9 +389,9 @@ def sendToBatch(rdfModule, chunkList, process, analysisFile):
         frun.write('cd job{}_chunk{}\n'.format(process,ch))
 
         if not os.path.isabs(outputDir):
-            frun.write('python $LOCAL_DIR/config/FCCAnalysisRun.py {} --batch --output {}chunk{}.root --files-list '.format(analysisFile, outputDir, ch))
+            frun.write('$LOCAL_DIR/bin/fccanalysis run {} --batch --output {}chunk{}.root --files-list '.format(analysisFile, outputDir, ch))
         else:
-            frun.write('python $LOCAL_DIR/config/FCCAnalysisRun.py {} --batch --output {}{}/chunk{}.root --files-list '.format(analysisFile, outputDir, process,ch))
+            frun.write('$LOCAL_DIR/bin/fccanalysis run {} --batch --output {}{}/chunk{}.root --files-list '.format(analysisFile, outputDir, process,ch))
 
         for ff in range(len(chunkList[ch])):
             frun.write(' %s'%(chunkList[ch][ff]))
@@ -523,7 +523,7 @@ def runLocal(rdfModule, fileList, args):
 
 
 #__________________________________________________________
-def runStages(args, rdfModule, preprocess):
+def runStages(args, rdfModule, preprocess, analysisFile):
     #check if outputDir exist and if not create it
     outputDir = getElement(rdfModule,"outputDir")
     if not os.path.exists(outputDir) and outputDir!='':
@@ -608,11 +608,11 @@ def runStages(args, rdfModule, preprocess):
 
 
 #__________________________________________________________
-def testfile(self,f):
+def testfile(f):
     tf=ROOT.TFile.Open(f)
     tt=None
     try :
-        tt=tf.Get(self.treename)
+        tt=tf.Get("events")
         if tt==None:
             print ('file does not contains events, selection was too tight, will skip: ',f)
             return False
@@ -765,7 +765,7 @@ def runFinal(rdfModule):
             if doTree:
                 opts = ROOT.RDF.RSnapshotOptions()
                 opts.fLazy = True
-                snapshot_tdf = df_cut.Snapshot(self.treename, fout, "", opts)
+                snapshot_tdf = df_cut.Snapshot("events", fout, "", opts)
                 # Needed to avoid python garbage collector messing around with the snapshot
                 tdf_list.append(snapshot_tdf)
 
@@ -886,7 +886,7 @@ def run(mainparser, subparser=None):
 
     try:
         args.command
-        if args.command == "run":          runStages(args, rdfModule, args.preprocess)
+        if args.command == "run":      runStages(args, rdfModule, args.preprocess, analysisFile)
         elif args.command == "final":  runFinal(rdfModule)
         elif args.command == "plots":  runPlots(analysisFile)
         return
@@ -925,7 +925,7 @@ def run(mainparser, subparser=None):
             if args.final:
                 print ('----> Can not have --final with --preprocess, exit')
                 sys.exit(3)
-        runStages(args, rdfModule, args.preprocess)
+        runStages(args, rdfModule, args.preprocess, analysisFile)
 
 
 #__________________________________________________________
