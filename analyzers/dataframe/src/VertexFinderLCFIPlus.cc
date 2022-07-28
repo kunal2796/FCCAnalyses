@@ -393,6 +393,7 @@ ROOT::VecOps::RVec<bool> isV0(ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 
     for(unsigned int j=i+1; j<nTr; j++) {
       if(result[j] == true) continue;
+      if(t_pair[0].omega * np_tracks[j].omega > 0) continue; // don't pair tracks with same charge (same sign curvature = same sign charge)
       t_pair[1] = np_tracks[j];
 
       ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0, t_pair, PV, false);
@@ -571,6 +572,7 @@ VertexingUtils::FCCAnalysesV0 get_V0s(ROOT::VecOps::RVec<edm4hep::TrackState> np
 
     for(unsigned int j=i+1; j<nTr; j++) {
       if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
+      if(tr_pair[0].omega * np_tracks[j].omega > 0) continue; // don't pair tracks with same charge (same sign curvature = same sign charge)
       tr_pair[1] = np_tracks[j];
 
       ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0_vtx, tr_pair, PV, true, chi2_cut);
@@ -703,6 +705,7 @@ VertexingUtils::FCCAnalysesV0 get_V0s_jet(ROOT::VecOps::RVec<edm4hep::Reconstruc
       
       for(unsigned int j=i+1; j<nTr; j++) {
 	if(isInV0[j] == true) continue; // don't pair a track if it already forms a V0
+	if(tr_pair[0].omega * np_tracks[j].omega > 0) continue; // don't pair tracks with same charge (same sign curvature = same sign charge)
 	tr_pair[1] = np_tracks[j];
 	
 	ROOT::VecOps::RVec<double> V0_cand = get_V0candidate(V0_vtx, tr_pair, PV, true, chi2_cut);
