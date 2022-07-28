@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659014747000,
+  "lastUpdate": 1659014748370,
   "repoUrl": "https://github.com/kunal2796/FCCAnalyses",
   "entries": {
     "Benchmark": [
@@ -2229,6 +2229,45 @@ window.BENCHMARK_DATA = {
             "unit": "Seconds",
             "range": 10,
             "extra": "Analysis path: examples/FCCee/test"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "committer": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "distinct": true,
+          "id": "b94b3b8ca678794a8eace2728315d5522d1746a8",
+          "message": "testing V0 finder with only oppositely charged tracks",
+          "timestamp": "2022-07-28T15:12:48+02:00",
+          "tree_id": "77f39f70fc9a026cfb3659c734450612aa5aab1e",
+          "url": "https://github.com/kunal2796/FCCAnalyses/commit/b94b3b8ca678794a8eace2728315d5522d1746a8"
+        },
+        "date": 1659014747964,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/higgs/mH-recoil/mumu",
+            "value": 8.346991735544755,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/flavour/Bc2TauNu",
+            "value": 5.960092498933116,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/test",
+            "value": 8.11638776330172,
+            "unit": "Evt/s"
           }
         ]
       }
