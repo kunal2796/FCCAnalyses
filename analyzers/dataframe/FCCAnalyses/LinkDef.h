@@ -23,6 +23,8 @@
 
 #pragma link C++ class ROOT::VecOps::RVec<FCCAnalyses::VertexingUtils::FCCAnalysesVertex>+;
 #pragma link C++ class ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalyses::VertexingUtils::FCCAnalysesVertex>>+;
+#pragma link C++ class ROOT::VecOps::RVec<ROOT::VecOps::RVec<TVector3>>+;
+#pragma link C++ class ROOT::VecOps::RVec<ROOT::VecOps::RVec<TLorentzVector>>+;
 
 //to load all other functions
 #pragma link C++ function dummyLoader;

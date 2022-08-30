@@ -269,25 +269,25 @@ namespace VertexingUtils{
   ROOT::VecOps::RVec<double> get_relTheta_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices, fastjet::PseudoJet jet ); // theta
   ROOT::VecOps::RVec<double> get_relPhi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices, fastjet::PseudoJet jet ); // phi
 
-  // --- functions to get SV properties in vec of vec (for ntuples) --- //
-  std::vector<std::vector<double>> get_invM( std::vector<std::vector<FCCAnalysesVertex>> vertices );
-  std::vector<std::vector<TVector3>> get_p_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
-  std::vector<std::vector<double>> get_pMag_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
-  std::vector<std::vector<int>> get_VertexNtrk( std::vector<std::vector<FCCAnalysesVertex>> vertices );
-  std::vector<std::vector<double>> get_chi2_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
-  std::vector<std::vector<double>> get_norm_chi2_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
-  std::vector<std::vector<int>> get_nDOF_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
-  std::vector<std::vector<double>> get_theta_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
-  std::vector<std::vector<double>> get_phi_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices );
-  std::vector<std::vector<double>> get_relTheta_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices, ROOT::VecOps::RVec<fastjet::PseudoJet> jets );
-  std::vector<std::vector<double>> get_relPhi_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices, ROOT::VecOps::RVec<fastjet::PseudoJet> jets );
-  std::vector<std::vector<double>> get_pointingangle_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices, FCCAnalysesVertex PV );
-  std::vector<std::vector<double>> get_dxy_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices, FCCAnalysesVertex PV );
-  std::vector<std::vector<double>> get_d3d_SV( std::vector<std::vector<FCCAnalysesVertex>> vertices, FCCAnalysesVertex PV );
-  std::vector<std::vector<int>> get_pdg_V0( ROOT::VecOps::RVec<int> pdg, ROOT::VecOps::RVec<int> nSV_jet );
-  std::vector<std::vector<double>> get_invM_V0( ROOT::VecOps::RVec<double> invM, ROOT::VecOps::RVec<int> nSV_jet );
+  // --- for get_SV_jets --- //
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_invM( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<TVector3>> get_p_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_pMag_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> get_VertexNtrk( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_chi2_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_norm_chi2_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> get_nDOF_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_theta_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_phi_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relTheta_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices, ROOT::VecOps::RVec<fastjet::PseudoJet> jets );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relPhi_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices, ROOT::VecOps::RVec<fastjet::PseudoJet> jets );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_pointingangle_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices, FCCAnalysesVertex PV );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_dxy_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices, FCCAnalysesVertex PV );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_d3d_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices, FCCAnalysesVertex PV );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> get_pdg_V0( ROOT::VecOps::RVec<int> pdg, ROOT::VecOps::RVec<int> nSV_jet );
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_invM_V0( ROOT::VecOps::RVec<double> invM, ROOT::VecOps::RVec<int> nSV_jet );
   
-  // --- (for ntuples) --- //
+  // --- for get_SV_jets --- //
   
   // --- Internal methods needed by the code of  Franco B :  
   float get_trackMom( edm4hep::TrackState & atrack );
