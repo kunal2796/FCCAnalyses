@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661863485996,
+  "lastUpdate": 1661863489031,
   "repoUrl": "https://github.com/kunal2796/FCCAnalyses",
   "entries": {
     "Benchmark": [
@@ -2733,6 +2733,45 @@ window.BENCHMARK_DATA = {
             "unit": "Seconds",
             "range": 10,
             "extra": "Analysis path: examples/FCCee/test"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "committer": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "distinct": true,
+          "id": "e4de908962332ea6eb2949be38e41e18f7f28a96",
+          "message": "fn updates for SV in jets",
+          "timestamp": "2022-08-30T14:28:02+02:00",
+          "tree_id": "0ee4495e67262195999c328649ba7fde588e8384",
+          "url": "https://github.com/kunal2796/FCCAnalyses/commit/e4de908962332ea6eb2949be38e41e18f7f28a96"
+        },
+        "date": 1661863487682,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "prod | Events processed per second: examples/FCCee/higgs/mH-recoil/mumu",
+            "value": 6.1104424525450876,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "prod | Events processed per second: examples/FCCee/flavour/Bc2TauNu",
+            "value": 5.049147127959782,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "prod | Events processed per second: examples/FCCee/test",
+            "value": 6.121982356219339,
+            "unit": "Evt/s"
           }
         ]
       }
