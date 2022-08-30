@@ -113,7 +113,7 @@ namespace VertexFinderLCFIPlus{
    */
   VertexingUtils::FCCAnalysesV0 get_V0s( ROOT::VecOps::RVec<edm4hep::TrackState> np_tracks,
 					 VertexingUtils::FCCAnalysesVertex PV,
-					 bool tight = true,
+					 bool tight,
 					 double chi2_cut=9. ) ;
 
   /** returns V0s reconstructed from a set of tracks (as an FCCAnalysesV0 object)
