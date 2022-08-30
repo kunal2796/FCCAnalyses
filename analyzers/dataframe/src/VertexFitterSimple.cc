@@ -286,11 +286,11 @@ TVectorD Fill_x(TVectorD par, Double_t phi){
 
 
 VertexingUtils::FCCAnalysesVertex  VertexFitter( int Primary,
-								     ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
-								     ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
-								     bool BeamSpotConstraint,
-								     double bsc_sigmax, double bsc_sigmay, double bsc_sigmaz,
-                                                                     double bsc_x, double bsc_y, double bsc_z )  {
+						 ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> recoparticles,
+						 ROOT::VecOps::RVec<edm4hep::TrackState> thetracks,
+						 bool BeamSpotConstraint,
+						 double bsc_sigmax, double bsc_sigmay, double bsc_sigmaz,
+						 double bsc_x, double bsc_y, double bsc_z )  {
 
 
 
@@ -719,8 +719,8 @@ VertexingUtils::FCCAnalysesVertex  VertexFitter_Tk( int Primary,
     }
   */
 
-  delete final_chi2;
-  delete final_phases;
+  delete[] final_chi2;
+  delete[] final_phases;
  
   if(debug) std::cout << "Finished VertexFitter_Tk!" << std::endl;
 
