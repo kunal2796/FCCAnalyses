@@ -25,14 +25,22 @@ int main()
 {
   gInterpreter->GenerateDictionary("vector<vector<int> >","vector");
 
+  //TFile *file = TFile::Open("p8_ee_Zbb_ecm91_reco.root");
+  //TFile *file = TFile::Open("p8_ee_Zcc_ecm91_reco.root");
   TFile *file = TFile::Open("p8_ee_Zuds_ecm91_reco.root");
   TTreeReader tree("events", file);
   int nEvents = tree.GetEntries();
   cout<<"Number of Events: "<<nEvents<<endl;
 
   TString histfname;
+  //histfname = "histZbb_tracks.root";
+  //histfname = "histZcc_tracks.root";
   histfname = "histZuds_tracks.root";
   TFile *histFile = new TFile(histfname,"RECREATE");
+
+  //TH1F* h_d0sig_b = new TH1F("h_d0sig_b","Z #rightarrow b#bar{b}",100,-10,10);
+  //TH1F* h_d0sig_c = new TH1F("h_d0sig_c","Z #rightarrow c#bar{c}",100,-10,10);
+  TH1F* h_d0sig_l = new TH1F("h_d0sig_l","Z #rightarrow uds",100,-10,10);
   
   // hists for the track loop
   TH1F* h_d0 = new TH1F("h_d0","Transverse Impact Parameter",100,-50,50);
@@ -40,6 +48,13 @@ int main()
   TH1F* h_phi0 = new TH1F("h_phi0","Azimuthal Angle at pt of Closest Approach",100,-3.15,3.15);
   TH1F* h_omega = new TH1F("h_omega","Curvature",100,-0.01,0.01);
   TH1F* h_tLmda = new TH1F("h_tLmda","tan of Dip Angle",100,-10,10);
+  TH1F* h_theta = new TH1F("h_theta","Polar Angle (from tanLambda)",100,0,3.15);
+  TH1F* h_p = new TH1F("h_p","Momentum Magnitude (from track parameters)",100,0,50);
+
+  // hists for RPs
+  TH1F* h_phi_RP   = new TH1F("h_phi_RP",  "Azimuthal Angle (from momentum)",100,-3.15,3.15);
+  TH1F* h_theta_RP = new TH1F("h_theta_RP","Polar Angle (from momentum)",100,0,3.15);
+  TH1F* h_p_RP     = new TH1F("h_p_RP",    "Momentum Magnitude (from momentum)",100,0,50);
   /*
   // hist by flavour
   TH1F* h_d0_b = new TH1F("h_d0_b","Z #rightarrow b#bar{b}",100,0,100);
@@ -64,12 +79,12 @@ int main()
   TH1F* h_z0sig_d = new TH1F("h_z0sig_d","Z #rightarrow d#bar{d}",100,-5,5);
   */
   // reco particles                                                       
-  //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpx(tree, "RP_px");
-  //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpy(tree, "RP_py");
-  //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpz(tree, "RP_pz");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpx(tree, "RP_px");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpy(tree, "RP_py");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPpz(tree, "RP_pz");
   //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPe(tree, "RP_e");
-  //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPp(tree, "RP_p");
-  //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPtheta(tree, "RP_theta");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPp(tree, "RP_p");
+  TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPtheta(tree, "RP_theta");
   //TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPmass(tree, "RP_mass");
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> RPcharge(tree, "RP_charge");
 
@@ -115,6 +130,10 @@ int main()
 	  if(RPcharge->at(ctr) == 0) continue; // only charged
 
 	  n_chrg++;
+
+	  //h_d0sig_b->Fill(RPD0sig->at(ctr));
+	  //h_d0sig_c->Fill(RPD0sig->at(ctr));
+	  h_d0sig_l->Fill(RPD0sig->at(ctr));
 	  
 	  d0 = RPD0->at(ctr);           // signed transverse IP
 	  z0 = RPZ0->at(ctr);           // signed longitudinal IP
@@ -156,6 +175,31 @@ int main()
 
 	  // tan(lambda)
 	  h_tLmda->Fill(tLmda);
+
+	  // theta
+	  float theta = atan(1/tLmda);
+	  if(theta<0) theta += M_PI;
+	  h_theta->Fill(theta);
+
+	  // |p|
+	  float pt_trk = 2*0.2998 / TMath::Abs(2 * omega * 0.5*1e3);
+	  TVector3 p_trk(pt_trk*TMath::Cos(phi0), pt_trk*TMath::Sin(phi0), pt_trk*tLmda);
+	  h_p->Fill(p_trk.Mag());
+	}
+
+      for(unsigned int ctr=0; ctr<RPpx->size(); ctr++)
+	{
+	  if(RPcharge->at(ctr) == 0) continue; // only charged
+
+	  // theta
+	  h_theta_RP->Fill(RPtheta->at(ctr));
+
+	  // phi
+	  TVector3 p_RP(RPpx->at(ctr), RPpy->at(ctr), RPpz->at(ctr));
+	  h_phi_RP->Fill(p_RP.Phi());
+
+	  // |p|
+	  h_p_RP->Fill(RPp->at(ctr));	  
 	}
 
       evt++;
@@ -172,11 +216,17 @@ int main()
   file->Close();
   cout<<"Event file closed"<<endl;
 
+  //h_d0sig_b->Write();
+  //h_d0sig_c->Write();
+  h_d0sig_l->Write();
+  //
   h_d0->Write();
   h_z0->Write();
   h_phi0->Write();
   h_omega->Write();
   h_tLmda->Write();
+  h_theta->Write();
+  h_p->Write();
   /*
   h_d0_b->Write();
   h_z0_b->Write();
@@ -199,6 +249,9 @@ int main()
   h_d0sig_d->Write();
   h_z0sig_d->Write();
   */
+  h_theta_RP->Write();
+  h_phi_RP->Write();
+  h_p_RP->Write();
   histFile->Close();
   cout<<"Histograms written to file and file closed"<<endl;
 

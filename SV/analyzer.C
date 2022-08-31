@@ -26,7 +26,10 @@ int main()
 
   //TFile *file = TFile::Open("p8_ee_Zbb_ecm91_V0_10K.root");
   //TFile *file = TFile::Open("p8_ee_Zcc_ecm91_V0_10K.root");
-  TFile *file = TFile::Open("p8_ee_Zuds_ecm91_V0_10K.root");
+  //TFile *file = TFile::Open("p8_ee_Zuds_ecm91_V0_10K.root");
+  TFile *file = TFile::Open("p8_ee_Zuds_ecm91_V0_100K.root");
+  //TFile *file = TFile::Open("p8_ee_Zuds_ecm91_V0_100K_nochi2.root");
+  //TFile *file = TFile::Open("p8_ee_Zuds_ecm91_V0_100K_5chi2.root");
   TTreeReader tree("events", file);
   int nEvents = tree.GetEntries();
   cout<<"Number of Events: "<<nEvents<<endl;
@@ -44,12 +47,15 @@ int main()
 
   TH1F* h_mass_Ks      = new TH1F("h_mass_Ks","K_{S} MC Mass",100,0,1);
   TH1F* h_mass_Lambda0 = new TH1F("h_mass_Lambda0","#Lambda^{0} MC Mass",100,0.5,1.5);
+
+  TH1F* h_chi2_V0      = new TH1F("h_chi2_V0","V^{0} #chi^{2}",500,0.,9.);
   
   // hists for Ks
   //TH1F* h_nKs_MC    = new TH1F("h_nKs_MC",   "K_{S} Multiplicity from MC Truth",              10,0,10);
   //TH1F* h_nKs_V0    = new TH1F("h_nKs_V0",   "K_{S} Multiplicity from V^{0} Reconstruction",  10,0,10);
   TH1F* h_nKs_diff  = new TH1F("h_nKs_diff", "K_{S} Multiplicity Difference (MC - V^{0})",    13,-5,8);
   TH1F* h_invMKs_V0 = new TH1F("h_invMKs_V0","K_{S} Invariant Mass from V^{0} Reconstruction",100,0.493,0.503);
+  TH1F* h_chi2Ks_V0 = new TH1F("h_chi2Ks_V0","K_{S} #chi^{2} from V^{0} Reconstruction",      100,0.,9.);
   TH1F* h_dKs_V0    = new TH1F("h_dKs_V0",   "K_{S} Distance",                                100,0,0.001);
   
   // hists for Lambda0
@@ -57,8 +63,9 @@ int main()
   //TH1F* h_nLambda_V0    = new TH1F("h_nLambda_V0",   "#Lambda^{0} Multiplicity from V^{0} Reconstruction",  10,0,10);
   TH1F* h_nLambda_diff  = new TH1F("h_nLambda_diff", "#Lambda^{0} Multiplicity Difference (MC - V^{0})",    10,-5,5);
   TH1F* h_invMLambda_V0 = new TH1F("h_invMLambda_V0","#Lambda^{0} Invariant Mass from V^{0} Reconstruction",100,1.111,1.121);
+  TH1F* h_chi2Lambda_V0 = new TH1F("h_chi2Lambda_V0","#Lambda^{0} #chi^{2} from V^{0} Reconstruction",      100,0.,9.);
   TH1F* h_dLambda_V0    = new TH1F("h_dLambda_V0",   "#Lambda^{0} Distance",                                100,0,0.001);
-  
+    
   // MC particles                                                       
   TTreeReaderValue<vector<float,ROOT::Detail::VecOps::RAdoptAllocator<float>>> MCpdg(tree, "MC_pdg");
   TTreeReaderValue<vector<TLorentzVector,ROOT::Detail::VecOps::RAdoptAllocator<TLorentzVector>>> MCp4(tree, "MC_p4");
@@ -69,11 +76,12 @@ int main()
 
   // Lambda0->p+pi-
   TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>> Lambda02ppi(tree, "Lambda0ppi_indices");
-
+  
   // V0
   TTreeReaderValue<vector<int,ROOT::Detail::VecOps::RAdoptAllocator<int>>> V0pdg(tree, "V0_pdg");
   TTreeReaderValue<vector<double,ROOT::Detail::VecOps::RAdoptAllocator<double>>> V0invM(tree, "V0_invM");
   TTreeReaderValue<vector<TVector3,ROOT::Detail::VecOps::RAdoptAllocator<TVector3>>> V0pos(tree, "V0_pos");
+  TTreeReaderValue<vector<double,ROOT::Detail::VecOps::RAdoptAllocator<double>>> V0chi2(tree, "V0_chi2");
 
   // event counter
   int evt = 0;
@@ -87,7 +95,7 @@ int main()
     {
       int nKs_MC_evt = 0, nLambda0_MC_evt = 0;
       int nKs_V0_evt = 0, nLambda0_V0_evt = 0;
-      
+      /*
       // MC particle loop
       for(unsigned int ctr=0; ctr<MCpdg->size(); ctr++)
 	{
@@ -110,21 +118,43 @@ int main()
 	      h_mass_Lambda0->Fill(MCmass->at(ctr));
 	    }
 	}
-
+      */
+      
       // Ks -> pi+pi- loop
       nKs2pipi += Ks2pipi->size()/3;
-      //for(unsigned int ctr=0; ctr<Ks2pipi->size(); ctr++)
+      for(unsigned int ctr=0; ctr<Ks2pipi->size(); ctr++)
+	{
+	  if(ctr%3==0)
+	    {
+	      nKs_MC++;
+	      nKs_MC_evt++;
+	      h_invM_Ks->Fill(MCp4->at(ctr).M());
+	      //
+	      h_mass_Ks->Fill(MCmass->at(ctr));
+	    }
+	}
 
       // Lambda0 -> p+pi- loop
       nLambda02ppi += Lambda02ppi->size()/3;
-      //for(unsigned int ctr=0; ctr<Ks2pipi->size(); ctr++)
-
+      for(unsigned int ctr=0; ctr<Lambda02ppi->size(); ctr++)
+	{
+	  if(ctr%3==0)
+	    {
+	      nLambda0_MC++;
+	      nLambda0_MC_evt++;
+	      h_invM_Lambda0->Fill(MCp4->at(ctr).M());
+	      //
+	      h_mass_Lambda0->Fill(MCmass->at(ctr));
+	    }	  
+	}
+      
       // V0 loop
       for(unsigned int ctr=0; ctr<V0pdg->size(); ctr++)
 	{
 	  TVector3 pos(V0pos->at(ctr));
 
 	  h_invM_V0->Fill(V0invM->at(ctr));
+	  h_chi2_V0->Fill(V0chi2->at(ctr));
 	  
 	  // Ks - V0
 	  if(V0pdg->at(ctr)==310)
@@ -133,6 +163,7 @@ int main()
 	      nKs_V0_evt++;
 	      //
 	      h_invMKs_V0->Fill(V0invM->at(ctr));
+	      h_chi2Ks_V0->Fill(V0chi2->at(ctr));
 	      //
 	      h_dKs_V0->Fill(pos.Mag());
 	    }
@@ -143,6 +174,7 @@ int main()
 	      nLambda0_V0_evt++;
 	      //
 	      h_invMLambda_V0->Fill(V0invM->at(ctr));
+	      h_chi2Lambda_V0->Fill(V0chi2->at(ctr));
 	      //
 	      h_dLambda_V0->Fill(pos.Mag());
 	    }
@@ -150,20 +182,20 @@ int main()
 
       h_nKs_diff->Fill(nKs_MC_evt - nKs_V0_evt);
       h_nLambda_diff->Fill(nLambda0_MC_evt - nLambda0_V0_evt);
-	  
+      
       evt++;
 
       if(evt%10000==0)
 	{
 	  //cout<<evt<<" events processed"<<endl;
 	  cout<<"Event #"<<evt<<":"<<endl;
-	  cout<<"This event has "<<nKs_MC_evt<<" K-shorts("<<Ks2pipi->size()/3<<" of them decay to pi+pi-) & "<<nLambda0_MC_evt<<" Lambda0s("<<Lambda02ppi->size()/3<<" of them decay to p+pi-)"<<endl;
+	  cout<<"This event has "<<nKs_MC_evt<<" K-shorts that decay to pi+pi- & "<<nLambda0_MC_evt<<" Lambda0s that decay to p+pi-"<<endl;
 	  cout<<"out of which "<<nKs_V0_evt<<" K-shorts & "<<nLambda0_V0_evt<<" Lambda0s were reconstructed"<<endl;
 	  cout<<"====================="<<endl<<endl;
 	}
     }
 
-  cout<<"There are "<<nKs_MC<<" K-shorts("<<nKs2pipi<<" of them decay to pi+pi-) & "<<nLambda0_MC<<" Lambda0s("<<nLambda02ppi<<" of them decay to pi+pi-) in "<<nEvents<<" events"<<endl;
+  cout<<"There are "<<nKs_MC<<" K-shorts that decay to pi+pi- & "<<nLambda0_MC<<" Lambda0s that decay to pi+pi- in "<<nEvents<<" events"<<endl;
   cout<<"out of which "<<nKs_V0<<" K-shorts & "<<nLambda0_V0<<" Lambda0s were reconstructed"<<endl;
 
   file->Close();
@@ -174,10 +206,13 @@ int main()
   h_invM_Lambda0->Write();
   h_mass_Ks->Write();
   h_mass_Lambda0->Write();
+  h_chi2_V0->Write();
   h_nKs_diff->Write();
   h_nLambda_diff->Write();
   h_invMKs_V0->Write();
   h_invMLambda_V0->Write();
+  h_chi2Ks_V0->Write();
+  h_chi2Lambda_V0->Write();
   h_dKs_V0->Write();
   h_dLambda_V0->Write();
   histFile->Close();
