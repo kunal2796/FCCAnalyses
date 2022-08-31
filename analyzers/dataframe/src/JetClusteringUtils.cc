@@ -70,7 +70,7 @@ std::vector<fastjet::PseudoJet> set_ghostPseudoJets_xyzm_primitive(const ROOT::V
 								   const ROOT::VecOps::RVec<float> px_MC, 
 								   const ROOT::VecOps::RVec<float> py_MC, 
 								   const ROOT::VecOps::RVec<float> pz_MC, 
-								   const OOT::VecOps::RVec<float> m_MC) {
+								   const ROOT::VecOps::RVec<float> m_MC) {
   std::vector<fastjet::PseudoJet> result;
   unsigned index = 0;
   for (size_t i = 0; i < px.size(); ++i) {
