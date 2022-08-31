@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['r_0',['R',['../classcontrib_1_1_valencia_info.html#a9985685d7eadc5ebe7b846e376ed43b9',1,'contrib::ValenciaInfo::R()'],['../classcontrib_1_1_valencia_plugin.html#a85faaa3e156cf408c7382f002b0826d8',1,'contrib::ValenciaPlugin::R()']]],
+  ['r_0',['R',['../classcontrib_1_1_valencia_plugin.html#a85faaa3e156cf408c7382f002b0826d8',1,'contrib::ValenciaPlugin::R()'],['../classcontrib_1_1_valencia_info.html#a9985685d7eadc5ebe7b846e376ed43b9',1,'contrib::ValenciaInfo::R()']]],
   ['recoilbuilder_1',['recoilBuilder',['../struct_f_c_c_analyses_1_1_reconstructed_particle_1_1recoil_builder.html#a6660e83105a806e54d1eccfaa9da37b7',1,'FCCAnalyses::ReconstructedParticle::recoilBuilder']]],
   ['recomb_5fscheme_2',['recomb_scheme',['../namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#ab363eb077d6d3b25ae9245a6978b36b5',1,'FCCAnalyses::JetClusteringUtils']]],
   ['recombine_3',['recombine',['../class_external_recombiner.html#aaf4506055fff2fe78cd90b767cbe6a2f',1,'ExternalRecombiner']]],
@@ -8,6 +8,5 @@ var searchData=
   ['remove_5',['remove',['../namespace_f_c_c_analyses_1_1_reconstructed_particle.html#af9cc5a8b7d1b85d98c2fcbb4634c799a',1,'FCCAnalyses::ReconstructedParticle']]],
   ['reshape2jet_6',['reshape2jet',['../namespace_f_c_c_analyses_1_1_jet_clustering_utils.html#a124de31f8550faf9fffce8b5c3070ae3',1,'FCCAnalyses::JetClusteringUtils']]],
   ['resonancebuilder_7',['resonanceBuilder',['../struct_f_c_c_analyses_1_1_reconstructed_particle_1_1resonance_builder.html#a28dd051f0f6e67741af0fdd781b6ac75',1,'FCCAnalyses::ReconstructedParticle::resonanceBuilder']]],
-  ['run_8',['run',['../class_o_n_n_x_runtime.html#a8badef26ee292f7606f281df625fee30',1,'ONNXRuntime::run()'],['../class_weaver_interface.html#aca705cd6d56c7b629099004e12053241',1,'WeaverInterface::run()']]],
-  ['run_5fclustering_9',['run_clustering',['../classcontrib_1_1_valencia_plugin.html#a3954050e695fd7cddca110de0800a241',1,'contrib::ValenciaPlugin']]]
+  ['run_5fclustering_8',['run_clustering',['../classcontrib_1_1_valencia_plugin.html#a3954050e695fd7cddca110de0800a241',1,'contrib::ValenciaPlugin']]]
 ];
