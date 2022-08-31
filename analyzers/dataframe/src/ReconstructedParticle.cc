@@ -70,7 +70,7 @@ ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> resonanceBuilder::operato
       }
       reso.momentum.x = reso_lv.Px();
       reso.momentum.y = reso_lv.Py();
-      reso.momentum.z = reso_lv.Pz();
+/      reso.momentum.z = reso_lv.Pz();
       reso.mass = reso_lv.M();
       result.emplace_back(reso);
     } while (std::next_permutation(v.begin(), v.end()));
@@ -394,6 +394,139 @@ int getJet_ntags(ROOT::VecOps::RVec<bool> in) {
   return result;
 }
 
+
+/// ------ ///
+// From Edi //
+
+sel_template::sel_template(float arg_pass){m_pass = arg_pass;}
+
+template<class G>
+ROOT::VecOps::RVec<G> sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in){
+//ROOT::VecOps::RVec<G> sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in){
+//////////ROOT::VecOps::RVec<int> sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<int> in){
+//ROOT::VecOps::RVec<G> sel_template(ROOT::VecOps::RVec<G> in){
+  ////////ROOT::VecOps::RVec<G> result;
+  ROOT::VecOps::RVec<int> result;
+  //ROOT::VecOps::RVec<G> result = in;
+  bool m_pass=true;
+  for (size_t i = 0; i < in.size(); ++i) {
+    if (m_pass) {
+      if (tags.at(i)) result.push_back(in.at(i));
+    }
+    else {
+      if (!tags.at(i)) result.push_back(in.at(i));
+    }
+  }
+  return result;
+}
+std::vector<std::vector<int>> sel_template::operator()(std::vector<std::vector<float>> tag_vector, std::vector<std::vector<int>> in){
+//ROOT::VecOps::RVec<G> sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in){
+//////////ROOT::VecOps::RVec<int> sel_template::operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<int> in){
+//ROOT::VecOps::RVec<G> sel_template(ROOT::VecOps::RVec<G> in){
+  ////////ROOT::VecOps::RVec<G> result;
+  std::vector<std::vector<int>> result;
+  //ROOT::VecOps::RVec<G> result = in;
+  //////bool m_pass=true;
+  for (size_t i = 0; i < in.size(); ++i) {
+    std::vector<int> tmp_res;
+    for (size_t j = 0; j < in[i].size(); ++j) {
+      if (m_pass) {
+        if (tag_vector.at(i).at(j)) tmp_res.push_back(in.at(i).at(j));
+      }
+      else {
+        if (!tag_vector.at(i).at(j)) tmp_res.push_back(in.at(i).at(j));
+      }
+    }
+    result.push_back(tmp_res);
+  }
+  return result;
+}
+
+std::vector<std::vector<float>> sel_template::operator()(std::vector<std::vector<float>> tag_vector, std::vector<std::vector<float>> in){
+  std::vector<std::vector<float>> result;
+  //ROOT::VecOps::RVec<G> result = in;
+  //////bool m_pass=true;
+  for (size_t i = 0; i < in.size(); ++i) {
+    std::vector<float> tmp_res;
+    for (size_t j = 0; j < in[i].size(); ++j) {
+      if (m_pass) {
+        if (tag_vector.at(i).at(j)) tmp_res.push_back(in.at(i).at(j));
+      }
+      else {
+        if (!tag_vector.at(i).at(j)) tmp_res.push_back(in.at(i).at(j));
+      }
+    }
+    result.push_back(tmp_res);
+  }
+  return result;
+}
+
+//template ROOT::VecOps::RVec<float> sel_template<float>(ROOT::VecOps::RVec<float>);
+///template ROOT::VecOps::RVec<float> sel_template<float>(ROOT::VecOps::RVec<bool>, ROOT::VecOps::RVec<float>);
+///template ROOT::VecOps::RVec<int> sel_template<int>(ROOT::VecOps::RVec<bool>, ROOT::VecOps::RVec<int>);
+///template ROOT::VecOps::RVec<double> sel_template<double>(ROOT::VecOps::RVec<bool>, ROOT::VecOps::RVec<double>);
+////////////////////template ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> sel_template::operator()(ROOT::VecOps::RVec<bool>, ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>);
+//template ROOT::VecOps::RVec<edm4hep::MCParticleData> sel_template<edm4hep::MCParticleData>(ROOT::VecOps::RVec<bool>, ROOT::VecOps::RVec<edm4hep::MCParticleData>);
+//template ROOT::VecOps::RVec<edm4hep::TrackState> sel_template<edm4hep::TrackState>(ROOT::VecOps::RVec<bool>, ROOT::VecOps::RVec<edm4hep::TrackState>);
+//template ROOT::VecOps::RVec<JetClusteringUtils::FCCAnalysesJet> sel_template<JetClusteringUtils::FCCAnalysesJet>(ROOT::VecOps::RVec<bool>, ROOT::VecOps::RVec<JetClusteringUtils::FCCAnalysesJet>);
+//think about adding additional instantiations as the need arises...
+
+ROOT::VecOps::RVec<int> index_splitter(ROOT::VecOps::RVec<int> ind){
+//ROOT::VecOps::RVec<int> index_splitter(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, ROOT::VecOps::RVec<int> ind){
+  ROOT::VecOps::RVec<int> result;
+  int charged_counter, neutral_counter=0;
+  for(size_t i = 0; i < ind.size(); ++i){
+    if(ind[i]==1){
+      result.push_back(charged_counter);
+      charged_counter+=1;
+    }
+    else if(ind[i]==0){
+      result.push_back(neutral_counter); 
+      neutral_counter+=1;
+    }
+  }
+  return result;
+}
+
+std::vector<std::vector<int>> index_converter(std::vector<std::vector<int>> RP_ind, ROOT::VecOps::RVec<int> split_ind){
+  std::vector<std::vector<int>> result;
+  //for(size_t i = 0; i < in.size(); ++i){
+  for(auto& indices : RP_ind){
+    std::vector<int> tmp_res;
+    for(auto& i : indices){
+      tmp_res.push_back(split_ind.at(i));
+    }
+    result.push_back(tmp_res);
+  }
+  return result;
+}
+
+ROOT::VecOps::RVec<float> is_particle(ROOT::VecOps::RVec<int> index, const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> & in){
+  ROOT::VecOps::RVec<float> result(in.size(), 0);
+  for(auto& i : index){
+    result[i] = 1;
+  }
+  return result;
+}
+
+std::vector<std::vector<float>> one_hot_encode(ROOT::VecOps::RVec<float> flavour){
+  std::vector<std::vector<float>> result;
+  int min = -5; //std::min_element(flavour.begin(),flavour.end());
+  int max = 5; //std::max_element(flavour.begin(),flavour.end());
+  for(int i = min; i<=max; ++i){
+    std::vector<float> zeros(flavour.size(),0);
+    result.push_back(zeros);
+  }
+  for(size_t k = 0; k<flavour.size(); ++k){
+    for(int j = min; j<=max; ++j){
+      if(j==flavour[k]){
+        result.at(j+5).at(k)=1;
+      }
+    }
+  }
+  return result;
+}
+  
 }//end NS ReconstructedParticle
 
 }//end NS FCCAnalyses

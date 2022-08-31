@@ -3,6 +3,7 @@
 #define  JETCLUSTERINGUTILS_ANALYZERS_H
 
 #include <vector>
+#include <cmath>
 #include "Math/Vector4D.h"
 #include "ROOT/RVec.hxx"
 #include "edm4hep/MCParticleData.h"
@@ -50,6 +51,18 @@ namespace JetClusteringUtils{
                                                       const ROOT::VecOps::RVec<float> &pz,
                                                       const ROOT::VecOps::RVec<float> &m);
 
+  std::vector<fastjet::PseudoJet> set_ghostPseudoJets_xyzm_primitive(const ROOT::VecOps::RVec<float> px, 
+								     const ROOT::VecOps::RVec<float> py, 
+								     const ROOT::VecOps::RVec<float> pz, 
+								     const ROOT::VecOps::RVec<float> m, 
+								     const ROOT::VecOps::RVec<float> genStatus, 
+								     const ROOT::VecOps::RVec<float> px_MC, 
+								     const ROOT::VecOps::RVec<float> py_MC, 
+								     const ROOT::VecOps::RVec<float> pz_MC, 
+								     const ROOT::VecOps::RVec<float> m_MC);
+  //Set ghost pseudoJets
+  std::vector<fastjet::PseudoJet> set_ghostPseudoJets_xyzm(std::vector<fastjet::PseudoJet> pseudoJets, ROOT::VecOps::RVec<edm4hep::MCParticleData> ghosts);
+
   /** Get fastjet pseudoJet after reconstruction from FCCAnalyses jets*/
   ROOT::VecOps::RVec<fastjet::PseudoJet> get_pseudoJets(const FCCAnalysesJet &in);
 
@@ -92,6 +105,22 @@ namespace JetClusteringUtils{
   /** Get jet theta. Details. */
   ROOT::VecOps::RVec<float> get_theta(const ROOT::VecOps::RVec<fastjet::PseudoJet> &in);
 
+  /** Get number of constituents per jet. */
+  ROOT::VecOps::RVec<float> get_nConstituents(std::vector<std::vector<int>> in);
+
+
+  //The below fncs take already the reshaped values as arguments... Different from above...  
+  /** Get difference of jet theta and jet constituent theta. */
+  std::vector<std::vector<float>> get_dTheta(ROOT::VecOps::RVec<float> jet_theta, std::vector<std::vector<float>> constituents_theta);
+
+  /** Get difference of jet phi and jet constituent phi in [-pi, pi]. */
+  std::vector<std::vector<float>> get_dPhi(ROOT::VecOps::RVec<float> jet_phi, std::vector<std::vector<float>> constituents_phi);
+  
+  /** Get ratio of jet constituent |p| and jet |p|. */
+  std::vector<std::vector<float>> get_pRel(ROOT::VecOps::RVec<float> jet_p, std::vector<std::vector<float>> constituents_p);
+
+  /** Reshape the given variable (given as a flat vector for the event) into 2d vector per jet. */
+  std::vector<std::vector<float>> reshape2jet(ROOT::VecOps::RVec<float> var, std::vector<std::vector<int>> constituents);
 
   ///Internal methods
   FCCAnalysesJet initialise_FCCAnalysesJet();
