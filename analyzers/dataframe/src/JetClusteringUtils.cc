@@ -29,9 +29,9 @@ float get_exclusive_dmerge_max(const FCCAnalysesJet &in,
 }
 
 std::vector<fastjet::PseudoJet> set_pseudoJets(const ROOT::VecOps::RVec<float> &px,
-                                                                   const ROOT::VecOps::RVec<float> &py,
-                                                                   const ROOT::VecOps::RVec<float> &pz,
-                                                                   const ROOT::VecOps::RVec<float> &e){
+					       const ROOT::VecOps::RVec<float> &py,
+					       const ROOT::VecOps::RVec<float> &pz,
+					       const ROOT::VecOps::RVec<float> &e){
   std::vector<fastjet::PseudoJet> result;
   unsigned index = 0;
   for (size_t i = 0; i < px.size(); ++i) {
@@ -61,6 +61,86 @@ std::vector<fastjet::PseudoJet> set_pseudoJets_xyzm(const ROOT::VecOps::RVec<flo
   return result;
 }
 
+
+std::vector<fastjet::PseudoJet> set_ghostPseudoJets_xyzm_primitive(const ROOT::VecOps::RVec<float> px, 
+								   const ROOT::VecOps::RVec<float> py, 
+								   const ROOT::VecOps::RVec<float> pz, 
+								   const ROOT::VecOps::RVec<float> m, 
+								   const ROOT::VecOps::RVec<float> genStatus, 
+								   const ROOT::VecOps::RVec<float> px_MC, 
+								   const ROOT::VecOps::RVec<float> py_MC, 
+								   const ROOT::VecOps::RVec<float> pz_MC, 
+								   const OOT::VecOps::RVec<float> m_MC) {
+  std::vector<fastjet::PseudoJet> result;
+  unsigned index = 0;
+  for (size_t i = 0; i < px.size(); ++i) {
+    double px_d = px.at(i);
+    double py_d = py.at(i);
+    double pz_d = pz.at(i);
+    double  m_d =  m.at(i);
+    double  E_d = sqrt(px_d*px_d + py_d*py_d + pz_d*pz_d + m_d*m_d);
+    result.emplace_back(px_d, py_d, pz_d, E_d);
+    result.back().set_user_index(index);
+    ++index;
+  }
+  for (size_t i = 0; i < px_MC.size(); ++i) {
+    bool flag1 = false;
+    bool flag2 = false;
+    if (((genStatus[i]>29)) || (genStatus[i]<21)) continue;
+    //if ((genStatus[i]>89) || (genStatus[i]<81)) flag1 = true;
+    //if (((genStatus[i]>29)) || (genStatus[i]<21)) flag2 = true;
+    //if (flag1 && flag2) continue;
+    double px_d = px_MC.at(i);
+    double py_d = py_MC.at(i);
+    double pz_d = pz_MC.at(i);
+    double  m_d =  m_MC.at(i);
+    double  E_d = sqrt(px_d*px_d + py_d*py_d + pz_d*pz_d + m_d*m_d);
+    result.emplace_back(px_d*pow(10, -18), py_d*pow(10, -18), pz_d*pow(10, -18), E_d*pow(10, -18));
+    result.back().set_user_index(index);
+    ++index;
+  }
+  return result;
+}
+
+std::vector<fastjet::PseudoJet> set_ghostPseudoJets_xyzm(std::vector<fastjet::PseudoJet> pseudoJets, ROOT::VecOps::RVec<edm4hep::MCParticleData> ghosts) {
+  //std::vector<fastjet::PseudoJet> result;
+  unsigned index = pseudoJets.size();
+
+  std::vector<int> c_hadrons = {411, 421};
+  std::vector<int> b_hadrons = {511, 521};
+
+
+  for (auto& p : ghosts) {
+    bool isGhost = false;
+    //if ((p.generatorStatus<80) && (p.generatorStatus>70)) {
+    if ((p.generatorStatus<30) && (p.generatorStatus>20)) {
+        isGhost = true;
+    }
+    else if (p.generatorStatus == 1) {
+        if (std::find(c_hadrons.begin(), c_hadrons.end(), std::abs(int(p.PDG))) != c_hadrons.end()) {
+            isGhost = true;
+        }
+        else if (std::find(b_hadrons.begin(), b_hadrons.end(), std::abs(int(p.PDG))) != b_hadrons.end()) {
+            isGhost = true;
+        }
+    }
+    if (isGhost){
+        double px = p.momentum.x;//*pow(10, -1);
+        double py = p.momentum.y;
+        double pz = p.momentum.z;
+        double m = p.mass;
+        double  E = sqrt(px*px + py*py + pz*pz + m*m);
+        pseudoJets.emplace_back(px*pow(10, -18), py*pow(10, -18), pz*pow(10, -18), E*pow(10, -18));
+        //std::cout << px << std::endl;
+        //pseudoJets.emplace_back(px, py, pz, E);
+        pseudoJets.back().set_user_index(index);
+        ++index;
+    }
+  }
+  return pseudoJets;
+}
+
+  
 
 ROOT::VecOps::RVec<float> get_px(const ROOT::VecOps::RVec<fastjet::PseudoJet> &in){
   ROOT::VecOps::RVec<float> result;
@@ -250,19 +330,6 @@ ROOT::VecOps::RVec<float> get_nConstituents(std::vector<std::vector<int>> consti
   }
   return result;
 }
-
-//Note that the below doesn't make sense atm, there is no consti vec of pseudojets (to my knowledge, maybe this refers to an old implementation)...
-///ROOT::VecOps::RVec<float> get_dTheta(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<fastjet::PseudoJet> constituents, std::vector<std::vector<int>> indices){
-///  ROOT::VecOps::RVec<float> result(constituents.size(), 0);
-///  //for (auto& ind : indices){
-///  for (int j=0; j<indices.size(); j++){
-///    for (auto& i : indices[j]){
-///    //for (int i=0; i<contituents.size())
-///      result[i] = in[j].theta()-constituents[i].theta();
-///    }
-///  }
-///  return result;
-///}
 
 std::vector<std::vector<float>> get_dTheta(ROOT::VecOps::RVec<float> jet_theta, std::vector<std::vector<float>> constituents_theta){
   std::vector<std::vector<float>> result;

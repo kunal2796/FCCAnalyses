@@ -80,20 +80,20 @@ class RDFanalysis():
     #Mandatory: output function, please make sure you return the branchlist as a python list
     def output():
         branchList = [
-            # MC particles                                                                                                                                               
+            # MC particles
             "MC_pdg",
             "MC_p4",
             "MC_mass",
-            
-            # Ks -> pi+pi- & Lambda0->p+pi-                                                                                                                              
+
+            # Ks -> pi+pi- & Lambda0->p+pi-
             "K0spipi_indices",
             "Lambda0ppi_indices",
             
-            #  primary vertex and primary tracks w/o any MC-matching :                                                                                                   
+            #  primary vertex and primary tracks w/o any MC-matching :
             "IsPrimary_based_on_reco",
             "PrimaryVertex",
             
-            # V0 object                                                                                                                                                  
+            # V0 object
             "V0",
             "V0_pdg",
             "V0_invM",

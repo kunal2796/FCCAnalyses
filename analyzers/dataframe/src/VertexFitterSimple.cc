@@ -719,10 +719,8 @@ VertexingUtils::FCCAnalysesVertex  VertexFitter_Tk( int Primary,
     }
   */
 
-  delete final_chi2;
-  delete final_phases;
- 
-  if(debug) std::cout << "Finished VertexFitter_Tk!" << std::endl;
+  delete[] final_chi2;
+  delete[] final_phases;
 
   return TheVertex;
 }

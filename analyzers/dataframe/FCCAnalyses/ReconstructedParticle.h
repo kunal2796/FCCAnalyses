@@ -85,9 +85,6 @@ namespace ReconstructedParticle{
   ROOT::VecOps::RVec<float> get_p(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in);
 
   /// return the momenta of the input ReconstructedParticles
-  float get_p(edm4hep::ReconstructedParticleData in);
-
-  /// return the momenta of the input ReconstructedParticles
   ROOT::VecOps::RVec<float> get_px(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in);
 
   /// return the momenta of the input ReconstructedParticles
@@ -168,7 +165,7 @@ namespace ReconstructedParticle{
   std::vector<std::vector<float>> one_hot_encode(ROOT::VecOps::RVec<float> flavour);
 
   /// ------ ///
-  
+
 }//end NS ReconstructedParticle
 
 }//end NS FCCAnalyses
