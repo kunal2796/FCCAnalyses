@@ -61,7 +61,7 @@ class RDFanalysis():
             .Define("IsPrimary_based_on_reco",  "VertexFitterSimple::IsPrimary_forTracks( EFlowTrack_1,  RecoedPrimaryTracks )")
             
             # find V0s                                                                                                                                                    
-            .Define("V0", "VertexFinderLCFIPlus::get_V0s(SecondaryTracks, PrimaryVertexObject)")
+            .Define("V0", "VertexFinderLCFIPlus::get_V0s(SecondaryTracks, PrimaryVertexObject, true)")
             # get pdg vector out                                                                                                                                          
             .Define("V0_pdg", "VertexingUtils::get_pdg_V0(V0)")
             # get invariant mass vector out                                                                                                                               

@@ -8,7 +8,8 @@ processList = {
     # 400K b & c, 1M uds
     #'p8_ee_Zbb_ecm91':{'fraction':0.0004, 'chunks':4},
     #'p8_ee_Zcc_ecm91':{'fraction':0.0004, 'chunks':4},
-    'p8_ee_Zuds_ecm91':{'fraction':0.001, 'chunks':10},
+    #'p8_ee_Zuds_ecm91':{'fraction':0.001, 'chunks':10},
+    'p8_ee_Zuds_ecm91':{'fraction':0.0001},
 }
 
 #Mandatory: Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics
@@ -102,9 +103,7 @@ class RDFanalysis():
             # get the jet constituents out of the structure
             .Define("jetconstituents", "JetClusteringUtils::get_constituents(FCCAnalysesJets_ee_kt)")
             # find SVs in jets
-            .Define("SV", "VertexFinderLCFIPlus::get_SV_jets(ReconstructedParticles, EFlowTrack_1, PV, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents)")
-            # separate by jets. none of this will be needed once get_SV_jets is of the form Rvec<RVec<SV>>
-            .Define("SV_jet", "VertexingUtils::get_svInJets(SV.vtx, SV.nSV_jet)")
+            .Define("SV_jet", "VertexFinderLCFIPlus::get_SV_jets(ReconstructedParticles, EFlowTrack_1, PV, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents)")
             # find V0s in jets (yet to write the fn)
             .Define("V0", "VertexFinderLCFIPlus::get_V0s_jet(ReconstructedParticles, EFlowTrack_1, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents, PV)")
             # separate by jets. none of this will be needed once get_V0_jet is of the form Rvec<RVec<V0>>
@@ -273,7 +272,7 @@ class RDFanalysis():
 
             
             # JET VARIABLES
-            .Define("n_sv",       "SV.nSV_jet") # no of SVs per jet
+            .Define("n_sv",       "VertexingUtils::get_n_SV_jets(SV_jet)") # no of SVs per jet
             #.Define("jet_p",      "JetClusteringUtils::get_p(jets_ee_kt)") # jet momentum
             #.Define("jet_pt",     "JetClusteringUtils::get_pt(jets_ee_kt)") # jet transverse momentum
             #.Define("jet_energy", "JetClusteringUtils::get_e(jets_ee_kt)") # jet energy
