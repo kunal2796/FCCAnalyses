@@ -293,21 +293,22 @@ $(function() {
 <div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>  ROOT::VecOps::RVec&lt;ROOT::VecOps::RVec&lt;double&gt;&gt; <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a76919e7e2ef97f1f06639bb963731db9">get_d3d_SV</a>( ROOT::VecOps::RVec&lt;ROOT::VecOps::RVec&lt;FCCAnalysesVertex&gt;&gt; vertices, <a class="code hl_struct" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> PV );</div>
 <div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>  ROOT::VecOps::RVec&lt;ROOT::VecOps::RVec&lt;int&gt;&gt; <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#abd865d2c7961bb292b73fdc18bdb111f">get_pdg_V0</a>( ROOT::VecOps::RVec&lt;int&gt; pdg, ROOT::VecOps::RVec&lt;int&gt; nSV_jet );</div>
 <div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>  ROOT::VecOps::RVec&lt;ROOT::VecOps::RVec&lt;double&gt;&gt; <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a11b6745eb691c40f55c8a07db4975cad">get_invM_V0</a>( ROOT::VecOps::RVec&lt;double&gt; invM, ROOT::VecOps::RVec&lt;int&gt; nSV_jet );</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>  </div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>  <span class="comment">// --- for get_SV_jets --- //</span></div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>  ROOT::VecOps::RVec&lt;ROOT::VecOps::RVec&lt;TVector3&gt;&gt; <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#add67d918c5689c0927383da4d2148ad9">get_position_SV</a>( ROOT::VecOps::RVec&lt;ROOT::VecOps::RVec&lt;FCCAnalysesVertex&gt;&gt; vertices );</div>
 <div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>  </div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>  <span class="comment">// --- Internal methods needed by the code of  Franco B :  </span></div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>  <span class="keywordtype">float</span> <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#aba10973d3f2bb2ff00a989d71017be01">get_trackMom</a>( edm4hep::TrackState &amp; atrack );</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>  TVectorD <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a87265b00b4c6291c8e1cde753c17b3c0">get_trackParam</a>( edm4hep::TrackState &amp; atrack) ;</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>  TMatrixDSym <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a3eaaef5d0f40f4b3ba9748b75953e462">get_trackCov</a>( edm4hep::TrackState &amp;  atrack) ;</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span> </div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>  TVectorD <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a5f43b223d06744303442542fc44809ac">ParToACTS</a>(TVectorD Par);</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>  TMatrixDSym <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a2d9a8e8d87409a8f6d22cbee921e0d16">CovToACTS</a>(TMatrixDSym Cov,TVectorD Par);</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span> </div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>}<span class="comment">//end NS VertexingUtils</span></div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>  <span class="comment">// --- for get_SV_jets --- //</span></div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>  </div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>  <span class="comment">// --- Internal methods needed by the code of  Franco B :  </span></div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>  <span class="keywordtype">float</span> <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#aba10973d3f2bb2ff00a989d71017be01">get_trackMom</a>( edm4hep::TrackState &amp; atrack );</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>  TVectorD <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a87265b00b4c6291c8e1cde753c17b3c0">get_trackParam</a>( edm4hep::TrackState &amp; atrack) ;</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>  TMatrixDSym <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a3eaaef5d0f40f4b3ba9748b75953e462">get_trackCov</a>( edm4hep::TrackState &amp;  atrack) ;</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span> </div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>  TVectorD <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a5f43b223d06744303442542fc44809ac">ParToACTS</a>(TVectorD Par);</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>  TMatrixDSym <a class="code hl_function" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a2d9a8e8d87409a8f6d22cbee921e0d16">CovToACTS</a>(TMatrixDSym Cov,TVectorD Par);</div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span> </div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>}<span class="comment">//end NS FCCAnalyses</span></div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>}<span class="comment">//end NS VertexingUtils</span></div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span> </div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>}<span class="comment">//end NS FCCAnalyses</span></div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespace_f_c_c_analyses_1_1_vertexing_utils_html_a0ac2c672cbcc4bb94a2bccab28b9ffc6"><div class="ttname"><a href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a0ac2c672cbcc4bb94a2bccab28b9ffc6">FCCAnalyses::VertexingUtils::get_pdg_V0jet1</a></div><div class="ttdeci">ROOT::VecOps::RVec&lt; int &gt; get_pdg_V0jet1(FCCAnalysesV0 V0)</div><div class="ttdoc">Return the PDG IDs of reconstructed V0s from the 1st jet.</div><div class="ttdef"><b>Definition:</b> VertexingUtils.cc:495</div></div>
 <div class="ttc" id="anamespace_f_c_c_analyses_1_1_vertexing_utils_html_a10e2288fd7c73a1a8e33d04bdb7d7497"><div class="ttname"><a href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a10e2288fd7c73a1a8e33d04bdb7d7497">FCCAnalyses::VertexingUtils::get_PV2vtx_angle</a></div><div class="ttdeci">double get_PV2vtx_angle(ROOT::VecOps::RVec&lt; edm4hep::TrackState &gt; tracks, FCCAnalysesVertex vtx, FCCAnalysesVertex PV)</div><div class="ttdoc">returns cos of the angle b/n track (that form the vtx) momentum sum &amp; PV to vtx displacement vector</div><div class="ttdef"><b>Definition:</b> VertexingUtils.cc:422</div></div>
 <div class="ttc" id="anamespace_f_c_c_analyses_1_1_vertexing_utils_html_a11b6745eb691c40f55c8a07db4975cad"><div class="ttname"><a href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a11b6745eb691c40f55c8a07db4975cad">FCCAnalyses::VertexingUtils::get_invM_V0</a></div><div class="ttdeci">ROOT::VecOps::RVec&lt; double &gt; get_invM_V0(FCCAnalysesV0 V0)</div><div class="ttdoc">Return the invariant masses of all reconstructed V0s.</div><div class="ttdef"><b>Definition:</b> VertexingUtils.cc:488</div></div>
@@ -382,7 +383,7 @@ $(function() {
 <!-- HTML footer for doxygen 1.8.15-->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Aug 31 2022 16:11:38 for FCCAnalyses by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Sep 20 2022 09:42:56 for FCCAnalyses by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.9.3
 </small></address>

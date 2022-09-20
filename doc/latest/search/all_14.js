@@ -18,7 +18,7 @@ var searchData=
   ['vertexfinderamvf_15',['VertexFinderAMVF',['../namespace_f_c_c_analyses_1_1_vertex_finder_acts.html#a93e80d1249e09de6fd32134ef5db1711',1,'FCCAnalyses::VertexFinderActs']]],
   ['vertexfinderlcfiplus_2ecc_16',['VertexFinderLCFIPlus.cc',['../_vertex_finder_l_c_f_i_plus_8cc.html',1,'']]],
   ['vertexfinderlcfiplus_2eh_17',['VertexFinderLCFIPlus.h',['../_vertex_finder_l_c_f_i_plus_8h.html',1,'']]],
-  ['vertexfitter_18',['VertexFitter',['../namespace_f_c_c_analyses_1_1_vertex_fitter_simple.html#a7c4a29eea298f58a15b47369e7a69a04',1,'FCCAnalyses::VertexFitterSimple']]],
+  ['vertexfitter_18',['VertexFitter',['../namespace_f_c_c_analyses_1_1_vertex_fitter_simple.html#a4ab60d499f2cec4ba5311393cd059c6e',1,'FCCAnalyses::VertexFitterSimple']]],
   ['vertexfitter_5ftk_19',['VertexFitter_Tk',['../namespace_f_c_c_analyses_1_1_vertex_fitter_simple.html#a358709fbd2843563cd5515b47836b982',1,'FCCAnalyses::VertexFitterSimple']]],
   ['vertexfitteracts_2ecc_20',['VertexFitterActs.cc',['../_vertex_fitter_acts_8cc.html',1,'']]],
   ['vertexfitteracts_2eh_21',['VertexFitterActs.h',['../_vertex_fitter_acts_8h.html',1,'']]],
