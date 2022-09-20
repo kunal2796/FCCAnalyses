@@ -286,6 +286,8 @@ namespace VertexingUtils{
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_d3d_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices, FCCAnalysesVertex PV );
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> get_pdg_V0( ROOT::VecOps::RVec<int> pdg, ROOT::VecOps::RVec<int> nSV_jet );
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_invM_V0( ROOT::VecOps::RVec<double> invM, ROOT::VecOps::RVec<int> nSV_jet );
+  /// Return the vertex position of all reconstructed SVs (in mm)
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<TVector3>> get_position_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices );
   
   // --- for get_SV_jets --- //
   

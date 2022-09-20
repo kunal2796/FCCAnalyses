@@ -56,22 +56,41 @@ class RDFanalysis():
             # the secondary tracks                                                                                                                                        
             .Define("SecondaryTracks",   "VertexFitterSimple::get_NonPrimaryTracks( EFlowTrack_1,  RecoedPrimaryTracks )")
             .Define("n_SecondaryTracks",  "ReconstructedParticle2Track::getTK_n( SecondaryTracks )" )
-            
+
             # which of the tracks are primary according to the reco algprithm                                                                                             
             .Define("IsPrimary_based_on_reco",  "VertexFitterSimple::IsPrimary_forTracks( EFlowTrack_1,  RecoedPrimaryTracks )")
+
+            # jet clustering
+            .Define("RP_px",        "ReconstructedParticle::get_px(ReconstructedParticles)")
+            .Define("RP_py",        "ReconstructedParticle::get_py(ReconstructedParticles)")
+            .Define("RP_pz",        "ReconstructedParticle::get_pz(ReconstructedParticles)")               
+            .Define("RP_m",         "ReconstructedParticle::get_mass(ReconstructedParticles)")
+            # build psedo-jets with the Reconstructed final particles
+            .Define("pseudo_jets",    "JetClusteringUtils::set_pseudoJets_xyzm(RP_px, RP_py, RP_pz, RP_m)")
+            # run jet clustering with all reco particles. ee_kt_algorithm, exclusive clustering, exactly 2 jets, E-scheme
+            .Define("FCCAnalysesJets_ee_kt", "JetClustering::clustering_ee_kt(2, 2, 1, 0)(pseudo_jets)")
+            # get the jets out of the structure
+            .Define("jets_ee_kt", "JetClusteringUtils::get_pseudoJets(FCCAnalysesJets_ee_kt)")
+            # get the jet constituents out of the structure
+            .Define("jetconstituents", "JetClusteringUtils::get_constituents(FCCAnalysesJets_ee_kt)")
+
             
-            # find V0s                                                                                                                                                    
-            .Define("V0", "VertexFinderLCFIPlus::get_V0s(SecondaryTracks, PrimaryVertexObject, true)")
+            # find V0s
+            #.Define("V0", "VertexFinderLCFIPlus::get_V0s(SecondaryTracks, PrimaryVertexObject, true)")
+            .Define("V0", "VertexFinderLCFIPlus::get_V0s_jet(ReconstructedParticles, EFlowTrack_1, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents, PrimaryVertexObject)")
+            .Define("V0_jet", "VertexingUtils::get_svInJets(V0.vtx, V0.nSV_jet)")
             # get pdg vector out                                                                                                                                          
-            .Define("V0_pdg", "VertexingUtils::get_pdg_V0(V0)")
-            # get invariant mass vector out                                                                                                                               
-            .Define("V0_invM", "VertexingUtils::get_invM_V0(V0)")
-            # get the position                                                                                                                                            
-            .Define("V0_pos", "VertexingUtils::get_position_SV(V0)")
+            #.Define("V0_pdg", "VertexingUtils::get_pdg_V0(V0)")
+            .Define("V0_pdg", "VertexingUtils::get_pdg_V0(V0.pdgAbs, V0.nSV_jet)")
+            # get invariant mass vector out
+            .Define("V0_invM", "VertexingUtils::get_invM_V0(V0.invM, V0.nSV_jet)")
+            # get the position
+            .Define("V0_pos", "VertexingUtils::get_position_SV(V0_jet)")
             # get the chi2
-            .Define("V0_chi2", "VertexingUtils::get_chi2_SV(V0)")
-            # get the momenta                                                                                                                                            
-            .Define("V0_p", "VertexingUtils::get_p_SV(V0)")
+            #.Define("V0_chi2", "VertexingUtils::get_chi2_SV(V0)")
+            .Define("V0_chi2", "VertexingUtils::get_chi2_SV(V0_jet)")
+            # get the momenta
+            .Define("V0_p", "VertexingUtils::get_p_SV(V0_jet)")
 
         )
         return df2
@@ -95,10 +114,12 @@ class RDFanalysis():
             
             # V0 object
             "V0",
+            "V0_jet",
             "V0_pdg",
             "V0_invM",
             "V0_pos",
             "V0_chi2",
-            "V0_p"
+            "V0_p",
         ]
         return branchList
+

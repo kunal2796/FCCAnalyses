@@ -885,9 +885,9 @@ ROOT::VecOps::RVec<double> get_relPhi_SV( ROOT::VecOps::RVec<FCCAnalysesVertex> 
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_invM( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ){
 
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  ROOT::VecOps::RVec<double> i_result;
 
   for(unsigned int i=0; i<vertices.size(); i++) {
-    ROOT::VecOps::RVec<double> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
 
     for (auto & vertex: i_vertices) {
@@ -904,6 +904,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_invM( ROOT::VecOps::RVec<ROOT
       i_result.push_back(p4_vtx.M());
     }
     result.push_back(i_result);
+    i_result.clear();
   }
   return result;
 }
@@ -911,9 +912,9 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_invM( ROOT::VecOps::RVec<ROOT
 // SV momentum
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<TVector3>> get_p_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<TVector3>> result;
+  ROOT::VecOps::RVec<TVector3> i_result;
 
   for(unsigned int i=0; i<vertices.size(); i++) {
-    ROOT::VecOps::RVec<TVector3> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) {
@@ -925,6 +926,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<TVector3>> get_p_SV( ROOT::VecOps::RVec<RO
       i_result.push_back(p_sum);
     }
     result.push_back(i_result);
+    i_result.clear();
   }
   return result;
 }
@@ -932,9 +934,9 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<TVector3>> get_p_SV( ROOT::VecOps::RVec<RO
 // SV momentum magnitude
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_pMag_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  ROOT::VecOps::RVec<double> i_result;
 
   for(unsigned int i=0; i<vertices.size(); i++) {
-    ROOT::VecOps::RVec<double> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) {
@@ -946,6 +948,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_pMag_SV( ROOT::VecOps::RVec<R
       i_result.push_back(p_sum.Mag());
     }
     result.push_back(i_result);
+    i_result.clear();
   }
   return result;
 }
@@ -953,14 +956,15 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_pMag_SV( ROOT::VecOps::RVec<R
 // SV daughters multiplicity
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> get_VertexNtrk( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> result;
+  ROOT::VecOps::RVec<int> i_result;
   for(unsigned int i=0; i<vertices.size(); i++) {
-    ROOT::VecOps::RVec<int> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & TheVertex: i_vertices){
       i_result.push_back(TheVertex.ntracks);
     }
     result.push_back(i_result);
+    i_result.clear();
   }
   return result;
 }
@@ -968,9 +972,9 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> get_VertexNtrk( ROOT::VecOps::RVec<R
 // SV chi2
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_chi2_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  ROOT::VecOps::RVec<double> i_result;
 
   for(unsigned int i=0; i<vertices.size(); i++) {
-    ROOT::VecOps::RVec<double> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) {
@@ -978,6 +982,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_chi2_SV( ROOT::VecOps::RVec<R
       i_result.push_back(nDOF*ivtx.vertex.chi2);
     }
     result.push_back(i_result);
+    i_result.clear();
   }
   return result;
 }
@@ -985,13 +990,14 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_chi2_SV( ROOT::VecOps::RVec<R
 // SV normalised chi2
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_norm_chi2_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  ROOT::VecOps::RVec<double> i_result;
 
   for(unsigned int i=0; i<vertices.size(); i++) {
-    ROOT::VecOps::RVec<double> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) i_result.push_back(ivtx.vertex.chi2);
     result.push_back(i_result);
+    i_result.clear();
   }    
 return result;
 }
@@ -999,13 +1005,14 @@ return result;
 // SV no of DOF
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> get_nDOF_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> result;
-
+  ROOT::VecOps::RVec<int> i_result;
+    
   for(unsigned int i=0; i<vertices.size(); i++) {
-    ROOT::VecOps::RVec<int> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) i_result.push_back(2*ivtx.ntracks - 3);
     result.push_back(i_result);
+    i_result.clear();
   }
   return result;
 }
@@ -1013,9 +1020,9 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> get_nDOF_SV( ROOT::VecOps::RVec<ROOT
 // SV theta
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_theta_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  ROOT::VecOps::RVec<double> i_result;
 
   for(unsigned int i=0; i<vertices.size(); i++) {
-    ROOT::VecOps::RVec<double> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     
     for(auto & ivtx : i_vertices) {
@@ -1023,6 +1030,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_theta_SV( ROOT::VecOps::RVec<
       i_result.push_back(xyz.Theta());
     }
     result.push_back(i_result);
+    i_result.clear();
   }
   return result;
 }
@@ -1030,9 +1038,9 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_theta_SV( ROOT::VecOps::RVec<
 // SV phi
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_phi_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  ROOT::VecOps::RVec<double> i_result;
 
   for(unsigned int i=0; i<vertices.size(); i++) {
-    ROOT::VecOps::RVec<double> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     
     for(auto & ivtx : i_vertices) {
@@ -1040,6 +1048,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_phi_SV( ROOT::VecOps::RVec<RO
       i_result.push_back(xyz.Phi());
     }
     result.push_back(i_result);
+    i_result.clear();
   }
   return result;
 }
@@ -1048,9 +1057,9 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_phi_SV( ROOT::VecOps::RVec<RO
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relTheta_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices,
 								ROOT::VecOps::RVec<fastjet::PseudoJet> jets ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  ROOT::VecOps::RVec<double> i_result;
 
   for(unsigned int i=0; i<jets.size(); i++) {
-    ROOT::VecOps::RVec<double> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     fastjet::PseudoJet i_jet = jets.at(i);
     for(auto & ivtx : i_vertices) {
@@ -1059,6 +1068,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relTheta_SV( ROOT::VecOps::RV
       i_result.push_back(xyz.Theta() - i_jet.theta());
     }
     result.push_back(i_result);
+    i_result.clear();
   }
   //
   return result;
@@ -1068,9 +1078,9 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relTheta_SV( ROOT::VecOps::RV
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relPhi_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices,
 							      ROOT::VecOps::RVec<fastjet::PseudoJet> jets ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  ROOT::VecOps::RVec<double> i_result;
 
   for(unsigned int i=0; i<jets.size(); i++) {
-    ROOT::VecOps::RVec<double> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     fastjet::PseudoJet i_jet = jets.at(i);
     for(auto & ivtx : i_vertices) {
@@ -1080,6 +1090,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relPhi_SV( ROOT::VecOps::RVec
       i_result.push_back(xyz.DeltaPhi(jetP));
     }
     result.push_back(i_result);
+    i_result.clear();
   }
   //
   return result;
@@ -1089,11 +1100,11 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relPhi_SV( ROOT::VecOps::RVec
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_pointingangle_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices,
 								     FCCAnalysesVertex PV ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  ROOT::VecOps::RVec<double> i_result;
 
   edm4hep::Vector3f r_PV  = PV.vertex.position;   // in mm
 
   for(unsigned int i=0; i<vertices.size(); i++) {
-    ROOT::VecOps::RVec<double> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     for(auto & ivtx : i_vertices) {
       double pointangle = 0.;
@@ -1114,6 +1125,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_pointingangle_SV( ROOT::VecOp
       i_result.push_back(pointangle);
     }
     result.push_back(i_result);
+    i_result.clear();
   }
   return result;
 }
@@ -1122,10 +1134,10 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_pointingangle_SV( ROOT::VecOp
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_dxy_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices,
 							   FCCAnalysesVertex PV) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  ROOT::VecOps::RVec<double> i_result;
   TVector3 x_PV(PV.vertex.position[0], PV.vertex.position[1], PV.vertex.position[2]);
 
   for(unsigned int i=0; i<vertices.size(); i++) {
-    ROOT::VecOps::RVec<double> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) {
@@ -1135,6 +1147,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_dxy_SV( ROOT::VecOps::RVec<RO
       i_result.push_back(x_vtx_PV.Perp());
     }
     result.push_back(i_result);
+    i_result.clear();
   }
   return result;
 }
@@ -1143,10 +1156,10 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_dxy_SV( ROOT::VecOps::RVec<RO
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_d3d_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices,
 							   FCCAnalysesVertex PV) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  ROOT::VecOps::RVec<double> i_result;
   TVector3 x_PV(PV.vertex.position[0], PV.vertex.position[1], PV.vertex.position[2]);
 
   for(unsigned int i=0; i<vertices.size(); i++) {
-    ROOT::VecOps::RVec<double> i_result;
     ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
     //
     for(auto & ivtx : i_vertices) {
@@ -1156,6 +1169,26 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_d3d_SV( ROOT::VecOps::RVec<RO
       i_result.push_back(x_vtx_PV.Mag());
     }
     result.push_back(i_result);
+    i_result.clear();
+  }
+  return result;
+}
+
+// SV position in 3D
+ROOT::VecOps::RVec<ROOT::VecOps::RVec<TVector3>> get_position_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ) {
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<TVector3>> result;
+  ROOT::VecOps::RVec<TVector3> i_result;
+  
+  for(unsigned int i=0; i<vertices.size(); i++) {
+    ROOT::VecOps::RVec<TVector3> i_result;
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    //
+    for(auto & ivtx : i_vertices) {
+      TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+      i_result.push_back(xyz);
+      }
+    result.push_back(i_result);
+    i_result.clear();
   }
   return result;
 }

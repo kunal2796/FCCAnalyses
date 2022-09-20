@@ -527,6 +527,97 @@ std::vector<std::vector<float>> one_hot_encode(ROOT::VecOps::RVec<float> flavour
   return result;
 }
 
+ROOT::VecOps::RVec<float> get_PID(const ROOT::VecOps::RVec<int> & recind, 
+				  const ROOT::VecOps::RVec<int> & mcind, 
+				  const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> & reco,
+				  const ROOT::VecOps::RVec<edm4hep::MCParticleData> & mc){
+  ROOT::VecOps::RVec<float> result;
+  result = ReconstructedParticle2MC::getRP2MC_pdg(recind, mcind, reco, mc);
+  return result;
+}
+
+ROOT::VecOps::RVec<int> is_S(ROOT::VecOps::RVec<float> PID){
+  
+  ROOT::VecOps::RVec<int> result;
+  for(auto & id : PID){
+    //the below conditions checks on strange mesons (and K0L separately), and strange baryons
+    if((id==130)||(std::abs(int((id/100))%10)==3)||(std::abs(int((id/1000))%10)==3)){
+      result.push_back(1);
+    }
+    else result.push_back(0);
+  }
+  return result;
+  
+  
+}
+  
+ROOT::VecOps::RVec<int> is_Kaon(ROOT::VecOps::RVec<float> PID){
+  
+  ROOT::VecOps::RVec<int> result;
+  for(auto & id : PID){
+    //the below conditions checks only on Kaons
+    if((id==130)||(std::abs(id)==321)||(std::abs(id)==311)||(std::abs(id)==310)){
+      result.push_back(1);
+    }
+    else result.push_back(0);
+    }
+  return result;
+  
+  
+}
+  
+
+ROOT::VecOps::RVec<int> is_Kaon_smearedUniform010(ROOT::VecOps::RVec<float> PID){
+  
+  ROOT::VecOps::RVec<int> result;
+  int tmp_res;
+  for(auto & id : PID){
+    //the below conditions checks only on Kaons
+    if((id==130)||(std::abs(id)==321)||(std::abs(id)==311)||(std::abs(id)==310)){
+      tmp_res=1;
+      }
+    else tmp_res=0;
+    if(gRandom->Uniform()<=0.1) tmp_res = (tmp_res+1)%2;
+    result.push_back(tmp_res);
+  } 
+  return result;
+}
+  
+
+ROOT::VecOps::RVec<int> is_Kaon_smearedUniform005(ROOT::VecOps::RVec<float> PID){
+
+  ROOT::VecOps::RVec<int> result;
+  int tmp_res;
+  for(auto & id : PID){
+    //the below conditions checks only on Kaons
+    if((id==130)||(std::abs(id)==321)||(std::abs(id)==311)||(std::abs(id)==310)){
+      tmp_res=1;
+    }
+    else tmp_res=0;
+      if(gRandom->Uniform()<=0.05) tmp_res = (tmp_res+1)%2;
+      result.push_back(tmp_res);
+  } 
+  return result;
+}
+  
+
+ROOT::VecOps::RVec<int> is_Kaon_smearedUniform001(ROOT::VecOps::RVec<float> PID){
+  
+  ROOT::VecOps::RVec<int> result;
+  int tmp_res;
+  for(auto & id : PID){
+      //the below conditions checks only on Kaons
+    if((id==130)||(std::abs(id)==321)||(std::abs(id)==311)||(std::abs(id)==310)){
+      tmp_res=1;
+    }
+    else tmp_res=0;
+    if(gRandom->Uniform()<=0.01) tmp_res = (tmp_res+1)%2;
+    result.push_back(tmp_res);
+  } 
+  return result;
+}
+  
+  
 /// ------ ///
 
 }//end NS ReconstructedParticle
