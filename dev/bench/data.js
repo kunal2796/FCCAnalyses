@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663669106283,
+  "lastUpdate": 1663669107811,
   "repoUrl": "https://github.com/kunal2796/FCCAnalyses",
   "entries": {
     "Benchmark": [
@@ -3549,6 +3549,45 @@ window.BENCHMARK_DATA = {
             "unit": "Seconds",
             "range": 10,
             "extra": "Analysis path: examples/FCCee/test"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "83cc6b9c27e23a69dbe58344075e0bed9906fd7d",
+          "message": "Merge pull request #103 from HEP-FCC/master\n\nmerging central repo",
+          "timestamp": "2022-09-20T12:10:26+02:00",
+          "tree_id": "2f779bc7550dfa3469cb3a0396e78c91dac25c87",
+          "url": "https://github.com/kunal2796/FCCAnalyses/commit/83cc6b9c27e23a69dbe58344075e0bed9906fd7d"
+        },
+        "date": 1663669107370,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "prod | Events processed per second: examples/FCCee/higgs/mH-recoil/mumu",
+            "value": 10.01792849938749,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "prod | Events processed per second: examples/FCCee/flavour/Bc2TauNu",
+            "value": 6.769028564714905,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "prod | Events processed per second: examples/FCCee/test",
+            "value": 9.026631237662453,
+            "unit": "Evt/s"
           }
         ]
       }
