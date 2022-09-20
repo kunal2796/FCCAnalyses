@@ -7,5 +7,6 @@ var searchData=
   ['fccanalysesvertex_4',['FCCAnalysesVertex',['../struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html',1,'FCCAnalyses::VertexingUtils']]],
   ['fccanalysesvertexmc_5',['FCCAnalysesVertexMC',['../struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex_m_c.html',1,'FCCAnalyses::VertexingUtils']]],
   ['filter_5fpdgid_6',['filter_pdgID',['../struct_f_c_c_analyses_1_1_m_c_particle_1_1filter__pdg_i_d.html',1,'FCCAnalyses::MCParticle']]],
-  ['filter_5fpv_7',['filter_PV',['../struct_f_c_c_analyses_1_1my_utils_1_1filter___p_v.html',1,'FCCAnalyses::myUtils']]]
+  ['filter_5fpv_7',['filter_PV',['../struct_f_c_c_analyses_1_1my_utils_1_1filter___p_v.html',1,'FCCAnalyses::myUtils']]],
+  ['flav_5fdetails_8',['flav_details',['../struct_f_c_c_analyses_1_1_jet_clustering_utils_1_1flav__details.html',1,'FCCAnalyses::JetClusteringUtils']]]
 ];
