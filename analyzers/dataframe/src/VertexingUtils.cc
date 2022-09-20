@@ -1160,6 +1160,23 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_d3d_SV( ROOT::VecOps::RVec<RO
   return result;
 }
 
+// vector of position of all reconstructed SV (in mm)
+ROOT::VecOps::RVec<ROOT::VecOps::RVec<TVector3>> get_position_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices ) {
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<TVector3>> result;
+  for(unsigned int i=0; i<vertices.size(); i++) {
+    ROOT::VecOps::RVec<TVector3> i_result;
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
+    //
+    for(auto & ivtx : i_vertices) {
+      TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
+      i_result.push_back(xyz);
+    }
+    result.push_back(i_result);
+  }
+  return result;
+}
+
+  
 // V0 pdg
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> get_pdg_V0( ROOT::VecOps::RVec<int> pdg,
 							ROOT::VecOps::RVec<int> nSV_jet ) {

@@ -70,7 +70,7 @@ ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> resonanceBuilder::operato
       }
       reso.momentum.x = reso_lv.Px();
       reso.momentum.y = reso_lv.Py();
-/      reso.momentum.z = reso_lv.Pz();
+      reso.momentum.z = reso_lv.Pz();
       reso.mass = reso_lv.M();
       result.emplace_back(reso);
     } while (std::next_permutation(v.begin(), v.end()));
