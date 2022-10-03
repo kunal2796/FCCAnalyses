@@ -1,8 +1,6 @@
 <map id="analyzers/dataframe/FCCAnalyses/JetClusteringUtils.h" name="analyzers/dataframe/FCCAnalyses/JetClusteringUtils.h">
-<area shape="rect" id="node1" title=" " alt="" coords="160,5,357,61"/>
-<area shape="rect" id="node2" href="$_jet_clustering_8h.html" title=" " alt="" coords="154,110,363,151"/>
-<area shape="rect" id="node3" href="$_jet_tagging_utils_8h.html" title=" " alt="" coords="5,201,227,242"/>
-<area shape="rect" id="node6" href="$_jet_clustering_utils_8cc.html" title=" " alt="" coords="387,110,567,151"/>
-<area shape="rect" id="node5" href="$_jet_clustering_8cc.html" title=" " alt="" coords="252,201,409,242"/>
-<area shape="rect" id="node4" href="$_jet_tagging_utils_8cc.html" title=" " alt="" coords="34,291,197,333"/>
+<area shape="rect" id="node1" title=" " alt="" coords="120,5,317,61"/>
+<area shape="rect" id="node2" href="$_jet_clustering_8h.html" title=" " alt="" coords="5,110,213,151"/>
+<area shape="rect" id="node4" href="$_jet_clustering_utils_8cc.html" title=" " alt="" coords="238,110,417,151"/>
+<area shape="rect" id="node3" href="$_jet_clustering_8cc.html" title=" " alt="" coords="31,201,188,242"/>
 </map>

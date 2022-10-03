@@ -7,6 +7,5 @@ var searchData=
   ['fill_5fx0_4',['Fill_x0',['../namespace_f_c_c_analyses_1_1_vertex_fitter_simple.html#aeea7ed4a735a0bbc31054ec0ef5e3c8a',1,'FCCAnalyses::VertexFitterSimple']]],
   ['filter_5fpdgid_5',['filter_pdgID',['../struct_f_c_c_analyses_1_1_m_c_particle_1_1filter__pdg_i_d.html#a5dca8e11912d134328d0dd57c7922d37',1,'FCCAnalyses::MCParticle::filter_pdgID']]],
   ['filter_5fpv_6',['filter_PV',['../struct_f_c_c_analyses_1_1my_utils_1_1filter___p_v.html#a76b0bcce72b96739cb592dbfc71ed7a8',1,'FCCAnalyses::myUtils::filter_PV']]],
-  ['find_5fghosts_7',['find_ghosts',['../namespace_f_c_c_analyses_1_1_jet_tagging_utils.html#a4403c1458fc57b6fb60c80eb47e890a3',1,'FCCAnalyses::JetTaggingUtils']]],
-  ['findsvfromtracks_8',['findSVfromTracks',['../namespace_f_c_c_analyses_1_1_vertex_finder_l_c_f_i_plus.html#a9e98be7c9b190321b878885f7edf508b',1,'FCCAnalyses::VertexFinderLCFIPlus']]]
+  ['findsvfromtracks_7',['findSVfromTracks',['../namespace_f_c_c_analyses_1_1_vertex_finder_l_c_f_i_plus.html#a9e98be7c9b190321b878885f7edf508b',1,'FCCAnalyses::VertexFinderLCFIPlus']]]
 ];
