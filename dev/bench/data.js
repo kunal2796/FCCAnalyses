@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664802701730,
+  "lastUpdate": 1664802704751,
   "repoUrl": "https://github.com/kunal2796/FCCAnalyses",
   "entries": {
     "Benchmark": [
@@ -3969,6 +3969,45 @@ window.BENCHMARK_DATA = {
             "unit": "Seconds",
             "range": 10,
             "extra": "Analysis path: examples/FCCee/test"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "committer": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "distinct": true,
+          "id": "560c35169ae67a7f7de2d366821a20874cfc0c9b",
+          "message": "fix to make nSV_jet in get_V0_jets of the same size as no of jets",
+          "timestamp": "2022-10-03T14:55:49+02:00",
+          "tree_id": "bb51b802c3b4c2c74f8777c63a43913c28355bf4",
+          "url": "https://github.com/kunal2796/FCCAnalyses/commit/560c35169ae67a7f7de2d366821a20874cfc0c9b"
+        },
+        "date": 1664802703510,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/higgs/mH-recoil/mumu",
+            "value": 7.061552237573672,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/flavour/Bc2TauNu",
+            "value": 5.620133498376946,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/test",
+            "value": 7.010821925359782,
+            "unit": "Evt/s"
           }
         ]
       }
