@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664801354870,
+  "lastUpdate": 1664801356355,
   "repoUrl": "https://github.com/kunal2796/FCCAnalyses",
   "entries": {
     "Benchmark": [
@@ -3717,6 +3717,45 @@ window.BENCHMARK_DATA = {
             "unit": "Seconds",
             "range": 10,
             "extra": "Analysis path: examples/FCCee/test"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "committer": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "distinct": true,
+          "id": "575314347a1bcae7ea4c9d5ca50dca0b20fe3d84",
+          "message": "adding the implementation of LCFIPlus vertexing module and the necessary funtions to exploit vertex properties in VertexingUtils",
+          "timestamp": "2022-10-03T14:37:48+02:00",
+          "tree_id": "2f7e637d491cc96b0d5215bbf0dd97008cb19a28",
+          "url": "https://github.com/kunal2796/FCCAnalyses/commit/575314347a1bcae7ea4c9d5ca50dca0b20fe3d84"
+        },
+        "date": 1664801355948,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/higgs/mH-recoil/mumu",
+            "value": 8.139265192116204,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/flavour/Bc2TauNu",
+            "value": 6.356801086391623,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/test",
+            "value": 8.677905774622197,
+            "unit": "Evt/s"
           }
         ]
       }
