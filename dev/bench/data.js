@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665397095064,
+  "lastUpdate": 1665397096797,
   "repoUrl": "https://github.com/kunal2796/FCCAnalyses",
   "entries": {
     "Benchmark": [
@@ -4137,6 +4137,45 @@ window.BENCHMARK_DATA = {
             "unit": "Seconds",
             "range": 10,
             "extra": "Analysis path: examples/FCCee/test"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "committer": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "distinct": true,
+          "id": "3af060e3b78970799d95ed396217da4d4a6aabb4",
+          "message": "example analysis.py files to test SV & V0 finder",
+          "timestamp": "2022-10-10T12:01:27+02:00",
+          "tree_id": "7aa930db7e69fa9fd9f1d9ca7c3fb97f74afae37",
+          "url": "https://github.com/kunal2796/FCCAnalyses/commit/3af060e3b78970799d95ed396217da4d4a6aabb4"
+        },
+        "date": 1665397096189,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/higgs/mH-recoil/mumu",
+            "value": 8.510327814601114,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/flavour/Bc2TauNu",
+            "value": 5.980574608007024,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/test",
+            "value": 7.850036172306323,
+            "unit": "Evt/s"
           }
         ]
       }
