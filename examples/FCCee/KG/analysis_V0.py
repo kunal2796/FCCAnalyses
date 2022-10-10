@@ -92,6 +92,23 @@ class RDFanalysis():
             # get the momenta
             .Define("V0_p", "VertexingUtils::get_p_SV(V0_jet)")
 
+            
+            .Define("v0_pid",     "VertexingUtils::get_pdg_V0(V0.pdgAbs, V0.nSV_jet)") # V0 pdg id
+            .Define("v0_mass",    "VertexingUtils::get_invM_V0(V0.invM, V0.nSV_jet)") # V0 invariant mass
+            #.Define("v0_p4",      "VertexingUtils::get_p4_SV(V0_jet)") # V0 momentum (4 vector)
+            .Define("v0_p",       "VertexingUtils::get_pMag_SV(V0_jet)") # V0 momentum (magnitude)
+            .Define("v0_ntracks", "VertexingUtils::get_VertexNtrk(V0_jet)") # V0 daughters (no of tracks)
+            .Define("v0_chi2",    "VertexingUtils::get_chi2_SV(V0_jet)") # V0 chi2 (not normalised)
+            .Define("v0_normchi2","VertexingUtils::get_norm_chi2_SV(V0_jet)") # V0 chi2 (normalised but same as above)
+            .Define("v0_ndf",     "VertexingUtils::get_nDOF_SV(V0_jet)") # V0 no of DOF (always 1)
+            .Define("v0_theta",   "VertexingUtils::get_theta_SV(V0_jet)") # V0 polar angle (theta)
+            .Define("v0_phi",     "VertexingUtils::get_phi_SV(V0_jet)") # V0 azimuthal angle (phi)
+            .Define("v0_thetarel","VertexingUtils::get_relTheta_SV(V0_jet, jets_ee_kt)") # V0 polar angle wrt jets
+            .Define("v0_phirel",  "VertexingUtils::get_relPhi_SV(V0_jet, jets_ee_kt)") # V0 azimuthal angle wrt jets
+            .Define("v0_costhetasvpv","VertexingUtils::get_pointingangle_SV(V0_jet, PrimaryVertexObject)") # V0 pointing angle
+            .Define("v0_dxy",     "VertexingUtils::get_dxy_SV(V0_jet, PrimaryVertexObject)") # V0 distance from PV (in xy plane)
+            .Define("v0_d3d",     "VertexingUtils::get_d3d_SV(V0_jet, PrimaryVertexObject)") # V0 distance from PV (in 3D)
+
         )
         return df2
 
@@ -120,6 +137,24 @@ class RDFanalysis():
             "V0_pos",
             "V0_chi2",
             "V0_p",
+
+            # ntuple stuff
+            'v0_pid',
+            'v0_mass',
+            #'v0_p4',
+            'v0_p',
+            'v0_ntracks',
+            'v0_chi2',
+            'v0_normchi2',
+            'v0_ndf',
+            'v0_theta',
+            'v0_phi',
+            'v0_thetarel',
+            'v0_phirel',
+            'v0_costhetasvpv',
+            'v0_dxy',
+            'v0_d3d',
+
         ]
         return branchList
 

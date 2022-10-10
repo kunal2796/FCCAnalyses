@@ -115,7 +115,22 @@ class RDFanalysis():
                .Define("SV_jet_chi2",   "VertexingUtils::get_chi2_SV( SV_jet )")
                #.Define("SV_evt1_chi2",  "VertexingUtils::get_chi2_SV( SV_evt1 )")
                #.Define("SV_evt2_chi2",  "VertexingUtils::get_chi2_SV( SV_evt2 )")
-               
+
+               .Define("sv_mass",    "VertexingUtils::get_invM(SV_jet)") # SV mass
+               #.Define("sv_p4",      "VertexingUtils::get_p4_SV(SV_jet)") # SV momentum (4 vector)                                                                         
+               .Define("sv_p",       "VertexingUtils::get_pMag_SV(SV_jet)") # SV momentum (magnitude)
+               .Define("sv_ntracks", "VertexingUtils::get_VertexNtrk(SV_jet)") # SV daughters (no of tracks)   
+               .Define("sv_chi2",    "VertexingUtils::get_chi2_SV(SV_jet)") # SV chi2 (not normalised)                                                                
+               .Define("sv_normchi2","VertexingUtils::get_norm_chi2_SV(SV_jet)") # SV chi2 (normalised)
+               .Define("sv_ndf",     "VertexingUtils::get_nDOF_SV(SV_jet)") # SV no of DOF
+               .Define("sv_theta",   "VertexingUtils::get_theta_SV(SV_jet)") # SV polar angle (theta)
+               .Define("sv_phi",     "VertexingUtils::get_phi_SV(SV_jet)") # SV azimuthal angle (phi)
+               .Define("sv_thetarel","VertexingUtils::get_relTheta_SV(SV_jet, jets_ee_kt)") # SV polar angle wrt jet
+               .Define("sv_phirel",  "VertexingUtils::get_relPhi_SV(SV_jet, jets_ee_kt)") # SV azimuthal angle wrt jet
+               .Define("sv_costhetasvpv","VertexingUtils::get_pointingangle_SV(SV_jet, PrimaryVertexObject)") # SV pointing angle
+               .Define("sv_dxy",     "VertexingUtils::get_dxy_SV(SV_jet, PrimaryVertexObject)") # SV distance from PV (in xy plane)
+               .Define("sv_d3d",     "VertexingUtils::get_d3d_SV(SV_jet, PrimaryVertexObject)") # SV distance from PV (in 3D)
+
               )
         return df2
 
@@ -146,5 +161,22 @@ class RDFanalysis():
                 'SV_jet_chi2',
                 #'SV_evt1_chi2',
                 #'SV_evt2_chi2',
+
+                # ntuple stuff
+               'sv_mass',
+               #'sv_p4',                                                                         
+               'sv_p',
+               'sv_ntracks',   
+               'sv_chi2',                                                                
+               'sv_normchi2',
+               'sv_ndf',
+               'sv_theta',
+               'sv_phi',
+               'sv_thetarel',
+               'sv_phirel',
+               'sv_costhetasvpv',
+               'sv_dxy',
+               'sv_d3d',
+
                 ]
         return branchList

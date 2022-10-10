@@ -1,7 +1,7 @@
 #Mandatory: List of processes
 processList = {
     # 1M b & c, 3M uds
-    #'p8_ee_Zbb_ecm91':{'fraction':0.001, 'chunks':10}, #Run 0.1% statistics in two files named <outputDir>/p8_ee_Zbb_ecm91/chunk<N>.root
+    'p8_ee_Zbb_ecm91':{'fraction':0.001, 'chunks':10}, #Run 0.1% statistics in two files named <outputDir>/p8_ee_Zbb_ecm91/chunk<N>.root
     #'p8_ee_Zcc_ecm91':{'fraction':0.001, 'chunks':10}, #Run 0.1% statistics in two files named <outputDir>/p8_ee_Zcc_ecm91/chunk<N>.root
     #'p8_ee_Zuds_ecm91':{'fraction':0.003, 'chunks':30}, #Run 0.3% statistics in one output file named <outputDir>/p8_ee_Zuds_ecm91.root
 
@@ -9,7 +9,7 @@ processList = {
     #'p8_ee_Zbb_ecm91':{'fraction':0.0004, 'chunks':4},
     #'p8_ee_Zcc_ecm91':{'fraction':0.0004, 'chunks':4},
     #'p8_ee_Zuds_ecm91':{'fraction':0.001, 'chunks':10},
-    'p8_ee_Zuds_ecm91':{'fraction':0.0001},
+    #'p8_ee_Zuds_ecm91':{'fraction':0.0001},
 }
 
 #Mandatory: Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics
@@ -55,7 +55,8 @@ class RDFanalysis():
             .Define("RP_pz",        "ReconstructedParticle::get_pz(ReconstructedParticles)")               
             .Define("RP_m",         "ReconstructedParticle::get_mass(ReconstructedParticles)")
             .Define("RP_charge",    "ReconstructedParticle::get_charge(ReconstructedParticles)")
-            .Define("RP_hasTRK",    "ReconstructedParticle2Track::hasTRK(ReconstructedParticles)")
+            #.Define("RP_hasTRK",    "ReconstructedParticle2Track::hasTRK(ReconstructedParticles)")
+            .Define("RP_hasTRK",    "ROOT::VecOps::RVec<int> result; for(auto& charge : RP_charge){if(std::abs(charge)>0) result.push_back(1); else result.push_back(0);} return result;")
             .Define("RP_charged",   "ReconstructedParticle::sel_tag(1)(RP_hasTRK, ReconstructedParticles)")
             .Define("RP_neutral",   "ReconstructedParticle::sel_tag(0)(RP_hasTRK, ReconstructedParticles)")
             .Define("RP_isMuon",    "ReconstructedParticle::is_particle(Muon0, ReconstructedParticles)")
@@ -108,8 +109,6 @@ class RDFanalysis():
             .Define("V0", "VertexFinderLCFIPlus::get_V0s_jet(ReconstructedParticles, EFlowTrack_1, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents, PV)")
             # separate by jetsh. none of this will be needed once get_V0_jet is of the form Rvec<RVec<V0>>
             .Define("V0_jet", "VertexingUtils::get_svInJets(V0.vtx, V0.nSV_jet)")
-            # separate tracks by jets
-            #.Define("Tracks", "VertexingUtils::get_tracksInJets(ReconstructedParticles, EFlowTrack_1, jets_ee_kt, jetconstituents)")
 
 
             ###############
@@ -235,9 +234,9 @@ class RDFanalysis():
             .Define("isC", "std::vector<int> isC(jets_isC.begin(), jets_isC.end()); return isC;")
             .Define("isUD", "std::vector<int> isUD; for(int i=0; i<jets_isU.size(); ++i){isUD.push_back(jets_isU[i]+jets_isD[i]);}; return isUD;")
             .Define("isS", "std::vector<int> isS(jets_isS.begin(), jets_isS.end()); return isS;")
-            #.Define("isUndefined", "std::vector<int> isUndefined(jets_isB.size(), 0); for(int i=0; i<isUndefined.size(); ++i){isUndefined[i] = (jets_isB[i]==0);}; return isUndefined;")
+            .Define("isUndefined", "std::vector<int> isUndefined(jets_isB.size(), 0); for(int i=0; i<isUndefined.size(); ++i){isUndefined[i] = (jets_isB[i]==0);}; return isUndefined;")
             #.Define("isUndefined", "std::vector<int> isUndefined(jets_isC.size(), 0); for(int i=0; i<isUndefined.size(); ++i){isUndefined[i] = (jets_isC[i]==0);}; return isUndefined;")
-            .Define("isUndefined", "std::vector<int> isUndefined(jets_isU.size(), 0); for(int i=0; i<isUndefined.size(); ++i){isUndefined[i] = (jets_isU[i]==0)&&(jets_isD[i]==0)&&(jets_isS[i]==0);}; return isUndefined;")
+            #.Define("isUndefined", "std::vector<int> isUndefined(jets_isU.size(), 0); for(int i=0; i<isUndefined.size(); ++i){isUndefined[i] = (jets_isU[i]==0)&&(jets_isD[i]==0)&&(jets_isS[i]==0);}; return isUndefined;")
             #.Define("isB", "int isB = jets_isB_placeholder[0]; return isB;")
             #.Define("isC", "int isC = jets_isC_placeholder[0]; return isC;")
             #.Define("isUD", "int isUD = jets_isU_placeholder[0]+jets_isD_placeholder[0]; return isUD;")
@@ -274,13 +273,6 @@ class RDFanalysis():
             
             # JET VARIABLES
             .Define("n_sv",       "VertexingUtils::get_n_SV_jets(SV_jet)") # no of SVs per jet
-            #.Define("jet_p",      "JetClusteringUtils::get_p(jets_ee_kt)") # jet momentum
-            #.Define("jet_pt",     "JetClusteringUtils::get_pt(jets_ee_kt)") # jet transverse momentum
-            #.Define("jet_energy", "JetClusteringUtils::get_e(jets_ee_kt)") # jet energy
-            #.Define("jet_mass",   "JetClusteringUtils::get_m(jets_ee_kt)") # jet mass
-            #.Define("jet_theta",  "JetClusteringUtils::get_theta(jets_ee_kt)") # jet polar angle
-            #.Define("jet_eta",    "JetClusteringUtils::get_eta(jets_ee_kt)") # jet pseudo-rapidity
-            #.Define("jet_phi",    "JetClusteringUtils::get_phi(jets_ee_kt)") # jet azimuthal angle
 
             # SV VARIABLES
             #.Define("sv_mass1",   "myUtils::get_Vertex_mass(SV.vtx, ReconstructedParticles)") # SV mass (first way)
@@ -315,17 +307,6 @@ class RDFanalysis():
             .Define("v0_costhetasvpv","VertexingUtils::get_pointingangle_SV(V0_jet, PV)") # V0 pointing angle
             .Define("v0_dxy",     "VertexingUtils::get_dxy_SV(V0_jet, PV)") # V0 distance from PV (in xy plane)
             .Define("v0_d3d",     "VertexingUtils::get_d3d_SV(V0_jet, PV)") # V0 distance from PV (in 3D)
-
-            # CHARGED PF CANDIDATE VARIABLES (TRACK)
-            #.Define("n_Cpfcan",   "ReconstructedParticle2Track::getTK_n(Tracks[0])") # no of tracks
-            #.Define("Cpfcan_dz",  "ReconstructedParticle2Track::getRP2TRK_Z0(ReconstructedParticles, Tracks[0])") # longitudinal IP
-            #.Define("Cpfcan_dxy", "ReconstructedParticle2Track::getRP2TRK_D0(ReconstructedParticles, Tracks[0])") # transverse IP
-            #.Define("Cpfcan_sdz", "ReconstructedParticle2Track::getRP2TRK_Z0_sig(ReconstructedParticles, Tracks[0])") # longitudinal IP significance
-            #.Define("Cpfcan_sdxy","ReconstructedParticle2Track::getRP2TRK_D0_sig(ReconstructedParticles, Tracks[0])") # transverse IP significance
-            #.Define("Cpfcan_phi", "ReconstructedParticle2Track::getRP2TRK_phi(ReconstructedParticles, Tracks[0])") # azimuthal angle
-            #.Define("Cpfcan_theta","ReconstructedParticle2Track::getRP2TRK_theta(ReconstructedParticles, Tracks[0])") # polar angle
-            #.Define("Cpfcan_p",   "ReconstructedParticle2Track::getRP2TRK_mom(ReconstructedParticles, Tracks[0])") # momentum magnitude
-            #.Define("Cpfcan_charge","ReconstructedParticle2Track::getRP2TRK_charge(ReconstructedParticles, Tracks[0])") # charge
             
         )
         return df2
@@ -357,13 +338,6 @@ class RDFanalysis():
 
             # jet variables
             "n_sv",
-            #"jet_p",
-            #"jet_pt",
-            #"jet_energy",
-            #"jet_mass",
-            #"jet_theta",
-            #"jet_eta",
-            #"jet_phi",
 
             "jets_nRP_charged",
             "jets_nRP_neutral",
@@ -450,16 +424,5 @@ class RDFanalysis():
             "v0_d3d",
 
             ## ENDS HERE CURRENTLY
-
-            # track variables
-            #"n_Cpfcan",
-            #"Cpfcan_dz",
-            #"Cpfcan_dxy",
-            #"Cpfcan_sdz",
-            #"Cpfcan_sdxy",
-            #"Cpfcan_phi",
-            #"Cpfcan_theta",
-            #"Cpfcan_p",
-            #"Cpfcan_charge"
         ]
         return branchList

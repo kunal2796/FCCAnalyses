@@ -55,7 +55,8 @@ class RDFanalysis():
             .Define("RP_pz",        "ReconstructedParticle::get_pz(ReconstructedParticles)")               
             .Define("RP_m",         "ReconstructedParticle::get_mass(ReconstructedParticles)")
             .Define("RP_charge",    "ReconstructedParticle::get_charge(ReconstructedParticles)")
-            .Define("RP_hasTRK",    "ReconstructedParticle2Track::hasTRK(ReconstructedParticles)")
+            #.Define("RP_hasTRK",    "ReconstructedParticle2Track::hasTRK(ReconstructedParticles)")
+            .Define("RP_hasTRK",    "ROOT::VecOps::RVec<int> result; for(auto& charge : RP_charge){if(std::abs(charge)>0) result.push_back(1); else result.push_back(0);} return result;")
             .Define("RP_charged",   "ReconstructedParticle::sel_tag(1)(RP_hasTRK, ReconstructedParticles)")
             .Define("RP_neutral",   "ReconstructedParticle::sel_tag(0)(RP_hasTRK, ReconstructedParticles)")
             .Define("RP_isMuon",    "ReconstructedParticle::is_particle(Muon0, ReconstructedParticles)")
@@ -103,13 +104,11 @@ class RDFanalysis():
             # get the jet constituents out of the structure
             .Define("jetconstituents", "JetClusteringUtils::get_constituents(FCCAnalysesJets_ee_kt)")
             # find SVs in jets
-            #.Define("SV_jet", "VertexFinderLCFIPlus::get_SV_jets(ReconstructedParticles, EFlowTrack_1, PV, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents)")
+            .Define("SV_jet", "VertexFinderLCFIPlus::get_SV_jets(ReconstructedParticles, EFlowTrack_1, PV, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents)")
             # find V0s in jets
-            #.Define("V0", "VertexFinderLCFIPlus::get_V0s_jet(ReconstructedParticles, EFlowTrack_1, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents, PV)")
+            .Define("V0", "VertexFinderLCFIPlus::get_V0s_jet(ReconstructedParticles, EFlowTrack_1, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents, PV)")
             # separate by jetsh. none of this will be needed once get_V0_jet is of the form Rvec<RVec<V0>>
-            #.Define("V0_jet", "VertexingUtils::get_svInJets(V0.vtx, V0.nSV_jet)")
-            # separate tracks by jets
-            #.Define("Tracks", "VertexingUtils::get_tracksInJets(ReconstructedParticles, EFlowTrack_1, jets_ee_kt, jetconstituents)")
+            .Define("V0_jet", "VertexingUtils::get_svInJets(V0.vtx, V0.nSV_jet)")
 
 
             ###############
@@ -273,59 +272,42 @@ class RDFanalysis():
 
             
             # JET VARIABLES
-            #.Define("n_sv",       "VertexingUtils::get_n_SV_jets(SV_jet)") # no of SVs per jet
-            #.Define("jet_p",      "JetClusteringUtils::get_p(jets_ee_kt)") # jet momentum
-            #.Define("jet_pt",     "JetClusteringUtils::get_pt(jets_ee_kt)") # jet transverse momentum
-            #.Define("jet_energy", "JetClusteringUtils::get_e(jets_ee_kt)") # jet energy
-            #.Define("jet_mass",   "JetClusteringUtils::get_m(jets_ee_kt)") # jet mass
-            #.Define("jet_theta",  "JetClusteringUtils::get_theta(jets_ee_kt)") # jet polar angle
-            #.Define("jet_eta",    "JetClusteringUtils::get_eta(jets_ee_kt)") # jet pseudo-rapidity
-            #.Define("jet_phi",    "JetClusteringUtils::get_phi(jets_ee_kt)") # jet azimuthal angle
+            .Define("n_sv",       "VertexingUtils::get_n_SV_jets(SV_jet)") # no of SVs per jet
 
             # SV VARIABLES
             #.Define("sv_mass1",   "myUtils::get_Vertex_mass(SV.vtx, ReconstructedParticles)") # SV mass (first way)
-            #.Define("sv_mass",    "VertexingUtils::get_invM(SV_jet)") # SV mass (second way)
+            .Define("sv_mass",    "VertexingUtils::get_invM(SV_jet)") # SV mass (second way)
             #.Define("sv_p4",      "VertexingUtils::get_p4_SV(SV_jet)") # SV momentum (4 vector)
-            #.Define("sv_p",       "VertexingUtils::get_pMag_SV(SV_jet)") # SV momentum (magnitude)
-            # .Define("sv_ntracks", "VertexingUtils::get_VertexNtrk(SV_jet)") # SV daughters (no of tracks)
-            # .Define("sv_chi2",    "VertexingUtils::get_chi2_SV(SV_jet)") # SV chi2 (not normalised)
-            # .Define("sv_normchi2","VertexingUtils::get_norm_chi2_SV(SV_jet)") # SV chi2 (normalised)
-            # .Define("sv_ndf",     "VertexingUtils::get_nDOF_SV(SV_jet)") # SV no of DOF
-            # .Define("sv_theta",   "VertexingUtils::get_theta_SV(SV_jet)") # SV polar angle (theta)
-            # .Define("sv_phi",     "VertexingUtils::get_phi_SV(SV_jet)") # SV azimuthal angle (phi)
-            # .Define("sv_thetarel","VertexingUtils::get_relTheta_SV(SV_jet, jets_ee_kt)") # SV polar angle wrt jet
-            # .Define("sv_phirel",  "VertexingUtils::get_relPhi_SV(SV_jet, jets_ee_kt)") # SV azimuthal angle wrt jet
-            # .Define("sv_costhetasvpv","VertexingUtils::get_pointingangle_SV(SV_jet, PV)") # SV pointing angle
-            # .Define("sv_dxy",     "VertexingUtils::get_dxy_SV(SV_jet, PV)") # SV distance from PV (in xy plane)
-            # .Define("sv_d3d",     "VertexingUtils::get_d3d_SV(SV_jet, PV)") # SV distance from PV (in 3D)
+            .Define("sv_p",       "VertexingUtils::get_pMag_SV(SV_jet)") # SV momentum (magnitude)
+            .Define("sv_ntracks", "VertexingUtils::get_VertexNtrk(SV_jet)") # SV daughters (no of tracks)
+            .Define("sv_chi2",    "VertexingUtils::get_chi2_SV(SV_jet)") # SV chi2 (not normalised)
+            .Define("sv_normchi2","VertexingUtils::get_norm_chi2_SV(SV_jet)") # SV chi2 (normalised)
+            .Define("sv_ndf",     "VertexingUtils::get_nDOF_SV(SV_jet)") # SV no of DOF
+            .Define("sv_theta",   "VertexingUtils::get_theta_SV(SV_jet)") # SV polar angle (theta)
+            .Define("sv_phi",     "VertexingUtils::get_phi_SV(SV_jet)") # SV azimuthal angle (phi)
+            .Define("sv_thetarel","VertexingUtils::get_relTheta_SV(SV_jet, jets_ee_kt)") # SV polar angle wrt jet
+            .Define("sv_phirel",  "VertexingUtils::get_relPhi_SV(SV_jet, jets_ee_kt)") # SV azimuthal angle wrt jet
+            .Define("sv_costhetasvpv","VertexingUtils::get_pointingangle_SV(SV_jet, PV)") # SV pointing angle
+            .Define("sv_dxy",     "VertexingUtils::get_dxy_SV(SV_jet, PV)") # SV distance from PV (in xy plane)
+            .Define("sv_d3d",     "VertexingUtils::get_d3d_SV(SV_jet, PV)") # SV distance from PV (in 3D)
 
             # V0 VARIABLES
-            # .Define("v0_pid",     "VertexingUtils::get_pdg_V0(V0.pdgAbs, V0.nSV_jet)") # V0 pdg id
-            # .Define("v0_mass",    "VertexingUtils::get_invM_V0(V0.invM, V0.nSV_jet)") # V0 invariant mass
-            # #.Define("v0_p4",      "VertexingUtils::get_p4_SV(V0_jet)") # V0 momentum (4 vector)
-            # .Define("v0_p",       "VertexingUtils::get_pMag_SV(V0_jet)") # V0 momentum (magnitude)
-            # .Define("v0_ntracks", "VertexingUtils::get_VertexNtrk(V0_jet)") # V0 daughters (no of tracks)
-            # .Define("v0_chi2",    "VertexingUtils::get_chi2_SV(V0_jet)") # V0 chi2 (not normalised)
-            # .Define("v0_normchi2","VertexingUtils::get_norm_chi2_SV(V0_jet)") # V0 chi2 (normalised but same as above)
-            # .Define("v0_ndf",     "VertexingUtils::get_nDOF_SV(V0_jet)") # V0 no of DOF (always 1)
-            # .Define("v0_theta",   "VertexingUtils::get_theta_SV(V0_jet)") # V0 polar angle (theta)
-            # .Define("v0_phi",     "VertexingUtils::get_phi_SV(V0_jet)") # V0 azimuthal angle (phi)
-            # .Define("v0_thetarel","VertexingUtils::get_relTheta_SV(V0_jet, jets_ee_kt)") # V0 polar angle wrt jets
-            # .Define("v0_phirel",  "VertexingUtils::get_relPhi_SV(V0_jet, jets_ee_kt)") # V0 azimuthal angle wrt jets
-            # .Define("v0_costhetasvpv","VertexingUtils::get_pointingangle_SV(V0_jet, PV)") # V0 pointing angle
-            # .Define("v0_dxy",     "VertexingUtils::get_dxy_SV(V0_jet, PV)") # V0 distance from PV (in xy plane)
-            # .Define("v0_d3d",     "VertexingUtils::get_d3d_SV(V0_jet, PV)") # V0 distance from PV (in 3D)
+            .Define("v0_pid",     "VertexingUtils::get_pdg_V0(V0.pdgAbs, V0.nSV_jet)") # V0 pdg id
+            .Define("v0_mass",    "VertexingUtils::get_invM_V0(V0.invM, V0.nSV_jet)") # V0 invariant mass
+            #.Define("v0_p4",      "VertexingUtils::get_p4_SV(V0_jet)") # V0 momentum (4 vector)
+            .Define("v0_p",       "VertexingUtils::get_pMag_SV(V0_jet)") # V0 momentum (magnitude)
+            .Define("v0_ntracks", "VertexingUtils::get_VertexNtrk(V0_jet)") # V0 daughters (no of tracks)
+            .Define("v0_chi2",    "VertexingUtils::get_chi2_SV(V0_jet)") # V0 chi2 (not normalised)
+            .Define("v0_normchi2","VertexingUtils::get_norm_chi2_SV(V0_jet)") # V0 chi2 (normalised but same as above)
+            .Define("v0_ndf",     "VertexingUtils::get_nDOF_SV(V0_jet)") # V0 no of DOF (always 1)
+            .Define("v0_theta",   "VertexingUtils::get_theta_SV(V0_jet)") # V0 polar angle (theta)
+            .Define("v0_phi",     "VertexingUtils::get_phi_SV(V0_jet)") # V0 azimuthal angle (phi)
+            .Define("v0_thetarel","VertexingUtils::get_relTheta_SV(V0_jet, jets_ee_kt)") # V0 polar angle wrt jets
+            .Define("v0_phirel",  "VertexingUtils::get_relPhi_SV(V0_jet, jets_ee_kt)") # V0 azimuthal angle wrt jets
+            .Define("v0_costhetasvpv","VertexingUtils::get_pointingangle_SV(V0_jet, PV)") # V0 pointing angle
+            .Define("v0_dxy",     "VertexingUtils::get_dxy_SV(V0_jet, PV)") # V0 distance from PV (in xy plane)
+            .Define("v0_d3d",     "VertexingUtils::get_d3d_SV(V0_jet, PV)") # V0 distance from PV (in 3D)
 
-            # CHARGED PF CANDIDATE VARIABLES (TRACK)
-            #.Define("n_Cpfcan",   "ReconstructedParticle2Track::getTK_n(Tracks[0])") # no of tracks
-            #.Define("Cpfcan_dz",  "ReconstructedParticle2Track::getRP2TRK_Z0(ReconstructedParticles, Tracks[0])") # longitudinal IP
-            #.Define("Cpfcan_dxy", "ReconstructedParticle2Track::getRP2TRK_D0(ReconstructedParticles, Tracks[0])") # transverse IP
-            #.Define("Cpfcan_sdz", "ReconstructedParticle2Track::getRP2TRK_Z0_sig(ReconstructedParticles, Tracks[0])") # longitudinal IP significance
-            #.Define("Cpfcan_sdxy","ReconstructedParticle2Track::getRP2TRK_D0_sig(ReconstructedParticles, Tracks[0])") # transverse IP significance
-            #.Define("Cpfcan_phi", "ReconstructedParticle2Track::getRP2TRK_phi(ReconstructedParticles, Tracks[0])") # azimuthal angle
-            #.Define("Cpfcan_theta","ReconstructedParticle2Track::getRP2TRK_theta(ReconstructedParticles, Tracks[0])") # polar angle
-            #.Define("Cpfcan_p",   "ReconstructedParticle2Track::getRP2TRK_mom(ReconstructedParticles, Tracks[0])") # momentum magnitude
-            #.Define("Cpfcan_charge","ReconstructedParticle2Track::getRP2TRK_charge(ReconstructedParticles, Tracks[0])") # charge
             
         )
         return df2
@@ -356,14 +338,7 @@ class RDFanalysis():
             "RPj_neutral_isPhoton",            
 
             # jet variables
-            #"n_sv",
-            #"jet_p",
-            #"jet_pt",
-            #"jet_energy",
-            #"jet_mass",
-            #"jet_theta",
-            #"jet_eta",
-            #"jet_phi",
+            "n_sv",
 
             "jets_nRP_charged",
             "jets_nRP_neutral",
@@ -417,49 +392,39 @@ class RDFanalysis():
 
             # sv variables
             #"sv_mass1",
-            #"sv_mass",
+            "sv_mass",
             #"sv_p4",
-            # "sv_p",
-            # "sv_ntracks",
-            # "sv_chi2",
-            # "sv_normchi2",
-            # "sv_ndf",
-            # "sv_theta",
-            # "sv_phi",
-            # "sv_thetarel",
-            # "sv_phirel",
-            # "sv_costhetasvpv",
-            # "sv_dxy",
-            #"sv_d3d",
+            "sv_p",
+            "sv_ntracks",
+            "sv_chi2",
+            "sv_normchi2",
+            "sv_ndf",
+            "sv_theta",
+            "sv_phi",
+            "sv_thetarel",
+            "sv_phirel",
+            "sv_costhetasvpv",
+            "sv_dxy",
+            "sv_d3d",
 
             # v0 variables
-            # "v0_pid",
-            # "v0_mass",
-            # #"v0_p4",
-            # "v0_p",
-            # "v0_ntracks",
-            # "v0_chi2",
-            # "v0_normchi2",
-            # "v0_ndf",
-            # "v0_theta",
-            # "v0_phi",
-            # "v0_thetarel",
-            # "v0_phirel",
-            # "v0_costhetasvpv",
-            # "v0_dxy",
-            # "v0_d3d",
+            "v0_pid",
+            "v0_mass",
+            #"v0_p4",
+            "v0_p",
+            "v0_ntracks",
+            "v0_chi2",
+            "v0_normchi2",
+            "v0_ndf",
+            "v0_theta",
+            "v0_phi",
+            "v0_thetarel",
+            "v0_phirel",
+            "v0_costhetasvpv",
+            "v0_dxy",
+            "v0_d3d",
 
             ## ENDS HERE CURRENTLY
 
-            # track variables
-            #"n_Cpfcan",
-            #"Cpfcan_dz",
-            #"Cpfcan_dxy",
-            #"Cpfcan_sdz",
-            #"Cpfcan_sdxy",
-            #"Cpfcan_phi",
-            #"Cpfcan_theta",
-            #"Cpfcan_p",
-            #"Cpfcan_charge"
         ]
         return branchList
