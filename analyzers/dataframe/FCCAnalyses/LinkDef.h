@@ -23,6 +23,11 @@
 #pragma link C++ class ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>>+;
 #pragma link C++ class ROOT::VecOps::RVec<ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>>+;
 
+#pragma link C++ class std::vector<std::vector<int>>+;
+#pragma link C++ class std::vector<std::vector<float>>+;
+#pragma link C++ class std::vector<std::vector<double>>+;
+
+
 #pragma link C++ class ROOT::VecOps::RVec<FCCAnalyses::VertexingUtils::FCCAnalysesVertex>+;
 #pragma link C++ class ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalyses::VertexingUtils::FCCAnalysesVertex>>+;
 #pragma link C++ class ROOT::VecOps::RVec<ROOT::VecOps::RVec<TVector3>>+;

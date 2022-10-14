@@ -811,6 +811,7 @@ ROOT::VecOps::RVec<int> get_n_SV_jets( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCC
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> get_svInJets( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices,
 									ROOT::VecOps::RVec<int> nSV_jet ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> result;
+
   ROOT::VecOps::RVec<FCCAnalysesVertex> i_result;
 
   int index=0;
@@ -1057,11 +1058,14 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_phi_SV( ROOT::VecOps::RVec<RO
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relTheta_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices,
 								ROOT::VecOps::RVec<fastjet::PseudoJet> jets ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  if(jets.size()==0) return result;
+
   ROOT::VecOps::RVec<double> i_result;
 
-  for(unsigned int i=0; i<jets.size(); i++) {
-    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
-    fastjet::PseudoJet i_jet = jets.at(i);
+  int index=0;
+  for(auto & i_jet : jets) {
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(index);
+
     for(auto & ivtx : i_vertices) {
       TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
       //
@@ -1069,6 +1073,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relTheta_SV( ROOT::VecOps::RV
     }
     result.push_back(i_result);
     i_result.clear();
+    index++;
   }
   //
   return result;
@@ -1078,11 +1083,14 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relTheta_SV( ROOT::VecOps::RV
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relPhi_SV( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> vertices,
 							      ROOT::VecOps::RVec<fastjet::PseudoJet> jets ) {
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> result;
+  if(jets.size()==0) return result;
+
   ROOT::VecOps::RVec<double> i_result;
 
-  for(unsigned int i=0; i<jets.size(); i++) {
-    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(i);
-    fastjet::PseudoJet i_jet = jets.at(i);
+  int index=0;
+  for(auto & i_jet : jets) {
+    ROOT::VecOps::RVec<FCCAnalysesVertex> i_vertices = vertices.at(index);
+
     for(auto & ivtx : i_vertices) {
       TVector3 xyz(ivtx.vertex.position[0], ivtx.vertex.position[1], ivtx.vertex.position[2]);
       TVector3 jetP(i_jet.px(), i_jet.py(), i_jet.pz());
@@ -1091,6 +1099,7 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>> get_relPhi_SV( ROOT::VecOps::RVec
     }
     result.push_back(i_result);
     i_result.clear();
+    index++;
   }
   //
   return result;
