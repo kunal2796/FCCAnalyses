@@ -9,8 +9,9 @@ var searchData=
   ['sel_5fpt_6',['sel_pt',['../struct_f_c_c_analyses_1_1_m_c_particle_1_1sel__pt.html',1,'FCCAnalyses::MCParticle::sel_pt'],['../struct_f_c_c_analyses_1_1_reconstructed_particle_1_1sel__pt.html',1,'FCCAnalyses::ReconstructedParticle::sel_pt']]],
   ['sel_5fpv_7',['sel_PV',['../struct_f_c_c_analyses_1_1my_utils_1_1sel___p_v.html',1,'FCCAnalyses::myUtils']]],
   ['sel_5ftag_8',['sel_tag',['../struct_f_c_c_analyses_1_1_jet_tagging_utils_1_1sel__tag.html',1,'FCCAnalyses::JetTaggingUtils::sel_tag'],['../struct_f_c_c_analyses_1_1_reconstructed_particle_1_1sel__tag.html',1,'FCCAnalyses::ReconstructedParticle::sel_tag']]],
-  ['selrp_5fpdg_9',['selRP_PDG',['../struct_f_c_c_analyses_1_1_reconstructed_particle2_m_c_1_1sel_r_p___p_d_g.html',1,'FCCAnalyses::ReconstructedParticle2MC']]],
-  ['selrp_5fpdg_5findex_10',['selRP_PDG_index',['../struct_f_c_c_analyses_1_1_reconstructed_particle2_m_c_1_1sel_r_p___p_d_g__index.html',1,'FCCAnalyses::ReconstructedParticle2MC']]],
-  ['seltracks_11',['selTracks',['../struct_f_c_c_analyses_1_1_vertexing_utils_1_1sel_tracks.html',1,'FCCAnalyses::VertexingUtils']]],
-  ['sphericityfit_12',['sphericityFit',['../struct_f_c_c_analyses_1_1_algorithms_1_1sphericity_fit.html',1,'FCCAnalyses::Algorithms']]]
+  ['sel_5ftemplate_9',['sel_template',['../struct_f_c_c_analyses_1_1_reconstructed_particle_1_1sel__template.html',1,'FCCAnalyses::ReconstructedParticle']]],
+  ['selrp_5fpdg_10',['selRP_PDG',['../struct_f_c_c_analyses_1_1_reconstructed_particle2_m_c_1_1sel_r_p___p_d_g.html',1,'FCCAnalyses::ReconstructedParticle2MC']]],
+  ['selrp_5fpdg_5findex_11',['selRP_PDG_index',['../struct_f_c_c_analyses_1_1_reconstructed_particle2_m_c_1_1sel_r_p___p_d_g__index.html',1,'FCCAnalyses::ReconstructedParticle2MC']]],
+  ['seltracks_12',['selTracks',['../struct_f_c_c_analyses_1_1_vertexing_utils_1_1sel_tracks.html',1,'FCCAnalyses::VertexingUtils']]],
+  ['sphericityfit_13',['sphericityFit',['../struct_f_c_c_analyses_1_1_algorithms_1_1sphericity_fit.html',1,'FCCAnalyses::Algorithms']]]
 ];
