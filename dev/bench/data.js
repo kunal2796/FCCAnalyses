@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665397096797,
+  "lastUpdate": 1665730915341,
   "repoUrl": "https://github.com/kunal2796/FCCAnalyses",
   "entries": {
     "Benchmark": [
@@ -4176,6 +4176,49 @@ window.BENCHMARK_DATA = {
             "name": "nightly | Events processed per second: examples/FCCee/test",
             "value": 7.850036172306323,
             "unit": "Evt/s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kgautam@lxplus724.cern.ch",
+            "name": "Kunal Gautam"
+          },
+          "committer": {
+            "email": "kgautam@lxplus724.cern.ch",
+            "name": "Kunal Gautam"
+          },
+          "distinct": true,
+          "id": "a827dba4d7f63a14a8912d25ac89f7bbb99b1db5",
+          "message": "updated analysis files",
+          "timestamp": "2022-10-14T08:51:51+02:00",
+          "tree_id": "19d29aa8a7b811b56084b7fa7a1d32fbdc42441b",
+          "url": "https://github.com/kunal2796/FCCAnalyses/commit/a827dba4d7f63a14a8912d25ac89f7bbb99b1db5"
+        },
+        "date": 1665730912633,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "prod | Time spent running the analysis: examples/FCCee/higgs/mH-recoil/mumu",
+            "value": 8.08528447151184,
+            "unit": "Seconds",
+            "range": 10,
+            "extra": "Analysis path: examples/FCCee/higgs/mH-recoil/mumu"
+          },
+          {
+            "name": "prod | Time spent running the analysis: examples/FCCee/flavour/Bc2TauNu",
+            "value": 13.084718465805054,
+            "unit": "Seconds",
+            "range": 10,
+            "extra": "Analysis path: examples/FCCee/flavour/Bc2TauNu"
+          },
+          {
+            "name": "prod | Time spent running the analysis: examples/FCCee/test",
+            "value": 10.504207849502563,
+            "unit": "Seconds",
+            "range": 10,
+            "extra": "Analysis path: examples/FCCee/test"
           }
         ]
       }
