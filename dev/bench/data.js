@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665731256941,
+  "lastUpdate": 1665731259963,
   "repoUrl": "https://github.com/kunal2796/FCCAnalyses",
   "entries": {
     "Benchmark": [
@@ -4299,6 +4299,43 @@ window.BENCHMARK_DATA = {
             "unit": "Seconds",
             "range": 10,
             "extra": "Analysis path: examples/FCCee/test"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kgautam@lxplus724.cern.ch",
+            "name": "Kunal Gautam"
+          },
+          "committer": {
+            "email": "kgautam@lxplus724.cern.ch",
+            "name": "Kunal Gautam"
+          },
+          "distinct": true,
+          "id": "a827dba4d7f63a14a8912d25ac89f7bbb99b1db5",
+          "message": "updated analysis files",
+          "timestamp": "2022-10-14T08:51:51+02:00",
+          "tree_id": "19d29aa8a7b811b56084b7fa7a1d32fbdc42441b",
+          "url": "https://github.com/kunal2796/FCCAnalyses/commit/a827dba4d7f63a14a8912d25ac89f7bbb99b1db5"
+        },
+        "date": 1665731258642,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/higgs/mH-recoil/mumu",
+            "value": 7.514246114176588,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/flavour/Bc2TauNu",
+            "value": 4.710008533436262,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/test",
+            "value": 6.0296951456723535,
+            "unit": "Evt/s"
           }
         ]
       }
