@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1676439270431,
+  "lastUpdate": 1676439272234,
   "repoUrl": "https://github.com/kunal2796/FCCAnalyses",
   "entries": {
     "Benchmark": [
@@ -4381,6 +4381,45 @@ window.BENCHMARK_DATA = {
             "unit": "Seconds",
             "range": 10,
             "extra": "Analysis path: examples/FCCee/test"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kunal2796@gmail.com",
+            "name": "Kunal Gautam",
+            "username": "kunal2796"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ca2e2f6494e689255a02f296818f6602a2ff3d27",
+          "message": "Merge pull request #104 from EmanuelPerez/lcfiplus-test\n\nUpdates of vertexing and LCFIPlus (esp. keep trace of indices)",
+          "timestamp": "2023-02-15T06:21:10+01:00",
+          "tree_id": "5b4961d887f2449097551a6fc4c51e3d7fce0e53",
+          "url": "https://github.com/kunal2796/FCCAnalyses/commit/ca2e2f6494e689255a02f296818f6602a2ff3d27"
+        },
+        "date": 1676439271609,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/higgs/mH-recoil/mumu",
+            "value": 7.347973450896592,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/flavour/Bc2TauNu",
+            "value": 5.662943715310401,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "nightly | Events processed per second: examples/FCCee/test",
+            "value": 7.485790655743963,
+            "unit": "Evt/s"
           }
         ]
       }
