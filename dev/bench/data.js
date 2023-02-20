@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1676889259598,
+  "lastUpdate": 1676889261215,
   "repoUrl": "https://github.com/kunal2796/FCCAnalyses",
   "entries": {
     "Benchmark": [
@@ -4652,6 +4652,50 @@ window.BENCHMARK_DATA = {
             "unit": "Seconds",
             "range": 10,
             "extra": "Analysis path: examples/FCCee/test"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "34742917+kjvbrt@users.noreply.github.com",
+            "name": "Juraj Smiesko",
+            "username": "kjvbrt"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b129c7be4da0808edba7a9e2a5e634f4a65d9f99",
+          "message": "Merge branch 'master' into lcfiplus",
+          "timestamp": "2023-02-20T11:24:18+01:00",
+          "tree_id": "0b443f24a75dcd9d6196062eef504e02822deb01",
+          "url": "https://github.com/kunal2796/FCCAnalyses/commit/b129c7be4da0808edba7a9e2a5e634f4a65d9f99"
+        },
+        "date": 1676889260797,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "prod | Events processed per second: case-studies/analysis_example/scripts",
+            "value": 9.816111269656368,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "prod | Events processed per second: examples/FCCee/higgs/mH-recoil/mumu",
+            "value": 8.285057048774748,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "prod | Events processed per second: examples/FCCee/flavour/Bc2TauNu",
+            "value": 6.54925538770718,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "prod | Events processed per second: examples/FCCee/test",
+            "value": 8.815761809579516,
+            "unit": "Evt/s"
           }
         ]
       }
