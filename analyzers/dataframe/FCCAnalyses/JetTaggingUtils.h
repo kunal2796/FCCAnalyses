@@ -49,6 +49,11 @@ struct sel_tag {
              ROOT::VecOps::RVec<fastjet::PseudoJet> in);
 };
 
+/////// added functions ////////
+//Makeshift way to get Z flavour
+ROOT::VecOps::RVec<int> get_Z_flavour(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin);
+ROOT::VecOps::RVec<int> get_Zqq_flavour(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin);
+  
 } // namespace JetTaggingUtils
 
 } // namespace FCCAnalyses

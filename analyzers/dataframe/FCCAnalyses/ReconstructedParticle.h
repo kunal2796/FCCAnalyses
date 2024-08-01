@@ -6,9 +6,13 @@
 #include <vector>
 
 #include "TLorentzVector.h"
+#include "TRandom3.h"
 #include "ROOT/RVec.hxx"
 #include "edm4hep/ReconstructedParticleData.h"
 #include "edm4hep/ParticleIDData.h"
+#include "edm4hep/MCParticleData.h"
+
+#include "FCCAnalyses/ReconstructedParticle2MC.h"
 
 namespace FCCAnalyses{
 
@@ -168,6 +172,34 @@ namespace ReconstructedParticle{
 
   /// get number of b-jets
   int getJet_ntags(ROOT::VecOps::RVec<bool> in);
+
+  ////////////////////////
+  /// added functions ////
+  /// get a list of PIDs
+  ROOT::VecOps::RVec<float> get_PID(const ROOT::VecOps::RVec<int> & recind, 
+				    const ROOT::VecOps::RVec<int> & mcind, 
+				    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> & reco,
+				    const ROOT::VecOps::RVec<edm4hep::MCParticleData> & mc);
+
+  /// isolate particles with a particular PID
+  ROOT::VecOps::RVec<int> is_PID(float PID_condition, ROOT::VecOps::RVec<float> PID);
+
+  /// from Edi ///
+  struct sel_template{
+    sel_template(float arg_pass);
+    float m_pass;
+    template<class G>
+    ROOT::VecOps::RVec<G> operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in); 
+    template<class T>
+    std::vector<std::vector<T>> operator()(std::vector<std::vector<float>> tag_vector, std::vector<std::vector<T>> in); 
+    ///std::vector<std::vector<float>> operator()(std::vector<std::vector<float>> tag_vector, std::vector<std::vector<float>> in); 
+    //ROOT::VecOps::RVec<G> operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<G> in); 
+    //ROOT::VecOps::RVec<int> operator()(ROOT::VecOps::RVec<float> tags, ROOT::VecOps::RVec<int> in); 
+  };
+  std::vector<std::vector<int>> sel_pseudoTemplate(std::vector<std::vector<float>> tag_vector, std::vector<std::vector<int>> in); 
+  std::vector<std::vector<float>> sel_pseudoTemplate(std::vector<std::vector<float>> tag_vector, std::vector<std::vector<float>> in);
+  ROOT::VecOps::RVec<int> index_splitter(ROOT::VecOps::RVec<int> ind); 
+  std::vector<std::vector<int>> index_converter(std::vector<std::vector<int>> RP_ind, ROOT::VecOps::RVec<int> split_ind);
 
 }//end NS ReconstructedParticle
 

@@ -26,6 +26,7 @@
 #pragma link C++ class ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>>+;
 #pragma link C++ class ROOT::VecOps::RVec<ROOT::VecOps::RVec<float>>+;
 #pragma link C++ class ROOT::VecOps::RVec<ROOT::VecOps::RVec<double>>+;
+#pragma link C++ class ROOT::VecOps::RVec<ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>>>+;
 #pragma link C++ class ROOT::VecOps::RVec<ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>>+;
 #pragma link C++ class ROOT::VecOps::RVec<std::vector<float>>+;
 

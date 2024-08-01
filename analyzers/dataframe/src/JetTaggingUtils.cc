@@ -152,6 +152,54 @@ sel_tag::operator()(ROOT::VecOps::RVec<bool> tags,
   return result;
 }
 
+///////// added functions //////////
+ROOT::VecOps::RVec<int> get_Z_flavour(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin){
+  int flav = 0;
+  for(auto& p : MCin){
+    if(p.generatorStatus == 23){
+      flav = std::abs(p.PDG); // when you want abs flavour
+      // flav = p.PDG; // when you want q-qbar separation (wouldn't work like this)
+      break;
+    }
+  }
+  ROOT::VecOps::RVec<int> result(in.size(), flav);
+  return result;
+}  
+
+  // CAUTION: ONLY USE FOR DI-JET Q-QBAR EVENTS
+ROOT::VecOps::RVec<int> get_Zqq_flavour(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin){
+  ROOT::VecOps::RVec<int> result;
+  for(auto& p : MCin){
+    if(p.generatorStatus == 23){
+      // flav = std::abs(p.PDG); // when you want abs flavour
+      int flav = p.PDG; // when you want q-qbar separation
+
+      ROOT::VecOps::RVec<float> angle;
+      for(auto& j : in){
+	float dot = j.px() * p.momentum.x + j.py() * p.momentum.y +
+                    j.pz() * p.momentum.z;
+	float lenSq1 = j.px() * j.px() + j.py() * j.py() + j.pz() * j.pz();
+	float lenSq2 = p.momentum.x * p.momentum.x +
+                       p.momentum.y * p.momentum.y +
+                       p.momentum.z * p.momentum.z;
+	float norm = sqrt(lenSq1 * lenSq2);
+	angle.push_back(acos(dot / norm));
+      }
+      if(angle[0] < angle[1]){
+	result.push_back(flav);
+	result.push_back(-1*flav);
+      }
+      else{
+      	result.push_back(-1*flav);
+	result.push_back(flav);
+      }
+      break;
+    }
+  }
+  return result;
+}  
+
+  
 } // namespace JetTaggingUtils
 
 } // namespace FCCAnalyses
