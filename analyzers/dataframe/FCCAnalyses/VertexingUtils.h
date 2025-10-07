@@ -116,6 +116,11 @@ namespace VertexingUtils{
   ROOT::VecOps::RVec<ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>>> get_VertexRecoInd_SVjet( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> TheVertexList,
 						      const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& reco );
 
+  /// getting hard dealing with vec of vec of vec. so a hack to get SV track indices only for a particular jet (jet#i)
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> get_VertexRecoInd_SVjet_i( ROOT::VecOps::RVec<ROOT::VecOps::RVec<FCCAnalysesVertex>> TheVertexList,
+						      const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& reco,
+						      int i_jet );
+
   /// Return the number of tracks in a given track collection
   int get_nTracks(ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
 

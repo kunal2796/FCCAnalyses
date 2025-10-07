@@ -166,10 +166,13 @@ ROOT::VecOps::RVec<int> get_Z_flavour(ROOT::VecOps::RVec<fastjet::PseudoJet> in,
   return result;
 }  
 
-  // CAUTION: ONLY USE FOR DI-JET Q-QBAR EVENTS
+ // CAUTION: ONLY USE FOR DI-JET Q-QBAR EVENTS
+ /// for Pythia-generated events///
 ROOT::VecOps::RVec<int> get_Zqq_flavour(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin){
   ROOT::VecOps::RVec<int> result;
+  // std::cout<<"PDG -> generator status"<<std::endl;
   for(auto& p : MCin){
+    // std::cout<<p.PDG<<" -> "<<p.generatorStatus<<std::endl;
     if(p.generatorStatus == 23){
       // flav = std::abs(p.PDG); // when you want abs flavour
       int flav = p.PDG; // when you want q-qbar separation
@@ -195,6 +198,36 @@ ROOT::VecOps::RVec<int> get_Zqq_flavour(ROOT::VecOps::RVec<fastjet::PseudoJet> i
       }
       break;
     }
+  }
+  return result;
+}  
+
+ // CAUTION: ONLY USE FOR DI-JET Q-QBAR EVENTS
+ /// for Whizard-generated events///
+ROOT::VecOps::RVec<int> get_Zqq_flavour_wz(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin){
+  ROOT::VecOps::RVec<int> result;
+  auto& p = MCin.at(8); // assuming q-qbar are always at indices 8 & 9 in the MC particle list
+  //
+  int flav = p.PDG; // when you want q-qbar separation
+  //
+  ROOT::VecOps::RVec<float> angle;
+  for(auto& j : in){
+    float dot = j.px() * p.momentum.x + j.py() * p.momentum.y +
+      j.pz() * p.momentum.z;
+    float lenSq1 = j.px() * j.px() + j.py() * j.py() + j.pz() * j.pz();
+    float lenSq2 = p.momentum.x * p.momentum.x +
+      p.momentum.y * p.momentum.y +
+      p.momentum.z * p.momentum.z;
+    float norm = sqrt(lenSq1 * lenSq2);
+    angle.push_back(acos(dot / norm));
+  }
+  if(angle[0] < angle[1]){
+    result.push_back(flav);
+    result.push_back(-1*flav);
+  }
+  else{
+    result.push_back(-1*flav);
+    result.push_back(flav);
   }
   return result;
 }  

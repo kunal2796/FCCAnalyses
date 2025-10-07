@@ -1,35 +1,99 @@
 # testFile="root://eospublic.cern.ch//eos/experiment/fcc/ee/generation/DelphesEvents/winter2023/IDEA/p8_ee_Zbb_ecm91/events_066726720.root"
 
+# COMMENTED OUT FOR ee, mumu, and tautau
+# sv_track_index_*
+
 #Mandatory: List of processes  
 processList = {
     # 'p8_ee_Zuds_ecm91':{'fraction':0.0001}, #Run 0.01% statistics in one output file named <outputDir>/p8_ee_Zuds_ecm91.root
     # 'p8_ee_Zcc_ecm91':{'fraction':0.0001}, #Run 0.01% statistics in one output file named <outputDir>/p8_ee_Zcc_ecm91.root
     # 'p8_ee_Zbb_ecm91':{'fraction':0.0001, 'output':'p8_ee_Zbb_ecm91_SV_100K'},
-    # 'p8_ee_Zbb_ecm91':{'fraction':0.00001, 'output':'test'},
-    'p8_ee_Zbb_ecm91':{'fraction':0.0001, 'output':'p8_ee_Zbb_ecm91'},
-    'p8_ee_Zcc_ecm91':{'fraction':0.0001, 'output':'p8_ee_Zcc_ecm91'},
-    # 'p8_ee_Zss_ecm91':{'fraction':0.0001, 'output':'p8_ee_Zss_ecm91'},
-    # 'p8_ee_Zud_ecm91':{'fraction':0.0004, 'output':'p8_ee_Zud_ecm91'},
+    # 'p8_ee_Zbb_ecm91':{'fraction':0.0001, 'output':'test', 'nevents':1000},
+
+    # 'p8_ee_Zee_ecm91'    :{'fraction':0.001, 'output':'test', 'nevents':1000},
+    # 'p8_ee_Zee_ecm91'    :{'fraction':0.015, 'chunks':15},
+    # 'p8_ee_Zmumu_ecm91'  :{'fraction':0.015, 'chunks':15},
+    # 'p8_ee_Ztautau_ecm91':{'fraction':0.015, 'chunks':15},
+
+    # 'p8_ee_Zbb_ecm91':{'fraction':0.023, 'chunks':100},
+    # 'p8_ee_Zcc_ecm91':{'fraction':0.02,  'chunks':100},
+    # 'p8_ee_Zss_ecm91':{'fraction':0.02,  'chunks':100},
+    # 'p8_ee_Zud_ecm91':{'fraction':0.041,  'chunks':200},
+    # 'p8_ee_Zbb_noFSR_ecm91':{'fraction':1, 'chunks':20},
+
+    # 'wzp6_ee_mumu_ecm91p188'              :{'fraction':0.01, 'chunks':10},
+    # 'wzp6_ee_mumu_ecm91p188_noISR'        :{'fraction':0.01, 'chunks':10},
+    # 'wzp6_ee_mumu_ecm91p188_noISR_noFSR'  :{'fraction':0.01, 'chunks':10},
+
+    # 'wzp6_ee_uu_ecm91p2':{'fraction':0.02, 'chunks':20},
+    # 'wzp6_ee_dd_ecm91p2':{'fraction':0.02, 'chunks':20},
+    # 'wzp6_ee_ss_ecm91p2':{'fraction':0.02, 'chunks':20},
+    # 'wzp6_ee_cc_ecm91p2':{'fraction':0.02, 'chunks':20},
+    # 'wzp6_ee_bb_ecm91p2':{'fraction':0.02, 'chunks':20},
+
+    'p8_ee_Zbb_ecm91':{'fraction':0.0002},
 }
 
 #Mandatory: Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics
 prodTag     = "FCCee/winter2023/IDEA/"
 
 #Optional: output directory, default is local running directory
-outputDir   = "/afs/cern.ch/work/k/kgautam/private/FCCAnalyses/outputs/FCCee/Zqq/asymmetries"
+# outputDir   = "/afs/cern.ch/work/k/kgautam/private/FCCAnalyses/outputs/FCCee/Zqq/asymmetries"
+# outputDir   = "/eos/user/k/kgautam/FCCAnalyses/outputs/asymmetries"
+outputDir   = "/eos/user/k/kgautam/FCCAnalyses/outputs/asymmetries/withoutSV"
 
 #Optional: ncpus, default is 4
-nCPUS       = 8
+# nCPUS       = 8
+nCPUS       = 1
 
 #Optional running on HTCondor, default is False
-# runBatch    = True
+runBatch    = True
 
 #Optional batch queue name when running on HTCondor, default is workday  
 #batchQueue = "microcentury"
 # batchQueue = "longlunch"
+batchQueue = "workday"
+# batchQueue = "espresso"
 
 #Optional computing account when running on HTCondor, default is group_u_FCC.local_gen
-# compGroup = "group_u_FCC.local_gen"
+compGroup = "group_u_FCC.local_gen"
+
+############### additions for flavour tagger #################
+import os
+import urllib.request
+# ____________________________________________________________
+def get_file_path(url, filename):
+    if os.path.exists(filename):
+        return os.path.abspath(filename)
+    else:
+        urllib.request.urlretrieve(url, os.path.basename(url))
+        return os.path.basename(url)
+# ____________________________________________________________
+#
+## latest particle transformer model, trainied on 9M jets in winter2023 samples
+model_name = "fccee_flavtagging_edm4hep_wc_v1"
+
+## model files needed for unit testing in CI
+url_model_dir = "https://fccsw.web.cern.ch/fccsw/testsamples/jet_flavour_tagging/winter2023/wc_pt_13_01_2022/"
+url_preproc = "{}/{}.json".format(url_model_dir, model_name)
+url_model = "{}/{}.onnx".format(url_model_dir, model_name)
+
+## model files locally stored on /eos
+#model_dir = "/eos/experiment/fcc/ee/jet_flavour_tagging/winter2023/wc_pt_13_01_2022/"
+model_dir = "/eos/experiment/fcc/ee/jet_flavour_tagging/winter2023/wc_pt_7classes_12_04_2023/"
+local_preproc = "{}/{}.json".format(model_dir, model_name)
+local_model = "{}/{}.onnx".format(model_dir, model_name)
+
+## get local file, else download from url
+weaver_preproc = get_file_path(url_preproc, local_preproc)
+weaver_model = get_file_path(url_model, local_model)
+
+from addons.ONNXRuntime.jetFlavourHelper import JetFlavourHelper
+from addons.FastJet.jetClusteringHelper import ExclusiveJetClusteringHelper
+
+jetFlavourHelper = None
+jetClusteringHelper = None
+##############################################################
 
 #Mandatory: RDFanalysis class where the use defines the operations on the TTree
 class RDFanalysis():
@@ -37,6 +101,37 @@ class RDFanalysis():
     #__________________________________________________________
     #Mandatory: analysers funtion to define the analysers to process, please make sure you return the last dataframe, in this example it is df2
     def analysers(df):
+
+        ##############################################################
+        global jetClusteringHelper
+        global jetFlavourHelper
+
+        from examples.FCCee.weaver.config import collections, njets
+
+        tag = ""
+
+        ## define jet clustering parameters
+        jetClusteringHelper = ExclusiveJetClusteringHelper(collections["PFParticles"], njets, tag)
+
+        ## run jet clustering
+        df = jetClusteringHelper.define(df)
+
+        ## define jet flavour tagging parameters
+
+        jetFlavourHelper = JetFlavourHelper(
+            collections,
+            jetClusteringHelper.jets,
+            jetClusteringHelper.constituents,
+            tag,
+        )
+
+        ## define observables for tagger
+        df = jetFlavourHelper.define(df)
+
+        ## tagger inference
+        df = jetFlavourHelper.inference(weaver_preproc, weaver_model, df)
+        ##############################################################
+        
         df2 = (df
 
                # alias
@@ -59,9 +154,9 @@ class RDFanalysis():
                .Define("RP_charge",    "ReconstructedParticle::get_charge(ReconstructedParticles)")
                .Define('RP_pdg',       "ReconstructedParticle2MC::getRP2MC_pdg(MCRecoAssociations0,MCRecoAssociations1,ReconstructedParticles,Particle)")
                #.Define("RP_hasTRK",    "ReconstructedParticle2Track::hasTRK(ReconstructedParticles)")
-               .Define("RP_hasTRK",    "ROOT::VecOps::RVec<int> result; for (auto& charge : RP_charge){if(std::abs(charge)>0) result.push_back(1); else result.push_back(0);}return result;")
-               .Define("RP_charged",   "ReconstructedParticle::sel_tag(1)(RP_hasTRK, ReconstructedParticles)")
-               .Define("RP_neutral",   "ReconstructedParticle::sel_tag(0)(RP_hasTRK, ReconstructedParticles)")
+               # .Define("RP_hasTRK",    "ROOT::VecOps::RVec<int> result; for (auto& charge : RP_charge){if(std::abs(charge)>0) result.push_back(1); else result.push_back(0);}return result;")
+               # .Define("RP_charged",   "ReconstructedParticle::sel_tag(1)(RP_hasTRK, ReconstructedParticles)")
+               # .Define("RP_neutral",   "ReconstructedParticle::sel_tag(0)(RP_hasTRK, ReconstructedParticles)")
 
                # # MC PID
                # .Define("RP_PID",       "ReconstructedParticle::get_PID(MCRecoAssociations0, MCRecoAssociations1, ReconstructedParticles, Particle)")
@@ -76,48 +171,48 @@ class RDFanalysis():
                # .Define("RP_isNeutron", "ReconstructedParticle::is_PID(2112, RP_PID)")
                # .Define("RP_isNPion",   "ReconstructedParticle::is_PID(111, RP_PID)")
 
-               # charged PF vars 
-               .Define("RP_charged_charge",    "ReconstructedParticle::get_charge(RP_charged)")
-               .Define("RP_charged_p",         "ReconstructedParticle::get_p(RP_charged)")
-               #.Define("RP_charged_p_template","ReconstructedParticle::get_p(RP_template)")
-               .Define("RP_charged_theta",     "ReconstructedParticle::get_theta(RP_charged)")
-               .Define("RP_charged_phi",       "ReconstructedParticle::get_phi(RP_charged)")
-               .Define("RP_charged_e",         "ReconstructedParticle::get_e(RP_charged)")
-               .Define("RP_charged_mass",      "ReconstructedParticle::get_mass(RP_charged)") #CAUTION: true mass of RP or assuming pion?
-               .Define("RP_charged_Z0",        "ReconstructedParticle2Track::getRP2TRK_Z0(RP_charged, EFlowTrack_1)")
-               .Define("RP_charged_D0",        "ReconstructedParticle2Track::getRP2TRK_D0(RP_charged, EFlowTrack_1)")
-               .Define("RP_charged_Z0_sig",    "ReconstructedParticle2Track::getRP2TRK_Z0_sig(RP_charged, EFlowTrack_1)")
-               .Define("RP_charged_D0_sig",    "ReconstructedParticle2Track::getRP2TRK_D0_sig(RP_charged, EFlowTrack_1)")
-               .Define("RP_charged_Curv",      "ReconstructedParticle2Track::getRP2TRK_omega(RP_charged, EFlowTrack_1)")
+               # # charged PF vars 
+               # .Define("RP_charged_charge",    "ReconstructedParticle::get_charge(RP_charged)")
+               # .Define("RP_charged_p",         "ReconstructedParticle::get_p(RP_charged)")
+               # #.Define("RP_charged_p_template","ReconstructedParticle::get_p(RP_template)")
+               # .Define("RP_charged_theta",     "ReconstructedParticle::get_theta(RP_charged)")
+               # .Define("RP_charged_phi",       "ReconstructedParticle::get_phi(RP_charged)")
+               # .Define("RP_charged_e",         "ReconstructedParticle::get_e(RP_charged)")
+               # .Define("RP_charged_mass",      "ReconstructedParticle::get_mass(RP_charged)") #CAUTION: true mass of RP or assuming pion?
+               # .Define("RP_charged_Z0",        "ReconstructedParticle2Track::getRP2TRK_Z0(RP_charged, EFlowTrack_1)")
+               # .Define("RP_charged_D0",        "ReconstructedParticle2Track::getRP2TRK_D0(RP_charged, EFlowTrack_1)")
+               # .Define("RP_charged_Z0_sig",    "ReconstructedParticle2Track::getRP2TRK_Z0_sig(RP_charged, EFlowTrack_1)")
+               # .Define("RP_charged_D0_sig",    "ReconstructedParticle2Track::getRP2TRK_D0_sig(RP_charged, EFlowTrack_1)")
+               # .Define("RP_charged_Curv",      "ReconstructedParticle2Track::getRP2TRK_omega(RP_charged, EFlowTrack_1)")
 
-               # neutral PF vars 
-               .Define("RP_neutral_p",    "ReconstructedParticle::get_p(RP_neutral)")
-               .Define("RP_neutral_theta","ReconstructedParticle::get_theta(RP_neutral)")
-               .Define("RP_neutral_phi",  "ReconstructedParticle::get_phi(RP_neutral)")
-               .Define("RP_neutral_e",    "ReconstructedParticle::get_e(RP_neutral)")
-               .Define("RP_neutral_mass", "ReconstructedParticle::get_mass(RP_neutral)") #CAUTION: even more strange for neutrals
+               # # neutral PF vars 
+               # .Define("RP_neutral_p",    "ReconstructedParticle::get_p(RP_neutral)")
+               # .Define("RP_neutral_theta","ReconstructedParticle::get_theta(RP_neutral)")
+               # .Define("RP_neutral_phi",  "ReconstructedParticle::get_phi(RP_neutral)")
+               # .Define("RP_neutral_e",    "ReconstructedParticle::get_e(RP_neutral)")
+               # .Define("RP_neutral_mass", "ReconstructedParticle::get_mass(RP_neutral)") #CAUTION: even more strange for neutrals
 
-               # PID vars
-               .Define("RP_dNdx","ReconstructedTrack::tracks_dNdx(EFlowTrack_1, EFlowTrack_1, EFlowTrack, EFlowTrack_2)")
-               .Define("RP_tof", "ReconstructedTrack::tracks_TOF(EFlowTrack_1, EFlowTrack_1, EFlowTrack, TrackerHits)")
+               # # PID vars
+               # .Define("RP_dNdx","ReconstructedTrack::tracks_dNdx(EFlowTrack_1, EFlowTrack_1, EFlowTrack, EFlowTrack_2)")
+               # .Define("RP_tof", "ReconstructedTrack::tracks_TOF(EFlowTrack_1, EFlowTrack_1, EFlowTrack, TrackerHits)")
                
                # number of tracks
                .Define("n_tracks","ReconstructedParticle2Track::getTK_n(EFlowTrack_1)")
 
-               # PV and SV reconstruction and Jet Clustering
-               # determime the primary (and secondary) tracks without using the MC-matching:
-	       # Select the tracks that are reconstructed as primaries
-               .Define("RecoedPrimaryTracks",  "VertexFitterSimple::get_PrimaryTracks( EFlowTrack_1, true, 4.5, 20e-3, 300, 0., 0., 0.)")
-               .Define("n_RecoedPrimaryTracks","ReconstructedParticle2Track::getTK_n( RecoedPrimaryTracks )")
-               # the final primary vertex :
-               .Define("PV",  "VertexFitterSimple::VertexFitter_Tk ( 1, RecoedPrimaryTracks, true, 4.5, 20e-3, 300) ")
-               .Define("PrimaryVertex",        "VertexingUtils::get_VertexData( PV )")
-               .Define("PrimaryVertexPosition","PV.vertex.position")
-               # the secondary tracks
-               .Define("SecondaryTracks",    "VertexFitterSimple::get_NonPrimaryTracks( EFlowTrack_1,  RecoedPrimaryTracks )")
-               .Define("n_SecondaryTracks",  "ReconstructedParticle2Track::getTK_n( SecondaryTracks )" )
-               # which of the tracks are primary according to the reco algprithm (boolean)
-               .Define("IsPrimary_based_on_reco",  "VertexFitterSimple::IsPrimary_forTracks( EFlowTrack_1,  RecoedPrimaryTracks )")
+               # # PV and SV reconstruction and Jet Clustering
+               # # determime the primary (and secondary) tracks without using the MC-matching:
+	       # # Select the tracks that are reconstructed as primaries
+               # .Define("RecoedPrimaryTracks",  "VertexFitterSimple::get_PrimaryTracks( EFlowTrack_1, true, 4.5, 20e-3, 300, 0., 0., 0.)")
+               # .Define("n_RecoedPrimaryTracks","ReconstructedParticle2Track::getTK_n( RecoedPrimaryTracks )")
+               # # the final primary vertex :
+               # .Define("PV",  "VertexFitterSimple::VertexFitter_Tk ( 1, RecoedPrimaryTracks, true, 4.5, 20e-3, 300) ")
+               # .Define("PrimaryVertex",        "VertexingUtils::get_VertexData( PV )")
+               # .Define("PrimaryVertexPosition","PV.vertex.position")
+               # # the secondary tracks
+               # .Define("SecondaryTracks",    "VertexFitterSimple::get_NonPrimaryTracks( EFlowTrack_1,  RecoedPrimaryTracks )")
+               # .Define("n_SecondaryTracks",  "ReconstructedParticle2Track::getTK_n( SecondaryTracks )" )
+               # # which of the tracks are primary according to the reco algprithm (boolean)
+               # .Define("IsPrimary_based_on_reco",  "VertexFitterSimple::IsPrimary_forTracks( EFlowTrack_1,  RecoedPrimaryTracks )")
 
                # jet clustering (ee-kt) before reconstructing SVs in event
                #build psedo-jets with the Reconstructed final particles
@@ -129,12 +224,12 @@ class RDFanalysis():
                #get the jet constituents out of the structure
 	       .Define("jetconstituents", "JetClusteringUtils::get_constituents(FCCAnalysesJets_ee_kt)")
 
-	       # finding SVs in jets 
-               .Define("SV_jet", "VertexFinderLCFIPlus::get_SV_jets(ReconstructedParticles, EFlowTrack_1, PV, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents)")
-               #find V0s in jets
-               .Define("V0", "VertexFinderLCFIPlus::get_V0s_jet(ReconstructedParticles, EFlowTrack_1, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents, PV)")
-               #separate by jetsh. none of this will be needed once get_V0_jet is of the form Rvec<RVec<V0>>
-               .Define("V0_jet", "VertexingUtils::get_svInJets(V0.vtx, V0.nSV_jet)")
+	       # # finding SVs in jets 
+               # .Define("SV_jet", "VertexFinderLCFIPlus::get_SV_jets(ReconstructedParticles, EFlowTrack_1, PV, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents)")
+               # #find V0s in jets
+               # .Define("V0", "VertexFinderLCFIPlus::get_V0s_jet(ReconstructedParticles, EFlowTrack_1, IsPrimary_based_on_reco, jets_ee_kt, jetconstituents, PV)")
+               # #separate by jetsh. none of this will be needed once get_V0_jet is of the form Rvec<RVec<V0>>
+               # .Define("V0_jet", "VertexingUtils::get_svInJets(V0.vtx, V0.nSV_jet)")
                #separate tracks by jets
                .Define("Tracks", "VertexingUtils::get_tracksInJets(ReconstructedParticles, EFlowTrack_1, jets_ee_kt, jetconstituents)")
 
@@ -149,49 +244,52 @@ class RDFanalysis():
                .Define("jets_phi",        "JetClusteringUtils::get_phi(jets_ee_kt)")
                .Define("jets_m",          "JetClusteringUtils::get_m(jets_ee_kt)")
                .Define("jets_e",          "JetClusteringUtils::get_e(jets_ee_kt)")
-               .Define("jets_pt",         "JetClusteringUtils::get_pt(jets_ee_kt)")
-               .Define("jets_eta",        "JetClusteringUtils::get_eta(jets_ee_kt)")
+               # .Define("jets_pt",         "JetClusteringUtils::get_pt(jets_ee_kt)")
+               # .Define("jets_eta",        "JetClusteringUtils::get_eta(jets_ee_kt)")
                .Define("n_jets",          "jets_ee_kt.size()")
 
                # jet flavour
                .Define("jets_flavour",  "JetTaggingUtils::get_flavour(jets_ee_kt, Particle)")
-               .Define("Z_flavour",     "JetTaggingUtils::get_Zqq_flavour(jets_ee_kt, Particle)") # default signed flavour to be used (q-qbar separated)
+               # .Define("Z_flavour",     "JetTaggingUtils::get_Zqq_flavour(jets_ee_kt, Particle)") # default signed flavour to be used (q-qbar separated)
+               .Define("Z_flavour",     "JetTaggingUtils::get_Zqq_flavour_wz(jets_ee_kt, Particle)") # for whizard samples
                # .Redefine("jets_flavour","ROOT::VecOps::RVec<float> flav; for(int i=0; i<jets_flavour.size(); ++i){if(jets_flavour.at(i)==Z_flavour.at(i)) flav.push_back(jets_flavour.at(i)); else flav.push_back(0);}return flav;") # includes undefined flavour when q(qbar) is outside the cone
 
-               # SV variables
-               .Define("n_sv",       "VertexingUtils::get_n_SV_jets(SV_jet)") # no of SVs per jet
-               .Define("sv_mass",    "VertexingUtils::get_invM(SV_jet)") # SV mass (second way)
-               # .Define("sv_p4",      "VertexingUtils::get_p4_SV(SV_jet)") # SV momentum (4 vector)
-               .Define("sv_p",       "VertexingUtils::get_pMag_SV(SV_jet)") # SV momentum (magnitude)
-               .Define("sv_ntracks", "VertexingUtils::get_VertexNtrk(SV_jet)") # SV daughters (no of tracks)
-               .Define("sv_chi2",    "VertexingUtils::get_chi2_SV(SV_jet)") # SV chi2 (not normalised)
-               .Define("sv_normchi2","VertexingUtils::get_norm_chi2_SV(SV_jet)") # SV chi2 (normalised)
-               .Define("sv_ndf",     "VertexingUtils::get_nDOF_SV(SV_jet)") # SV no of DOF
-               .Define("sv_theta",   "VertexingUtils::get_theta_SV(SV_jet)") # SV polar angle (theta)
-               .Define("sv_phi",     "VertexingUtils::get_phi_SV(SV_jet)") # SV azimuthal angle (phi)
-               .Define("sv_thetarel","VertexingUtils::get_relTheta_SV(SV_jet, jets_ee_kt)") # SV polar angle wrt jet
-               .Define("sv_phirel",  "VertexingUtils::get_relPhi_SV(SV_jet, jets_ee_kt)") # SV azimuthal angle wrt jet
-               .Define("sv_costhetasvpv","VertexingUtils::get_pointingangle_SV(SV_jet, PV)") # SV pointing angle
-               .Define("sv_dxy",     "VertexingUtils::get_dxy_SV(SV_jet, PV)") # SV distance from PV (in xy plane)
-               .Define("sv_d3d",     "VertexingUtils::get_d3d_SV(SV_jet, PV)") # SV distance from PV (in 3D)
-               .Define("sv_trackIndx", "VertexingUtils::get_VertexRecoInd_SVjet(SV_jet, ReconstructedParticles)") #IMPORTANT AND TO BE FIXED
+               # # SV variables
+               # .Define("n_sv",       "VertexingUtils::get_n_SV_jets(SV_jet)") # no of SVs per jet
+               # .Define("sv_mass",    "VertexingUtils::get_invM(SV_jet)") # SV mass (second way)
+               # # .Define("sv_p4",      "VertexingUtils::get_p4_SV(SV_jet)") # SV momentum (4 vector)
+               # .Define("sv_p",       "VertexingUtils::get_pMag_SV(SV_jet)") # SV momentum (magnitude)
+               # .Define("sv_ntracks", "VertexingUtils::get_VertexNtrk(SV_jet)") # SV daughters (no of tracks)
+               # .Define("sv_chi2",    "VertexingUtils::get_chi2_SV(SV_jet)") # SV chi2 (not normalised)
+               # .Define("sv_normchi2","VertexingUtils::get_norm_chi2_SV(SV_jet)") # SV chi2 (normalised)
+               # .Define("sv_ndf",     "VertexingUtils::get_nDOF_SV(SV_jet)") # SV no of DOF
+               # .Define("sv_theta",   "VertexingUtils::get_theta_SV(SV_jet)") # SV polar angle (theta)
+               # .Define("sv_phi",     "VertexingUtils::get_phi_SV(SV_jet)") # SV azimuthal angle (phi)
+               # .Define("sv_thetarel","VertexingUtils::get_relTheta_SV(SV_jet, jets_ee_kt)") # SV polar angle wrt jet
+               # .Define("sv_phirel",  "VertexingUtils::get_relPhi_SV(SV_jet, jets_ee_kt)") # SV azimuthal angle wrt jet
+               # .Define("sv_costhetasvpv","VertexingUtils::get_pointingangle_SV(SV_jet, PV)") # SV pointing angle
+               # .Define("sv_dxy",     "VertexingUtils::get_dxy_SV(SV_jet, PV)") # SV distance from PV (in xy plane)
+               # .Define("sv_d3d",     "VertexingUtils::get_d3d_SV(SV_jet, PV)") # SV distance from PV (in 3D)
+               # # .Define("sv_trackIndx", "VertexingUtils::get_VertexRecoInd_SVjet(SV_jet, ReconstructedParticles)") #IMPORTANT AND TO BE FIXED
+               # # .Define("sv_trackIndx_j1", "VertexingUtils::get_VertexRecoInd_SVjet_i(SV_jet, ReconstructedParticles,0)") #test
+               # # .Define("sv_trackIndx_j2", "VertexingUtils::get_VertexRecoInd_SVjet_i(SV_jet, ReconstructedParticles,1)") #test
 
-               # V0 variables
-               .Define("v0_pid",     "VertexingUtils::get_pdg_V0(V0.pdgAbs, V0.nSV_jet)") # V0 pdg id
-               .Define("v0_mass",    "VertexingUtils::get_invM_V0(V0.invM, V0.nSV_jet)") # V0 invariant mass
-               #.Define("v0_p4",      "VertexingUtils::get_p4_SV(V0_jet)") # V0 momentum (4 vector)
-               .Define("v0_p",       "VertexingUtils::get_pMag_SV(V0_jet)") # V0 momentum (magnitude)
-               .Define("v0_ntracks", "VertexingUtils::get_VertexNtrk(V0_jet)") # V0 daughters (no of tracks)
-               .Define("v0_chi2",    "VertexingUtils::get_chi2_SV(V0_jet)") # V0 chi2 (not normalised)
-               .Define("v0_normchi2","VertexingUtils::get_norm_chi2_SV(V0_jet)") # V0 chi2 (normalised but same as above)
-               .Define("v0_ndf",     "VertexingUtils::get_nDOF_SV(V0_jet)") # V0 no of DOF (always 1)
-               .Define("v0_theta",   "VertexingUtils::get_theta_SV(V0_jet)") # V0 polar angle (theta)
-               .Define("v0_phi",     "VertexingUtils::get_phi_SV(V0_jet)") # V0 azimuthal angle (phi)
-               .Define("v0_thetarel","VertexingUtils::get_relTheta_SV(V0_jet, jets_ee_kt)") # V0 polar angle wrt jets
-               .Define("v0_phirel",  "VertexingUtils::get_relPhi_SV(V0_jet, jets_ee_kt)") # V0 azimuthal angle wrt jets
-               .Define("v0_costhetasvpv","VertexingUtils::get_pointingangle_SV(V0_jet, PV)") # V0 pointing angle
-               .Define("v0_dxy",     "VertexingUtils::get_dxy_SV(V0_jet, PV)") # V0 distance from PV (in xy plane)
-               .Define("v0_d3d",     "VertexingUtils::get_d3d_SV(V0_jet, PV)") # V0 distance from PV (in 3D)
+               # # V0 variables
+               # .Define("v0_pid",     "VertexingUtils::get_pdg_V0(V0.pdgAbs, V0.nSV_jet)") # V0 pdg id
+               # .Define("v0_mass",    "VertexingUtils::get_invM_V0(V0.invM, V0.nSV_jet)") # V0 invariant mass
+               # #.Define("v0_p4",      "VertexingUtils::get_p4_SV(V0_jet)") # V0 momentum (4 vector)
+               # .Define("v0_p",       "VertexingUtils::get_pMag_SV(V0_jet)") # V0 momentum (magnitude)
+               # .Define("v0_ntracks", "VertexingUtils::get_VertexNtrk(V0_jet)") # V0 daughters (no of tracks)
+               # .Define("v0_chi2",    "VertexingUtils::get_chi2_SV(V0_jet)") # V0 chi2 (not normalised)
+               # .Define("v0_normchi2","VertexingUtils::get_norm_chi2_SV(V0_jet)") # V0 chi2 (normalised but same as above)
+               # .Define("v0_ndf",     "VertexingUtils::get_nDOF_SV(V0_jet)") # V0 no of DOF (always 1)
+               # .Define("v0_theta",   "VertexingUtils::get_theta_SV(V0_jet)") # V0 polar angle (theta)
+               # .Define("v0_phi",     "VertexingUtils::get_phi_SV(V0_jet)") # V0 azimuthal angle (phi)
+               # .Define("v0_thetarel","VertexingUtils::get_relTheta_SV(V0_jet, jets_ee_kt)") # V0 polar angle wrt jets
+               # .Define("v0_phirel",  "VertexingUtils::get_relPhi_SV(V0_jet, jets_ee_kt)") # V0 azimuthal angle wrt jets
+               # .Define("v0_costhetasvpv","VertexingUtils::get_pointingangle_SV(V0_jet, PV)") # V0 pointing angle
+               # .Define("v0_dxy",     "VertexingUtils::get_dxy_SV(V0_jet, PV)") # V0 distance from PV (in xy plane)
+               # .Define("v0_d3d",     "VertexingUtils::get_d3d_SV(V0_jet, PV)") # V0 distance from PV (in 3D)
                
                ############### all reshaping redefining here #############
                # # Some hacky reshaping of the constis 
@@ -341,8 +439,8 @@ class RDFanalysis():
             "jets_phi",
             "jets_m",
             "jets_e",
-            "jets_pt",
-            "jets_eta",
+            # "jets_pt",
+            # "jets_eta",
             # "jets_nRP_charged",
             # "jets_nRP_neutral",
             "jetconstituents",
@@ -354,38 +452,38 @@ class RDFanalysis():
             "RP_e",
             "RP_m",
             "RP_charge",
-            "RP_hasTRK",
-            "RP_charged",
-            "RP_neutral",
+            # "RP_hasTRK",
+            # "RP_charged",
+            # "RP_neutral",
 
             # PID variables
             #"RPj_PID", #?
             # "RPj_dNdx",
             # "RPj_tof",
             "RP_pdg",
-            "RP_dNdx",
-            "RP_tof",
+            # "RP_dNdx",
+            # "RP_tof",
 
             # charged PF vars
             "n_tracks",
-            "RP_charged_charge",
-            "RP_charged_p",
-            "RP_charged_theta",
-            "RP_charged_phi",
-            "RP_charged_e",
-            "RP_charged_mass",
-            "RP_charged_Z0",
-            "RP_charged_D0",
-            "RP_charged_Z0_sig",
-            "RP_charged_D0_sig",
-            "RP_charged_Curv",
+            # "RP_charged_charge",
+            # "RP_charged_p",
+            # "RP_charged_theta",
+            # "RP_charged_phi",
+            # "RP_charged_e",
+            # "RP_charged_mass",
+            # "RP_charged_Z0",
+            # "RP_charged_D0",
+            # "RP_charged_Z0_sig",
+            # "RP_charged_D0_sig",
+            # "RP_charged_Curv",
             
-            # neutral PF vars 
-            "RP_neutral_p",
-            "RP_neutral_theta",
-            "RP_neutral_phi",
-            "RP_neutral_e",
-            "RP_neutral_mass",
+            # # neutral PF vars 
+            # "RP_neutral_p",
+            # "RP_neutral_theta",
+            # "RP_neutral_phi",
+            # "RP_neutral_e",
+            # "RP_neutral_mass",
             
             # # charged PF
             # "RPj_charged_p",
@@ -427,44 +525,53 @@ class RDFanalysis():
             # "RPj_neutral_isNeutron",            
             # "RPj_neutral_isNPion",
 
-            # PV variables
-            "PrimaryVertexPosition",
-            "IsPrimary_based_on_reco",
+            # # PV variables
+            # "PrimaryVertexPosition",
+            # "IsPrimary_based_on_reco",
 
-            # SV variables
-            #"nSV", # should add these. would require vec instead of vec of vec like for others. add while adding PID
-            "n_sv",
-            "sv_mass",
-            "sv_p",
-            "sv_ntracks",
-            "sv_chi2",
-            "sv_normchi2",
-            "sv_ndf",
-            "sv_theta",
-            "sv_phi",
-            "sv_thetarel",
-            "sv_phirel",
-            "sv_costhetasvpv",
-            "sv_dxy",
-            "sv_d3d",
-            "sv_trackIndx", #IMPORTANT AND TO BE FIXED
+            # # SV variables
+            # #"nSV", # should add these. would require vec instead of vec of vec like for others. add while adding PID
+            # "n_sv",
+            # "sv_mass",
+            # "sv_p",
+            # "sv_ntracks",
+            # "sv_chi2",
+            # "sv_normchi2",
+            # "sv_ndf",
+            # "sv_theta",
+            # "sv_phi",
+            # "sv_thetarel",
+            # "sv_phirel",
+            # "sv_costhetasvpv",
+            # "sv_dxy",
+            # "sv_d3d",
+            # # "sv_trackIndx", #IMPORTANT AND TO BE FIXED
+            # # "sv_trackIndx_j1", #test
+            # # "sv_trackIndx_j2", #test
             
-            #V0 variables
-            #"nV0",
-            "v0_pid",
-            "v0_mass",
-            "v0_p",
-            "v0_ntracks",
-            "v0_chi2",
-            "v0_normchi2",
-            "v0_ndf",
-            "v0_theta",
-            "v0_phi",
-            "v0_thetarel",
-            "v0_phirel",
-            "v0_costhetasvpv",
-            "v0_dxy",
-            "v0_d3d",
+            # #V0 variables
+            # #"nV0",
+            # "v0_pid",
+            # "v0_mass",
+            # "v0_p",
+            # "v0_ntracks",
+            # "v0_chi2",
+            # "v0_normchi2",
+            # "v0_ndf",
+            # "v0_theta",
+            # "v0_phi",
+            # "v0_thetarel",
+            # "v0_phirel",
+            # "v0_costhetasvpv",
+            # "v0_dxy",
+            # "v0_d3d",
             
                 ]
+
+        ##  outputs jet properties
+        branchList += jetClusteringHelper.outputBranches()
+
+        ## outputs jet scores and constituent breakdown
+        branchList += jetFlavourHelper.outputBranches()
+
         return branchList

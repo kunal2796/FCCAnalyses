@@ -399,6 +399,20 @@ ROOT::VecOps::RVec<ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>>> get_VertexRecoIn
   return result;
 }
 
+ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> get_VertexRecoInd_SVjet_i(
+    ROOT::VecOps::RVec<ROOT::VecOps::RVec<VertexingUtils::FCCAnalysesVertex>> TheVertexList,
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> &reco,
+    int i_jet) {
+  
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<int>> result;
+  auto &vtxList_jet = TheVertexList.at(i_jet);
+  for(auto &vtx : vtxList_jet){
+    ROOT::VecOps::RVec<int> temp = get_VertexRecoParticlesInd(vtx, reco);
+    result.push_back(temp);
+  }
+  return result;
+}
+
 ///////// Kunal additional functions //////////
 
 TVectorD ParToACTS(TVectorD Par) {

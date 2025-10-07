@@ -53,6 +53,7 @@ struct sel_tag {
 //Makeshift way to get Z flavour
 ROOT::VecOps::RVec<int> get_Z_flavour(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin);
 ROOT::VecOps::RVec<int> get_Zqq_flavour(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin);
+ROOT::VecOps::RVec<int> get_Zqq_flavour_wz(ROOT::VecOps::RVec<fastjet::PseudoJet> in, ROOT::VecOps::RVec<edm4hep::MCParticleData> MCin);
   
 } // namespace JetTaggingUtils
 
